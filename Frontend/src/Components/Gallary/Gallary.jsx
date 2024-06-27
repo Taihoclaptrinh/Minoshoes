@@ -1,6 +1,7 @@
 import React from "react"
 import "./Gallary.css";
 import Bestsellers from "../Bestseller/Bestseller.jsx"
+import Reviews from "../Reviews/Reviews.jsx"
 import { Link } from "react-router-dom"
 import context1 from "../Assets/context1.png"
 import hotshoe1 from "../Assets/Image1.png"
@@ -20,22 +21,23 @@ const Gallary = () => {
         </div>
         
         <div className="trending-img">
-          <Link to="/"> <img src={hotshoe1} alt="" className="img-format1"/> </Link>
-          <Link to="/"> <img src={hotshoe2} alt="" className="img-format2"/> </Link>
-          <Link to="/"> <img src={hotshoe3} alt="" className="img-format3"/> </Link>
-          <Link to="/"> <img src={hotshoe4} alt="" className="img-format4"/> </Link>
+          <img src={hotshoe1} alt="" className="img-format1"/>
+          <img src={hotshoe2} alt="" className="img-format2"/>
+          <img src={hotshoe3} alt="" className="img-format3"/>
+          <img src={hotshoe4} alt="" className="img-format4"/>
         </div>
         
         <div className="trending-button">
           <div className="left-section" onClick={() => window.location.href = 'http://localhost:3000/login'} >
             Shop
           </div>
-          <div className="right-section" onClick={() => window.location.href = 'http://localhost:3000/login'}>
+          <div className="right-section" onClick={() => window.location.href = 'http://localhost:3001/new-arrivals'}>
             Explore
           </div> 
         </div>
       </div>
       <Bestsellers />
+      <Reviews />
     </div>
   );
 };

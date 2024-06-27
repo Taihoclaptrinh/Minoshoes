@@ -1,0 +1,47 @@
+.Contact-container {
+    width: 80%;
+    height: 500px;
+    flex-shrink: 0;
+    margin: 0 10%;
+    padding-bottom: 6%;
+}
+
+.Contact-logo{
+    display: flex;
+    position: absolute;
+    cursor: pointer;
+    width: 146px;
+    height: 116px;
+    flex-shrink: 0;
+}
+.text {
+    display: inline-block;
+    padding-bottom: 5%;
+}
+.h-top {
+    color: #000;
+    font-family: "Inria Sans";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+.h-bottom {
+    color: #000;
+    font-family: "Inria Sans";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+
+}
+
+.address-img {
+    position:absolute;
+    display: inline-flex;
+    right: 10%;
+    object-fit: cover;
+    width: auto;
+    height: 55%;
+    background-color: #000;
+}

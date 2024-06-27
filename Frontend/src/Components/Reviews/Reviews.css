@@ -1,0 +1,90 @@
+.reviews-container{
+    position: absolute;
+    display: block; 
+    margin: 0 5% ;
+    bottom: 10%;
+    flex-shrink: 0;
+    width: 90%;
+    height: 18%;
+    /* background-color: yellow; */
+}
+.head {
+    color: #000;
+    font-family: Raleway;
+    font-size: 65px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+/* contain main content */
+.reviews {
+    height: 100%;
+    margin: 4% 0;
+    justify-content: center; /* Canh giữa theo chiều ngang */
+    align-items: center; /* Canh giữa theo chiều dọc */
+    /* background-color: #000; */
+}
+
+.feedback {
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+    max-width: 100%;
+    flex-shrink: 0;
+    margin: auto 1rem;
+    justify-content: center;
+    font-family: arial;
+    /* background-color: aliceblue; */
+  }
+.feedback--image {
+    position: relative;
+    width: 35%;
+    max-width: 500px;
+    height: auto;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    left: 0;
+}
+.feedback--content {
+    position:absolute;
+    display: inline-flex;
+    width: 60%;
+    height: 90%;
+    padding-left: 10%;
+    justify-content: left;
+    align-items: center;
+    /* background-color: aqua; */
+}
+
+.feedback button {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  justify-content: center;
+  cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+}
+.feedback button:hover {
+  opacity: 0.7;
+}
+/* Star printing */
+.star-rating {
+  display: inline-block;
+  font-size: 2em;
+  color: black;
+  position: relative;
+}
+.star-rating::before {
+  content: '★★★★★';
+  opacity: 0.3;
+}
+.star-rating span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  color: black;
+}
