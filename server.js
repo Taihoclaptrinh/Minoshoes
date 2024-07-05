@@ -5,6 +5,7 @@ import morgan from "morgan";
 import connectDB from "./Backend/config/db.js";
 import authRoute from './Backend/routes/authRoute.js';
 import productRoute from './Backend/routes/productRoute.js';
+import cartRoute from './Backend/routes/cartRoute.js';
 import cors from 'cors';
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(morgan("dev"));
 // Routes
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/products', productRoute);
+app.use('/api/v1/cart', cartRoute);
 
 // Default route
 app.get('/', (req, res) => {
