@@ -6,10 +6,10 @@ const EMAIL_USERNAME = 'lamchitaia1@gmail.com'
 const EMAIL_PASSWORD = 'tdhi afvh cyhd dktb'
 // Thiết lập cấu hình gửi email
 const transporter = nodemailer.createTransport({
-  service: 'gmail', 
+  service: 'gmail',
   auth: {
-    user: EMAIL_USERNAME, 
-    pass: EMAIL_PASSWORD, 
+    user: EMAIL_USERNAME,
+    pass: EMAIL_PASSWORD,
   },
 });
 
@@ -30,9 +30,9 @@ const sendVerificationCode = async (email, code) => {
     return false;
   }
 };
-  
-  // Kiểm tra email
-  // Kiểm tra email
+
+// Kiểm tra email
+// Kiểm tra email
 export const checkEmailController = async (req, res) => {
   try {
     const { email } = req.body;
@@ -65,8 +65,6 @@ export const checkEmailController = async (req, res) => {
     });
   }
 };
-
-  
 
 // Đăng ký người dùng
 export const registerController = async (req, res) => {
@@ -166,5 +164,96 @@ export const testController = (req, res) => {
   } catch (error) {
     console.log(error);
     res.send({ error });
+  }
+};
+
+// Create user
+export const createUser = async (req, res) => {
+  try {
+    const { name, email, password, phone, address } = req.body;
+    const hashedPassword = await hashPassword(password);
+    const user = await new userModel({ name, email, password: hashedPassword, phone, address }).save();
+    res.status(201).send({
+      success: true,
+      message: 'User created successfully',
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'Error in creating user',
+      error,
+    });
+  }
+};
+
+// Read all users
+export const readUsers = async (req, res) => {
+  try {
+    const users = await userModel.find({});
+    res.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'Error in reading users',
+      error,
+    });
+  }
+};
+
+// Delete user
+export const deleteUser = async (req, res) => {
+  try {
+    await userModel.findByIdAndDelete(req.params.id);
+    res.status(200).send({
+      success: true,
+      message: 'User deleted successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'Error in deleting user',
+      error,
+    });
+  }
+};
+
+// Find user (ID, mail, name)
+export const findUser = async (req, res) => {
+  try {
+    const { search } = req.query;
+    const user = await userModel.find({
+      $or: [
+        { _id: search },
+        { email: search },
+        { name: { $regex: search, $options: 'i' } },
+      ],
+    });
+    res.status(200).send(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'Error in finding user',
+      error,
+    });
+  }
+};
+
+// Show all users
+export const showAllUsers = async (req, res) => {
+  try {
+    const users = await userModel.find({});
+    res.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'Error in showing all users',
+      error,
+    });
   }
 };
