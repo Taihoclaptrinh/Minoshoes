@@ -1,0 +1,11 @@
+.Big-container{
+    width: 100%;
+    height: 3961px;
+    display: flex;
+    justify-content: center;
+}
+.container{
+    position: relative;
+    height: 3868px;
+    width: 1440px;
+}
