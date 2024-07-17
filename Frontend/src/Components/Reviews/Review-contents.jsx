@@ -7,9 +7,12 @@ const Feedback = ({ review }) => {
             <div className="star-rating">
                 <span style={{ width: `${review.stars * 20}%` }}>★★★★★</span>
             </div>
-            <p>{review.text}</p>
-            <p><strong>{review.author_name}</strong></p>
-            <p>{review.author_description}</p>
+            <div className="feedback--content-font">
+                <p>{review.text}</p>
+                <p className="feedback--author-font">{review.author_name}</p>
+                <p className="feedback--role-font">{review.author_description}</p>
+            </div>
+            
         </div>
     );
 };

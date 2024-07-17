@@ -28,7 +28,7 @@ const Bestsellers = () => {
               </div>
           </div>
       </div>
-      <div className="bseller-image">
+      <div className="bseller_image">
         <Carousel showDots={true} responsive={responsive}>
           {product}
         </Carousel>

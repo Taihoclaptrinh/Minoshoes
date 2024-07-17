@@ -1,9 +1,10 @@
 .Contact-container {
-    width: 80%;
-    height: 500px;
+    width: 90%;
+    height: 415px;
     flex-shrink: 0;
-    margin: 0 10%;
+    margin: 10% 4%;
     padding-bottom: 6%;
+    /* background-color: aqua; */
 }
 
 .Contact-logo{
@@ -39,9 +40,9 @@
 .address-img {
     position:absolute;
     display: inline-flex;
-    right: 10%;
+    right: 9%;
     object-fit: cover;
     width: auto;
-    height: 55%;
-    background-color: #000;
+    height: 12%;
+    aspect-ratio: 1/1;
 }

@@ -89,9 +89,16 @@ const Reviews = () => {
           <div className="feedback">
             <img className="feedback--image" src={im_src} alt="feedback image" />
             <div className="feedback--content">
-              <div>
-                {review ? <Feedback review={review} /> : <p>Loading...</p>}
+              <div className="feedback--content-font">
+                  <p>ádasd
+                  Ngày đầu năm mới, anh chàng samurai vô chủ Senou Souichirou đến ngụ ở khu trọ Katagi tại Edo. Bắt đầu manh nha những hỗn loạn phá vỡ chuỗi ngày bình yên của dân cư khu trọ Katagi... Senou Souichirou là ai và liệu anh có thể sống bình yên bên những người dân ở Katagi?
+                  </p>
+                  <p className="feedback--author-font">ád</p>
+                  <p className="feedback--role-font">ffff</p>
               </div>
+              {/* <div>
+                {review ? <Feedback review={review} /> : <p>Loading...</p>}
+              </div> */}
             </div>        
           </div>
         </div>

@@ -29,7 +29,7 @@ export const responsive1 = {
     },
   };
   
-  export const productData = [
+  export const productData1 = [
     {
       id: 1,
       imageurl: bestshoe1,
