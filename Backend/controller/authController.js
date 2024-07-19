@@ -32,7 +32,6 @@ const sendVerificationCode = async (email, code) => {
 };
 
 // Kiểm tra email
-// Kiểm tra email
 export const checkEmailController = async (req, res) => {
   try {
     const { email } = req.body;

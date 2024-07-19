@@ -1,6 +1,6 @@
 import express from 'express';
 import { checkEmailController, registerController, loginController, testController } from "../controller/authController.js";
-import { createUser, showAllUsers, readUsers, deleteUser, findUser } from '../controller/userController.js';
+// import { createUser, showAllUsers, readUsers, deleteUser, findUser } from '../controller/userController.js';
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js';
 
 //router object
@@ -18,11 +18,11 @@ router.post("/login", loginController);
 // Test routes
 router.get('/test', requireSignIn, isAdmin, testController);
 
-// CRUD User
-router.post('/create-user', createUser);
-router.get('/show-all-users', showAllUsers);
-router.get('/read-users', readUsers);
-router.get('/find-user/:username', findUser);
-router.delete('/delete-user/:id', deleteUser);
+// CRUD User    
+// router.post('/create-user', createUser);
+// router.get('/show-all-users', showAllUsers);
+// router.get('/read-users', readUsers);
+// router.get('/find-user/:email', findUser); // Changed to email
+// router.delete('/delete-user/:id', deleteUser);
 
 export default router;
