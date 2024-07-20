@@ -2,18 +2,20 @@
     width: 90%;
     height: 415px;
     flex-shrink: 0;
-    margin: 10% 4%;
-    padding-bottom: 6%;
+    margin: 8% 5% ;
+    padding-bottom: 10%;
+    position: relative;
     /* background-color: aqua; */
 }
 
 .Contact-logo{
     display: flex;
-    position: absolute;
-    cursor: pointer;
+    position: relative;
+    /* cursor: pointer; */
     width: 146px;
     height: 116px;
     flex-shrink: 0;
+    background-color: #000;
 }
 .text {
     display: inline-block;
@@ -39,10 +41,10 @@
 
 .address-img {
     position:absolute;
-    display: inline-flex;
-    right: 9%;
+    display: flex;
+    right: 0%;
     object-fit: cover;
     width: auto;
-    height: 12%;
+    height: 90%;
     aspect-ratio: 1/1;
 }
