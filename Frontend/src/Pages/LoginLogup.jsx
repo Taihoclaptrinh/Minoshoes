@@ -36,10 +36,12 @@ const LoginLogup = () => {
         setShowPassword(false);
         setShowForgotPassword(true);
     };
-
+    // Login-Logup feature's temporary flow 
+    // (Testing Front-end only, Need changed to appropriate form ) 
+    // Type Gmail ---Continue--> Type Password
+    // Forget Password  ---Continue--> Sign-Up
     return (
         <div className="login-logup">
-            <div className="login-logup-page"> 
             {showSignIn && (
                 <div class="login-container">
                     <h1>WELCOME</h1>
@@ -55,9 +57,7 @@ const LoginLogup = () => {
                 </div>  
 
             )}
-            </div>
 
-            <div className="login-logup-page"> 
             {showPassword && (
                 <div class="login-container">
                     <h1>WELCOME</h1>
@@ -66,15 +66,13 @@ const LoginLogup = () => {
                             <input type="password" placeholder="Enter your password" required/>
                         </div>
                         <div class="forgot-password">
-                            <a href="#" onClick={showForgotPasswordForm}>Forgot password?</a>
+                            <a href="#" onClick={setShowForgotPassword}>Forgot password?</a>
                         </div>
                         <button type="submit">CONTINUE</button>
                     </form>
                 </div>  
                 )}
-            </div>
 
-            <div className="login-logup-page"> 
             {showForgotPassword && (
                 <div class="login-container">
                     <h1>VERIFICATION</h1>
@@ -86,51 +84,44 @@ const LoginLogup = () => {
                         <div class="input-container">
                             <input type="password" id="new-password" placeholder="Enter your new password" required />
                         </div>
-                        <button type="submit">CONTINUE</button>
+                        {/* To Test Sign Up, Must be changed to correct the real route  */}
+                        <button type="submit" href="#" onClick={showSignUpForm} >CONTINUE</button>
                     </form>
                 </div>  
                 )}
-            </div>
 
-            {/* {showSignUp && (
-                <div className="logup-box">
-                    <h2>Register</h2>
-                    <p>Sign up to continue</p>
-                    <div className="input-group">
-                        <label htmlFor="username">Username</label>
-                        <input type="text" id="username" />
-                    </div>
-                    <div className="input-group">
-                        <label htmlFor="email">Email</label>
-                        <input type="email" id="email" />
-                    </div>
-                    <div className="input-group">
-                        <label htmlFor="password">Password</label>
-                        <input type="password" id="password" />
-                    </div>
-                    <div className="input-group">
-                        <label htmlFor="confirm-password">Confirm Password</label>
-                        <input type="password" id="confirm-password" />
-                    </div>
-                    <button className="sign-up-btn">SIGN UP</button>
-                    <p>Already have an account? <a href="#" onClick={showSignInForm}>Sign in</a></p>
-                </div>
-            )} */}
-
-            {/* {showForgotPassword && (
-                <div className="forgot-password-box">
-                    <h2>Forgot Password</h2>
-                    <p>Enter your email to reset your password</p>
-                    <div className="input-group">
-                        <label htmlFor="email">Email</label>
-                        <input type="email" id="email" />
-                    </div>
-                    <button className="reset-password-btn">RESET PASSWORD</button>
-                    <p>Remember your password? <a href="#" onClick={showSignInForm}>Sign in</a></p>
-                </div>
-            )} */}
-        {/* <Contact_info />
-        <Footer /> */}
+            {showSignUp && (
+                <div class="signup-container">
+                    <h1>LET’S MAKE YOU A MINO MEMBER</h1>
+                    <form id="signup-form">
+                        <div class="input-container1">
+                            <input type="text" id="code" placeholder="Enter the code*" required />
+                        </div>
+                        <div class="input-container1">
+                            <input type="text" id="name" placeholder="Name" required />
+                        </div>
+                        <div class="input-container1">
+                        <input type="date" id="dob" placeholder="Date of birth" required />
+                        <input type="text" id="gender" placeholder="Gender" required />
+                        </div>
+                        <div class="input-container1">
+                            <input type="password" id="password" placeholder="Password" required />
+                        </div>
+                        <div class="input-container1">
+                            <input type="password" id="confirm-password" placeholder="Confirm password" required />
+                        </div>
+                        <div class="input-container1">
+                            <input type="text" id="Address" placeholder="Address" required />
+                        </div>
+                        <div class="input-container1">
+                            <input type="text" id="phone" placeholder="Phone Number" required />
+                        </div>
+                        {/* Test Sign Up  */}
+                        <button type="submit"  href="#" onClick={showSignInForm}>REGISTER NOW</button>
+                    </form>
+                </div>  
+            )}
+            
         </div>
     );
 }

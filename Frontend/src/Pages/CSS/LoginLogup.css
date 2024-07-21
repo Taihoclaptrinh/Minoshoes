@@ -3,22 +3,14 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    height: 90vh;
+    height: 80vh;
+    /* top:50px; */
 }
-/* .login-logup-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 1440px;
-}    */
+
 .login-container {
-    /* background-color: brown; */
     padding: 20px 40px;
-    /* box-shadow: 0 0 10px rgba(125, 123, 123, 0.1); */
     width: 502.5px;
     height: 500px;
-    margin-bottom: 45%;
-
 }
 
 .login-container h1 {
@@ -46,7 +38,7 @@
 
 .input-container {
     display: flex;
-    margin-top: 15%;
+    margin-top: 10%;
 }
 
 /* Input email */
@@ -112,135 +104,84 @@ input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focu
     line-height: normal;
 }
 
-/* .form[id="verification-form"] button[type="submit"] {
-    padding: 50%;
-} */
-body.unique-page .continue-button {
-    margin-top: 1.5rem; /* Điều chỉnh khoảng cách theo ý bạn */
-}
-/* 
-button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    color: white;
-    background-color: black;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-} */
-/* 
-button:hover {
-    background-color: #333;
-} */
-
-
-/* Xoa tam thoi
-
-.login-box, .logup-box {
-    display: flexbox;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 502.5px;
-    height: 321px;
+/* Sign Up Form */
+.signup-container {
+    margin-top: 3%;
+    text-align: center;
+    max-width: 1000px;
+    max-height: 900px;
 }
 
-.login-box h2, .logup-box h2 {
-    margin-bottom: 5%;
-    color: #333;
+.signup-container h1 {
+    color: #000;
     font-family: Raleway;
     font-size: 50px;
     font-style: normal;
     font-weight: 800;
     line-height: normal;
+    margin-bottom: 8%;
 }
 
-.login-box p, .logup-box p {
-    margin-bottom: 20px;
-    color: #666;
-}
-
-.input-group {
-    margin-bottom: 20px;
+#signup-form {
     display: flex;
-    justify-content: space-between; 
+    flex-direction: column;
     align-items: center;
 }
 
-.input-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
+.input-container1 {
+    margin-bottom: 2rem;
+    width: 100%; /* Đảm bảo input container rộng 100% */
+    max-width: 502.5px; /* Giới hạn chiều rộng tối đa */
 }
 
-.input-group input {
+.input-container1 input {
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing:border-box;
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-.forget-pw {
-    font-size: 20px;
-    color:black;
-    cursor: pointer; 
-    display: flexbox;
-    background-color: beige;
-    justify-self: right;
+    font-size: 30px;
+    font-weight: 700;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    border-radius: 0;
+
 }
 
-.btn {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
+.input-container1 input[type="date"] {
+    width: calc(50% - 10px);
+    margin-right: 10px;
+    
+}
+
+.input-container1 input[type="date"] + input[type="text"] {
+    width: calc(50% - 10px);
+}
+
+.signup-container button {
+    padding: 0.75rem;
     border: none;
     border-radius: 4px;
+    background-color: #000;
+    color: #fff;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
+    margin-top: 1.5rem;
+    width: 100%; /* Đảm bảo input container rộng 100% */
+    max-width: 502.5px; /* Giới hạn chiều rộng tối đa */
+    padding: 1.5%;
+
+    font-weight: normal;
+    color: #FDF8F8;
+    font-family: "Inria Sans";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 }
 
-.btn:hover {
-    background-color: #0056b3;
+.signup-container button:hover {
+    background-color: #333;
 }
-
-.btn-alt {
-    background-color: #28a745;
-}
-
-.btn-alt:hover {
-    background-color: #218838;
-} */
-
-/* Link between login and logup */
-
-/* .link-to-logup {
-    margin-top: 20px;
-    color: #666;
-}
-
-.link-to-logup a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.link-to-logup a:hover {
-    text-decoration: underline;
-} */
-
-/* Forgot password */
-/* 
-.forgot-password {
-    margin-top: 10px;
-    color: #999;
-    font-size: 12px;
-}
-
-.forgot-password a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.forgot-password a:hover {
-    text-decoration: underline;
-} */
