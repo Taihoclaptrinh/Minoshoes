@@ -1,0 +1,82 @@
+.CTA-background {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 528px;
+    flex-shrink: 0;
+    justify-content: center; 
+    object-fit: cover;
+}
+
+.CTA_container {
+    text-align: center;
+    position: absolute;
+    margin-top: 2%;
+
+}
+.gradient-text {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    font-family: Raleway;
+    font-weight:bolder;
+    font-size: 80px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+}
+.top {
+    background: linear-gradient(90deg, white 52%, black 48%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    position: relative;
+}
+.bottom {
+    background: linear-gradient(90deg, white 60%, black 40%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    position: relative;
+}
+.format-text {
+    color: #FFF;
+    text-align: center;
+    font-family: "Inria Sans";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    padding-top: 4%;
+}
+
+.CTA-button {
+    position: absolute;
+    display: inline-flex;
+    gap: 50px;
+    cursor: pointer;
+    border-color: #000;
+    justify-content: center;
+    text-align: center;
+    font-size: 30px;
+    bottom: 20%;
+    width: 100%;
+}
+.CTA_left-section {
+    flex: 0.13;
+    background-color: black;
+    color: #FFFFFF;
+    padding: 10px;
+    font-weight: normal;
+    border-color: black;
+    border: 1px solid #000;
+}
+.CTA_right-section {
+    flex: 0.13;
+    color: white;
+    padding: 10px;
+    font-weight: normal;
+    border-width: 0.01px;
+    border-color: white;
+    border: 1px solid white; 
+}
