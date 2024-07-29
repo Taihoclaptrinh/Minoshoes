@@ -55,7 +55,6 @@ const LoginLogup = () => {
                         <button href="#" onClick={showPasswordForm} type="submit">CONTINUE</button>
                     </form>
                 </div>  
-
             )}
 
             {showPassword && (
@@ -71,7 +70,7 @@ const LoginLogup = () => {
                         <button type="submit">CONTINUE</button>
                     </form>
                 </div>  
-                )}
+            )}
 
             {showForgotPassword && (
                 <div class="login-container">
@@ -88,7 +87,7 @@ const LoginLogup = () => {
                         <button type="submit" href="#" onClick={showSignUpForm} >CONTINUE</button>
                     </form>
                 </div>  
-                )}
+            )}
 
             {showSignUp && (
                 <div class="signup-container">
@@ -120,9 +119,8 @@ const LoginLogup = () => {
                         <button type="submit"  href="#" onClick={showSignInForm}>REGISTER NOW</button>
                     </form>
                 </div>  
-            )}
-            
-        </div>
+            )}   
+        </div>            
     );
 }
 

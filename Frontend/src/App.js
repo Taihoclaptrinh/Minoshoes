@@ -5,7 +5,7 @@ import Shop from './Pages/Shop';
 import ShopCategory from './Pages/ShopCategory';
 import Cart from './Pages/Cart';
 import LoginLogup from './Pages/LoginLogup';
-
+import Product from './Pages/Product';
 function App() {
   return (
     <div>
@@ -20,6 +20,7 @@ function App() {
           <Route path='/sale' element={<ShopCategory category="sale" />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<LoginLogup />} />
+          <Route path='/product' element={<Product />} />
         </Routes>
       </BrowserRouter>
     </div>

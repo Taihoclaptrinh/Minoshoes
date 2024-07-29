@@ -19,7 +19,7 @@ const Gallary = () => {
           <div className="Gal_left-section" onClick={() => window.location.href = 'http://localhost:3000/login'} >
             Shop
           </div>
-          <div className="Gal_right-section" onClick={() => window.location.href = 'http://localhost:3001/new-arrivals'}>
+          <div className="Gal_right-section" onClick={() => window.location.href = 'http://localhost:3000/product'}>
             Explore
           </div> 
         </div>

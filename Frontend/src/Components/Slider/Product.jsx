@@ -1,5 +1,5 @@
 import React from 'react'
-import "./Bestseller.css";
+import "../Bestseller/Bestseller.css";
 
 const Product = (props) => {
   return (

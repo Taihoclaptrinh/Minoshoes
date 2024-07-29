@@ -3,8 +3,11 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    height: 80vh;
-    /* top:50px; */
+    height: 90vh;
+    background-color:beige;
+    border-bottom: 2px solid black;
+    border-radius: 0;
+
 }
 
 .login-container {

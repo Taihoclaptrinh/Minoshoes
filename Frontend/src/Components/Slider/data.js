@@ -1,8 +1,8 @@
-import bestshoe1 from "../Assets/Nike/Air Jordan I High G_1.jpg"
+import bestshoe1 from "../Assets/Nike/Air_Jordan_I_High_G_1.jpg"
 import bestshoe2 from "../Assets/Nike/nike_am_react_ENG1.jpg"
 import bestshoe3 from "../Assets/Nike/JD_Low_SE_Craft_1.jpg"
 import bestshoe4 from "../Assets/Nike/nike_pegasus_38_1.png"
-import bestshoe5 from "../Assets/Nike/Air Jordan I High G_1.jpg"
+import bestshoe5 from "../Assets/Nike/Air_Jordan_I_High_G_1.jpg"
 import bestshoe6 from "../Assets/Nike/nike_am_react_ENG1.jpg"
 import bestshoe7 from "../Assets/Nike/JD_Low_SE_Craft_1.jpg"
 import bestshoe8 from "../Assets/Nike/nike_pegasus_38_1.png"
@@ -10,8 +10,8 @@ export const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.
       breakpoint: { max: 4000, min: 1024 },
-      items: 5,
-      slidesToSlide: 2,
+      items: 4,
+      slidesToSlide: 1,
     },
     desktop: {
       breakpoint: { max: 1024, min: 800 },

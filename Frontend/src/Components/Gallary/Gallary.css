@@ -3,7 +3,6 @@
     display: flex;
     width: 100%;
     flex-shrink: 0;
-
 }
 
 .layout-trending{
@@ -55,14 +54,10 @@
 }
 /* Container of new product_slider */
 .nproduct_slider {
-  /* display: flex; */
   position: relative;
   width: 55%;
   left:45%;
   height: 90%; 
-  /* background-color: aquamarine; */
-  /* aspect-ratio: 1/1; */
-    /* margin: 0% 0; */
   display: block; 
 }
 /* Product image in new_product-card */
