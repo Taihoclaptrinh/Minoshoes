@@ -27,7 +27,7 @@ export const getProductById = async (req, res) => {
 // Lấy tất cả sản phẩm với tùy chọn tìm kiếm, lọc và sắp xếp
 export const getProducts = async (req, res) => {
     try {
-        const { search, sort, category, priceRange, page = 1, limit = 10 } = req.query;
+        const { search, sort, category, priceRange, page = 1, limit = 12 } = req.query;
 
         let query = {};
         if (search) {
@@ -50,7 +50,7 @@ export const getProducts = async (req, res) => {
             productsQuery = productsQuery.sort(sortCriteria);
         }
 
-        // Phân trang
+        // Phân trang 
         const skip = (page - 1) * limit;
         productsQuery = productsQuery.skip(skip).limit(Number(limit));
 

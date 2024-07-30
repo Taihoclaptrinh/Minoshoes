@@ -1,0 +1,289 @@
+.product-page {
+  width: 100%;
+  height: 3838px;
+  display: flex;
+  justify-content: center;
+}
+.product-page-layout{
+    position: relative;
+    width: 1440px;
+    top:2%;
+}
+/* Contain the image and info of product */
+.main-container{
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 1040px;
+  display: flex;
+  gap: 3rem;
+   /*width: calc(1440px - 439px - 10%);
+    margin-left: 2.5%;
+    background-color: red; */
+}
+.main-container .product-section{
+  width: 988.52px;
+  height: 1253px;
+  flex: 0.75;
+}
+.product-image-list{
+  width: 988.52px;
+  height: 985.52px;
+  flex-shrink: 0;
+}
+
+.product-image-list .image-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+  width: 100%;
+  max-width: 1000px;  /* size of grid */
+}
+.image-item {
+  background-color: #d3d3d3;
+  width: auto;
+  max-width: 480px;
+  aspect-ratio: 1/1;    /* format image to square shape */
+  object-fit:cover; 
+  overflow: hidden;
+}
+.image-item::after {
+  content: '';
+  display: block;
+  padding-top: 100%; /* This creates the square shape */
+}
+
+.main-container .info-section {
+  width: 371px;
+  height: 960px;
+  flex: 0.75;
+  right: 0;
+  padding-left: 50px;
+}
+
+.info-section .text-group {
+  color: #000;
+  font-family: "Inria Sans";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.info-section .text-group p {
+  margin-bottom: 5px;
+}
+.info-section .text-group h1, h2{
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+/* The button show as the 2x2 grid  */
+.info-section .button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-width: 210px;
+  width: 100%;
+  padding-bottom: 5rem;
+}
+.info-section .button-grid button {
+  width: 93px;
+  height: 42px;
+  flex-shrink: 0;
+  cursor: pointer;
+  border: 1px solid #000; 
+  background: rgba(0, 0, 0, 0.00);
+}
+.info-section .button-grid button:hover {
+  background-color: #555;
+}
+
+.adding-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.adding-button-container button {
+  padding: 15px 30px;
+  border: 2px solid #000;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  max-width: 210px;
+  width: 100%;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.7);
+
+  font-family: "Inria Sans";
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.add-to-list {
+  background-color: #fff;
+  color: #000;
+}
+.add-to-bag {
+  background-color: #000;
+  color: #fff;
+}
+.adding-button-container button:hover {
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), -1px -1px 3px rgba(255, 255, 255, 0.7);
+  transform: translateY(2px);
+}
+
+.product-page .product-description {
+  position: relative;
+  width: 889px;
+  height: 166px;
+  flex-shrink: 0;
+  padding-left: 100px;
+}
+.product-description{
+  color: #000;
+  font-family: "Inria Sans";
+  font-size: 20px;
+  font-style: normal;
+  line-height: normal;
+}
+.product-description h1 {
+  font-weight: 700;
+}
+.product-description p {
+  font-weight: 400;
+  padding-left: 3rem;
+}
+
+.related-product {
+  position: relative;
+  width: 100%;
+  height: 550px;
+
+  color: #000;
+  font-family: "Inria Sans";
+  font-size: 20px;
+  font-style: normal;
+  line-height: normal;
+  font-weight: 700;
+}
+.related-product h1{
+  padding-left: 100px;
+} 
+
+.related-product-slider {
+  width: 1363.355px;
+  height: 383.703px;
+  flex-shrink: 0;
+  align-items: center;
+  padding-left: 2rem;
+}
+
+/* Review section */
+.review-section {
+  margin: 5rem 5rem;
+  padding: 4.5rem 4rem;
+  width: 873px;
+  height: 1035px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  background: #F5F5F5;
+}
+
+.overall-rating {
+  margin-bottom: 20px;
+}
+
+.rating {
+  display: flex;
+  font-family: "Inria Sans";
+  font-size: 3rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+/* Format average score */
+.rating-score {
+  color: #000;
+  font-family: "Inria Sans";
+  font-size: 3rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-right: 5px;
+  padding: 1rem 4rem;
+}
+/* Showing star format */
+.star {
+  flex-shrink: 0;
+  padding-top: 0.5rem;
+  color: gold;
+  stroke-width: 1px;
+  stroke: #000;
+  text-shadow: 1px 1px 2px black;
+}
+.star.full {
+  color: gold;
+}
+.star.half {
+  color: gold;
+  position: relative;
+}
+.star.half::before {
+  content: "★";
+  position: absolute;
+  left: 0;
+  color:transparent;
+  text-shadow: 1px 1px 2px black;
+}
+.star.half::after {
+  content: "★";
+  position: absolute;
+  left: 0;
+  width: 50%;
+  overflow: hidden;
+  color: gold;
+}
+
+.star.empty {
+  color: transparent;
+  text-shadow: 1px 1px 2px black; 
+
+}
+.stars {
+  display: flex;
+  gap: 2px; /* Adjust the gap between stars as needed */
+}
+
+/* Number of review left for this product */
+.review-count {
+  padding: 1.8rem 2rem;
+  font-size: 2rem;
+  font-style: normal;
+  font-weight: 400;
+  color: #000000;
+}
+
+.review {
+  margin-bottom: 20px;
+}
+
+.review h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.review .stars {
+  color: gold;
+  margin: 5px 0;
+}
+
+.review p {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.product-pagebreak {
+  border-top: 2px solid black; /* Độ dày, kiểu và màu của*/ 
+}
