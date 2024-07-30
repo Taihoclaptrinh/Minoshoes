@@ -1,11 +1,15 @@
+.Contact-layout {
+    margin-top: 3rem;
+    width: 1440px;
+    border-top: 2px solid black;
+}
 .Contact-container {
     width: 90%;
     height: 415px;
     flex-shrink: 0;
-    margin: 8% 5% ;
+    margin: 5% 5% ;
     padding-bottom: 10%;
     position: relative;
-    /* background-color: aqua; */
 }
 
 .Contact-logo{
@@ -36,7 +40,6 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-
 }
 
 .address-img {
