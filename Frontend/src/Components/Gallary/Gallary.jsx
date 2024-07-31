@@ -8,9 +8,9 @@ const Gallary = () => {
   return (  
     <div className="layout">
       <div className="layout-trending">
-        <div className="trending-qoute">
+        <h1 className="trending-qoute">
           SEASONAL FOCUS
-        </div>
+        </h1>
         <div className="trending-img">
           <img src={hotshoe4} alt="" className="img-format4"/>
           <ProductSlider />

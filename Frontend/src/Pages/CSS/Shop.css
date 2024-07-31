@@ -1,11 +1,13 @@
 .Big-container{
     width: 100%;
-    height: 3961px;
+    height: 500vh;
     display: flex;
     justify-content: center;
+    
 }
 .container{
     position: relative;
-    height: 3868px;
-    width: 1440px;
+    height: auto;
+    max-width: 74vw;
+    flex-direction: column;
 }

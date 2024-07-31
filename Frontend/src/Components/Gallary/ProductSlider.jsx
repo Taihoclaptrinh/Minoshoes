@@ -6,21 +6,6 @@ import "./Gallary.css"
 import "../Bestseller/Bestseller.css"
 import New_product from "./NewArrival.jsx";
 const ProductSlider = () => {
-    // Chia products thành nhóm 4 sản phẩm
-  // const Nproduct = productData.map((item) => (
-  //   <New_product
-  //     id={item.id}
-  //     name={item.name}
-  //     url={item.imageurl}
-  //     price={item.price}
-  //     description={item.description}
-  //   />
-  // ));
-
-  // const productChunks = [];
-  // for (let i = 0; i < productData.length; i += 4) {
-  //   productChunks.push(productData.slice(i, i + 4));
-  // }
   const productChunks = [];
   const data = [...productData1]; // Clone the array if necessary
   for (let i = 0; i < data.length; i += 4) {
