@@ -55,11 +55,6 @@ const Cart = () => {
                                         {products.map(product => (
                                             <tr key={product.id}>
                                                 <td>{product.name}</td>
-                                                {/* <td>
-                                                    <button onClick={() => handleQuantityChange(product.id, -1)}>-</button>
-                                                    {product.quantity}
-                                                    <button onClick={() => handleQuantityChange(product.id, 1)}>+</button>
-                                                </td> */}
                                                 <td className="quantity-container">
                                                     <button className="quantity-button" onClick={() => handleQuantityChange(product.id, -1)}>-</button>
                                                     <span className="quantity">{product.quantity}</span>
