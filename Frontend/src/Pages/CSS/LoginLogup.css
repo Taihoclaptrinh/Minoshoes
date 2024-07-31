@@ -4,10 +4,8 @@
     justify-content: center;
     flex-direction: column;
     height: 90vh;
-    background-color:beige;
     border-bottom: 2px solid black;
     border-radius: 0;
-
 }
 
 .login-container {
@@ -88,17 +86,19 @@ input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focu
     font-weight: 400;
     line-height:normal;
     margin-top: 2%;
+    cursor: pointer;
 }
 .login-container button {
     width: 100%;
     background-color: black;
-    padding: 3%;
+    margin-top: 4vh;
+    padding: 1vh;
     font-weight: normal;
     border-color: black;
     border: 1px solid #000;
-    margin-top:3%;
     cursor: pointer;
-    
+    border-radius: 30px;
+
     color: #FDF8F8;
     font-family: "Inria Sans";
     font-size: 20px;

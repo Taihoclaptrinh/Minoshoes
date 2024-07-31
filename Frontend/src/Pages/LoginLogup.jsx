@@ -19,6 +19,13 @@ const LoginLogup = () => {
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
 
+    const showForgotPasswordForm = () => {
+        setShowSignIn(false);
+        setShowSignUp(false);
+        setShowPassword(false);
+        setShowForgotPassword(true);
+    };
+
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -124,7 +131,7 @@ const LoginLogup = () => {
                         </div>
                         {error && <p className="error-message">{error}</p>}
                         <div className="forgot-password">
-                            <button type="button" onClick={() => setShowForgotPassword(true)}>Forgot password?</button>
+                            <a type="button" onClick={() => showForgotPasswordForm(true)}>Forgot password?</a>
                         </div>
                         <button type="submit">CONTINUE</button>
                     </form>
@@ -146,7 +153,7 @@ const LoginLogup = () => {
                         </div>
                         {error && <p className="error-message">{error}</p>}
                         <div className="forgot-password">
-                            <button type="button" onClick={() => setShowForgotPassword(true)}>Forgot password?</button>
+                            <a type="button" onClick={() => showForgotPasswordForm(true)}>Forgot password?</a>
                         </div>
                         <button type="submit">CONTINUE</button>
                     </form>
@@ -182,7 +189,7 @@ const LoginLogup = () => {
                     </form>
                 </div>
             )}
-
+    
             {showSignUp && (
                 <div className="signup-container">
                     <h1>LET’S MAKE YOU A MEMBER</h1>
