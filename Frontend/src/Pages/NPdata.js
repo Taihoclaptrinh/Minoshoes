@@ -12,7 +12,7 @@ export const productData =
     id: 1,
     category: "Sneakers",
     name: "Nike Air Jordan",
-    price: "$150",
+    price: "4000000 VND",
     images: [img1, img2, img3, img4],
     colors: ["Red", "Blue", "Green", "Yellow"],
     sizes: ["8.0 UK", "8.5 UK", "9.0 UK", "9.5 UK"],

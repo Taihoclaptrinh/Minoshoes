@@ -11,7 +11,7 @@ import "./CSS/Shop.css"
 import "../Components/Hero/Hero.css";
 const Shop = () => {
     return (
-        <div className="Big-container">
+        <div className="Big-container"> 
             <div className="container">
                 <Hero />
                 <Gallary />

@@ -3,8 +3,8 @@
     height: 500vh;
     display: flex;
     justify-content: center;
-    
 }
+
 .container{
     position: relative;
     height: auto;

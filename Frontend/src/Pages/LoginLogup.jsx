@@ -130,10 +130,10 @@ const LoginLogup = () => {
                             />
                         </div>
                         {error && <p className="error-message">{error}</p>}
-                        <div className="forgot-password">
+                        {/* <div className="forgot-password">
                             <a type="button" onClick={() => showForgotPasswordForm(true)}>Forgot password?</a>
-                        </div>
-                        <button type="submit">CONTINUE</button>
+                        </div> */}
+                        <button type="submit" style={{marginTop: "4rem"}}>CONTINUE</button>
                     </form>
                 </div>
             )}

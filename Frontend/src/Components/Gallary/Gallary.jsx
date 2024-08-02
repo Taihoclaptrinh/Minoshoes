@@ -2,8 +2,8 @@ import React from "react"
 import "./Gallary.css";
 import { Link } from "react-router-dom"
 import hotshoe4 from "../Assets/Image4.png"
-import ProductSlider from "./ProductSlider"
 
+import ProductSlider from "./ProductSlider"
 const Gallary = () => {
   return (  
     <div className="layout">

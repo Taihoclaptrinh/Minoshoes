@@ -80,8 +80,8 @@ const Product = () => {
                         </div>
 
                         <div className="adding-button-container">
-                            <button  class="add-to-list">Add to list</button>
-                            <button onClick={() => onAddtoCartHandler(productData)} class="add-to-bag">Add to bag</button>
+                            <button  class="add-to-list">Wish list</button>
+                            <button onClick={() => onAddtoCartHandler(productData)} class="add-to-bag">Add to cart</button>
                         </div>
                     </div>    
                 </div>
@@ -117,9 +117,9 @@ const Product = () => {
                         ))}
                     </div>   
                 </div>   
-                <div className="product-pagebreak">
+                {/* <div className="product-pagebreak">
                     <Contact_info />
-                </div>
+                </div> */}
             
                 <Footer />
             </div>                

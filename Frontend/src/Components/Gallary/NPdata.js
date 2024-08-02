@@ -1,4 +1,5 @@
 import bestshoe1 from "../Assets/Nike/Air_Jordan_I_High_G_1.jpg"
+// import bestshoe1 from "https://minoshoesstorage.blob.core.windows.net/nike/JD_Low_SE_Craft_1.jpg"
 import bestshoe2 from "../Assets/Nike/nike_am_react_ENG1.jpg"
 import bestshoe3 from "../Assets/Nike/JD_Low_SE_Craft_1.jpg"
 import bestshoe4 from "../Assets/Nike/nike_pegasus_38_1.png"
@@ -33,6 +34,7 @@ export const responsive1 = {
     {
       id: 1,
       imageurl: bestshoe1,
+      // imageurl: "https://minoshoesstorage.blob.core.windows.net/nike/JD_Low_SE_Craft_1.jpg",
       name: "Air Jordan I High G",
       price: "$19.99",
       description: "Some text about the product..",

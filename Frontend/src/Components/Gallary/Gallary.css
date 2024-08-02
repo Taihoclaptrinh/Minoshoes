@@ -10,9 +10,8 @@
     position: relative;
     display: block;
     width: 74vw;
-    /* margin: 0 5%;  */
-    /* width: 1275px; */
-    height: 821px;
+    margin-top: 2vh;
+    height: 94vh;
 }
 .layout-trending h1{
     display: flex;

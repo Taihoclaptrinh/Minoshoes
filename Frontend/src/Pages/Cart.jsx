@@ -50,15 +50,15 @@ const Cart = () => {
                         <div class="cart-wrapper">
                             <div class="cart">
                                 <h2>YOUR CART</h2>
-                                <div className="products-container">
-                                    <table id="product-table">
+                                <div className="cart_products-container">
+                                    <table id="cart_product-table">
                                         {products.map(product => (
                                             <tr key={product.id}>
                                                 <td>{product.name}</td>
-                                                <td className="quantity-container">
-                                                    <button className="quantity-button" onClick={() => handleQuantityChange(product.id, -1)}>-</button>
-                                                    <span className="quantity">{product.quantity}</span>
-                                                    <button className="quantity-button" onClick={() => handleQuantityChange(product.id, 1)}>+</button>
+                                                <td className="cart_quantity-container">
+                                                    <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.id, -1)}>-</button>
+                                                    <span className="cart_quantity">{product.quantity}</span>
+                                                    <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.id, 1)}>+</button>
                                                 </td>
                                                 <td style={{}}>${product.price * product.quantity}</td>
                                             </tr>
@@ -93,7 +93,7 @@ const Cart = () => {
                     </div>
                 </div>
             
-            <Contact_info />
+            {/* <Contact_info /> */}
 
             <Footer />
             </div>

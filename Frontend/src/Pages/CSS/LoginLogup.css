@@ -107,7 +107,9 @@ input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focu
     font-weight: 400;
     line-height: normal;
 }
-
+.login-container button:hover {
+    background-color: #333;
+}
 /* Sign Up Form */
 .signup-layout {
     width: 100%;
