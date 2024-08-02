@@ -11,17 +11,22 @@ import "./CSS/Shop.css"
 import "../Components/Hero/Hero.css";
 const Shop = () => {
     return (
-        <div className="Big-container"> 
-            <div className="container">
+        <div className="landing-page"> 
+            <div className="landing-background">
                 <Hero />
-                <Gallary />
-                <Bestseller />
-                <Reviews />
-                <CTA_Section />
-                <Brand_Section />
-                <Contact_info />
-                <Footer />
             </div>
+            <div className="landing-main-content">
+                <div className="container">
+                    <Gallary />
+                    <Bestseller />
+                    <Reviews />
+                    <CTA_Section />
+                    <Brand_Section />
+                    <Contact_info />
+                    <Footer />
+                </div>
+            </div>
+
         </div>
     )
 }

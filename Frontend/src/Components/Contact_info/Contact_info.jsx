@@ -1,7 +1,7 @@
 import React from "react"
 import "./Contact_info.css"
 import logo from "../Assets/Logo2_Image.png"
-import map from "../Assets/waiting_update.jpg"
+import map from "../Assets/Map.png"
 
 export default function Contact_info(){
   return (
