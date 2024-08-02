@@ -19,6 +19,13 @@ const LoginLogup = () => {
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
 
+    const showForgotPasswordForm = () => {
+        setShowSignIn(false);
+        setShowSignUp(false);
+        setShowPassword(false);
+        setShowForgotPassword(true);
+    };
+
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -124,7 +131,7 @@ const LoginLogup = () => {
                         </div>
                         {error && <p className="error-message">{error}</p>}
                         <div className="forgot-password">
-                            <button type="button" onClick={() => setShowForgotPassword(true)}>Forgot password?</button>
+                            <a type="button" onClick={() => showForgotPasswordForm(true)}>Forgot password?</a>
                         </div>
                         <button type="submit">CONTINUE</button>
                     </form>
@@ -146,7 +153,7 @@ const LoginLogup = () => {
                         </div>
                         {error && <p className="error-message">{error}</p>}
                         <div className="forgot-password">
-                            <button type="button" onClick={() => setShowForgotPassword(true)}>Forgot password?</button>
+                            <a type="button" onClick={() => showForgotPasswordForm(true)}>Forgot password?</a>
                         </div>
                         <button type="submit">CONTINUE</button>
                     </form>
@@ -184,58 +191,79 @@ const LoginLogup = () => {
             )}
 
             {showSignUp && (
-                <div className="signup-container">
-                    <h1>LET’S MAKE YOU A MEMBER</h1>
-                    <form id="signup-form" onSubmit={handleSignUpSubmit}>
-                        <div className="input-container1">
-                            <input
-                                type="text"
-                                placeholder="Verification Code"
-                                required
-                                value={providedCode}
-                                onChange={(e) => setProvidedCode(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-container1">
-                            <input
-                                type="text"
-                                placeholder="Name"
-                                required
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-container1">
-                            <input
-                                type="text"
-                                placeholder="Phone"
-                                required
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-container1">
-                            <input
-                                type="text"
-                                placeholder="Address"
-                                required
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-container1">
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
-                        {error && <p className="error-message">{error}</p>}
-                        {success && <p className="success-message">{success}</p>}
-                        <button type="submit">REGISTER NOW</button>
-                    </form>
+                <div className="signup-layout">
+                    <div className="signup-container">
+                        <h1>LET’S MAKE YOU A MEMBER</h1>
+                        <form id="signup-form" onSubmit={handleSignUpSubmit}>
+                            <div className="input-container1">
+                                <input
+                                    type="text"
+                                    placeholder="Verification Code"
+                                    required
+                                    value={providedCode}
+                                    onChange={(e) => setProvidedCode(e.target.value)}
+                                />
+                            </div>
+                            <div className="input-container1">
+                                <input
+                                    type="text"
+                                    placeholder="Name"
+                                    required
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                            </div>
+                            <div class="input-container1">
+                                <input 
+                                    type="date" 
+                                    placeholder="Date of birth" 
+                                    required 
+                                    // Thêm birstday và hàm set birthday
+                                    // value={birstday}
+                                    // onChange={(e) => set(e.target.value)}
+                                />
+                                <input 
+                                    type="text" 
+                                    id 
+                                    placeholder="Gender" 
+                                    required
+                                    // Thêm Gender và hàm set Gender
+                                    // value={gender}
+                                    // onChange={(e) => setPhone(e.target.value)}
+                                />
+                            </div>
+                            <div className="input-container1">
+                                <input
+                                    type="text"
+                                    placeholder="Phone"
+                                    required
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                />
+                            </div>
+                            <div className="input-container1">
+                                <input
+                                    type="text"
+                                    placeholder="Address"
+                                    required
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
+                                />
+                            </div>
+                            <div className="input-container1">
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </div>
+                            {error && <p className="error-message">{error}</p>}
+                            {success && <p className="success-message">{success}</p>}
+                            <button type="submit">REGISTER NOW</button>
+                        </form>
+                    </div>
                 </div>
             )}
 

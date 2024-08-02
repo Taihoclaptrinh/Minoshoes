@@ -9,25 +9,16 @@ import "../Gallary/Gallary.css"
 import Slider from "../Slider/Slider.jsx";
 const Bestsellers = () => {
 
-  // const product = productData.map((item) => (
-  //   <Product
-  //     name={item.name}
-  //     url={item.imageurl}
-  //     price={item.price}
-  //     description={item.description}
-  //   />
-  // ));
-
   return (
     <div className="layout-BSeller">
       <div className="head-content">
-          <div className="head-up">Shop</div>
-          <div className="head-down">BEST SELLERS</div>
-          <div className="head-up">Discover our top-selling products that are loved by customers.
+          <h2 className="head-up">Shop</h2>
+          <h1 className="head-down">BEST SELLERS</h1>
+          <p3 className="head-up">Discover our top-selling products that are loved by customers.
               <div className="viewall-button" onClick={() => window.location.href = 'http://localhost:3000/login'}>
                   View All
               </div>
-          </div>
+          </p3>
       </div>
       <div className="bseller_image">
         <Slider />
