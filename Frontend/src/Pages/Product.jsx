@@ -6,13 +6,14 @@ import Slider from "../Components/Slider/Slider.jsx";
 import Contact_info from "../Components/Contact_info/Contact_info.jsx"
 import Footer from "../Components/Footer/Footer.jsx"
 const Product = () => {
-    
     const onAddtoCartHandler = (product) => {
         console.log("Product added to cart:", product);
     };
 
     const [averageRating, setAverageRating] = useState(0);
     const [reviewCount, setReviewCount] = useState(0);
+    const [selectedColor, setSelectedColor] = useState(null);
+    const [selectedSize, setSelectedSize] = useState(null);
 
     useEffect(() => {
         const calculateAverageRating = () => {
@@ -25,6 +26,7 @@ const Product = () => {
 
         calculateAverageRating();
     }, []);
+
     const renderStars = (rating) => {
         const fullStars = Math.floor(rating);
         const halfStar = rating % 1 !== 0;
@@ -40,6 +42,14 @@ const Product = () => {
                 ))}
             </>
         );
+    };
+
+    const handleColorClick = (color) => {
+        setSelectedColor(color);
+    };
+
+    const handleSizeClick = (size) => {
+        setSelectedSize(size);
     };
 
     return (
@@ -61,7 +71,7 @@ const Product = () => {
                         Customer can choose the size and colour */}
                     <div className="info-section">
                         <div className="text-group">
-                            <p style={{fontSize: "30px"}}>{productData.category}</p>
+                            <p style={{fontSize: "2rem"}}>{productData.category}</p>
                             <h1>{productData.name}</h1>
                             <h2>{productData.price}</h2>
                         </div>
@@ -69,13 +79,25 @@ const Product = () => {
                         <h2 style={{marginTop: "6rem"}}>Colours</h2>
                         <div className="button-grid">
                             {productData.colors.map((color, index) => (
-                                <button key={index}>{color}</button>
+                                <button 
+                                    key={index}
+                                    className={selectedColor === color ? "selected" : ""}
+                                    onClick={() => handleColorClick(color)}
+                                >
+                                    {color}
+                                </button>
                             ))}
                         </div>
                         <h2>Sizes</h2>
                         <div className="button-grid">
                             {productData.sizes.map((size, index) => (
-                                <button key={index}>{size}</button>
+                                <button 
+                                    key={index}
+                                    className={selectedSize === size ? "selected" : ""}
+                                    onClick={() => handleSizeClick(size)}
+                                >
+                                    {size}
+                                </button>
                             ))}
                         </div>
 
@@ -117,10 +139,6 @@ const Product = () => {
                         ))}
                     </div>   
                 </div>   
-                {/* <div className="product-pagebreak">
-                    <Contact_info />
-                </div> */}
-            
                 <Footer />
             </div>                
             

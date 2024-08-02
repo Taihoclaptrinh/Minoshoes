@@ -16,9 +16,9 @@ const Navbar = () => {
                 <Link to='/'><img src={logo} alt="" style={{ height: "80px" }} /></Link>
             </div>
             <ul className="nav-menu">
-                <li onClick={() => { setMenu("men") }}><strong><Link style={{ textDecoration: 'none', color: 'black' }} to='men'>MEN</Link>{menu === "men"}</strong></li>
-                <li onClick={() => { setMenu("women") }}><strong><Link style={{ textDecoration: 'none', color: 'black' }} to='women'>WOMEN</Link>{menu === "women"}</strong></li>
-                <li onClick={() => { setMenu("brands") }}><strong><Link style={{ textDecoration: 'none', color: 'black' }} to='brands'>BRANDS</Link>{menu === "brands"}</strong></li>
+                <li onClick={() => { setMenu("men") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='men'>MEN</Link>{menu === "men"}</li>
+                <li onClick={() => { setMenu("women") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='women'>WOMEN</Link>{menu === "women"}</li>
+                <li onClick={() => { setMenu("brands") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='brands'>BRANDS</Link>{menu === "brands"}</li>
                 <li onClick={() => { setMenu("new-arrivals") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='new-arrivals'>NEW ARRIVALS</Link>{menu === "new-arrivals"}</li>
                 <li onClick={() => { setMenu("sale") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='sale'>SALE</Link>{menu === "sale"}</li>
             </ul>
