@@ -1,9 +1,12 @@
-import userModel from "../models/userModel.js";
-import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
-import JWT from "jsonwebtoken";
-import nodemailer from "nodemailer";
-const EMAIL_USERNAME = 'lamchitaia1@gmail.com'
-const EMAIL_PASSWORD = 'tdhi afvh cyhd dktb'
+import userModel from '../models/userModel.js';
+import { comparePassword, hashPassword } from './../helpers/authHelper.js';
+import JWT from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
+
+const EMAIL_USERNAME = 'lamchitaia1@gmail.com'; // Đảm bảo địa chỉ email chính xác
+const EMAIL_PASSWORD = 'tdhi afvh cyhd dktb'; // Đảm bảo mật khẩu chính xác
+
+
 // Thiết lập cấu hình gửi email
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -14,15 +17,16 @@ const transporter = nodemailer.createTransport({
 });
 
 // Hàm gửi mã xác thực qua email
-const sendVerificationCode = async (email, code) => {
-  try {
-    const mailOptions = {
-      from: EMAIL_USERNAME, 
-      to: email,
-      subject: 'Email Verification Code',
-      text: `Your verification code is: ${code}`,
-    };
 
+const sendVerificationCode = async (email, verificationCode) => {
+  const mailOptions = {
+    from: EMAIL_USERNAME,
+    to: email,
+    subject: 'Verification Code',
+    text: `Your verification code is: ${verificationCode}`,
+  };
+
+  try {
     await transporter.sendMail(mailOptions);
     return true;
   } catch (error) {
@@ -30,6 +34,8 @@ const sendVerificationCode = async (email, code) => {
     return false;
   }
 };
+
+
 
 // Kiểm tra email
 export const checkEmailController = async (req, res) => {
@@ -39,20 +45,21 @@ export const checkEmailController = async (req, res) => {
       return res.status(400).send({ message: 'Email is required' });
     }
 
-    // Kiểm tra tính hợp lệ của địa chỉ email
+    // Kiểm tra tính hợp lệ của email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).send({ message: 'Invalid email address' });
     }
+
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
       return res.status(200).send({ userExists: true });
     } else {
       const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-      console.log(verificationCode)
-      await sendVerificationCode(email, verificationCode);
-
-
+      const success = await sendVerificationCode(email, verificationCode);
+      if (!success) {
+        return res.status(500).send({ message: 'Failed to send verification code' });
+      }
       return res.status(200).send({ userExists: false, verificationCode });
     }
   } catch (error) {
@@ -103,12 +110,13 @@ export const registerController = async (req, res) => {
   }
 };
 
+
 // Đăng nhập người dùng
 export const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(404).send({
+      return res.status(400).send({
         success: false,
         message: 'Invalid email or password!',
       });
@@ -124,13 +132,13 @@ export const loginController = async (req, res) => {
 
     const match = await comparePassword(password, user.password);
     if (!match) {
-      return res.status(200).send({
+      return res.status(401).send({
         success: false,
         message: 'Invalid password!',
       });
     }
 
-    const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d',
     });
 
@@ -252,6 +260,87 @@ export const showAllUsers = async (req, res) => {
     res.status(500).send({
       success: false,
       message: 'Error in showing all users',
+      error,
+    });
+  }
+};
+
+// Đặt lại mật khẩu
+export const resetPasswordController = async (req, res) => {
+  try {
+    const { email, resetCode, newPassword, resetToken } = req.body;
+
+    if (!email || !resetCode || !newPassword || !resetToken) {
+      return res.status(400).send({ message: 'All fields are required' });
+    }
+
+    let decoded;
+    try {
+      decoded = JWT.verify(resetToken, process.env.JWT_SECRET);
+    } catch (error) {
+      return res.status(400).send({ message: 'Invalid or expired reset token' });
+    }
+
+    if (decoded.email !== email || decoded.resetCode !== resetCode) {
+      return res.status(400).send({ message: 'Invalid reset code' });
+    }
+
+    const existingUser = await userModel.findOne({ email });
+    if (!existingUser) {
+      return res.status(404).send({ message: 'Email does not exist' });
+    }
+
+    existingUser.password = await hashPassword(newPassword);
+    await existingUser.save();
+
+    res.status(200).send({
+      success: true,
+      message: 'Password reset successfully',
+    });
+  } catch (error) {
+    console.log('Error in resetting password:', error);
+    res.status(500).send({
+      success: false,
+      message: 'Error in resetting password',
+      error,
+    });
+  }
+};
+
+
+
+
+// Gửi mã reset qua email
+export const sendResetCodeController = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).send({ message: 'Email is required' });
+    }
+
+    const existingUser = await userModel.findOne({ email });
+    if (!existingUser) {
+      return res.status(404).send({ message: 'Email does not exist' });
+    }
+
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const resetToken = JWT.sign({ email, resetCode }, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+    const success = await sendVerificationCode(email, resetCode);
+    if (!success) {
+      return res.status(500).send({ message: 'Failed to send reset code' });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: 'Reset code sent to email',
+      resetToken,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'Error in sending reset code',
       error,
     });
   }

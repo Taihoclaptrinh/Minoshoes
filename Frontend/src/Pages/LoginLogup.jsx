@@ -19,17 +19,15 @@ const LoginLogup = () => {
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
 
-    const showForgotPasswordForm = () => {
-        setShowSignIn(false);
-        setShowSignUp(false);
-        setShowPassword(false);
-        setShowForgotPassword(true);
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
     };
 
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
+
         try {
             const response = await axios.post('http://localhost:5000/api/v1/auth/check-email', { email });
             if (response.data.userExists) {
@@ -50,13 +48,17 @@ const LoginLogup = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
-    
-        // Kiểm tra mã xác thực
+
         if (verificationCode !== providedCode) {
             setError('Verification code is incorrect.');
             return;
         }
-    
+
+        if (!name || !phone || !address || !password) {
+            setError('All fields are required.');
+            return;
+        }
+
         try {
             const response = await axios.post('http://localhost:5000/api/v1/auth/register', {
                 name,
@@ -67,43 +69,36 @@ const LoginLogup = () => {
                 verificationCode,
                 providedCode
             });
-    
-            // Kiểm tra phản hồi từ máy chủ
+
             if (response.data.success) {
                 setSuccess('Registration successful! You can now sign in.');
                 setShowSignIn(true);
                 setShowSignUp(false);
             } else {
-                // Nếu không thành công, hiển thị thông báo lỗi từ máy chủ
                 setError(response.data.message || 'Registration failed. Please try again.');
             }
         } catch (error) {
-            // Nếu có lỗi xảy ra trong quá trình đăng ký
             console.error('Error registering:', error);
-    
-            // Kiểm tra xem có phản hồi từ máy chủ không
-            if (error.response && error.response.data && error.response.data.message) {
-                setError(error.response.data.message);
-            } else {
-                setError('An error occurred while registering. Please try again later.');
-            }
+            setError(error.response?.data?.message || 'An error occurred while registering. Please try again later.');
         }
     };
-    
-    
+
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
-    
+
+        if (!email || !password) {
+            setError('Email and password are required.');
+            return;
+        }
+
         try {
             const response = await axios.post('http://localhost:5000/api/v1/auth/login', { email, password });
             if (response.data.success) {
                 const user = response.data.user;
                 localStorage.setItem('user', JSON.stringify(user));
                 console.log('Login successful!', response.data);
-    
-                // Redirect to homepage
                 navigate('/');
             } else {
                 setError('Login failed. Please check your email and password.');
@@ -113,7 +108,83 @@ const LoginLogup = () => {
             setError('An error occurred while logging in.');
         }
     };
+
+    const handleSendResetCode = async () => {
+        setError('');
+        setSuccess('');
     
+        if (!email) {
+            setError('Email is required.');
+            return false; // Indicate failure
+        }
+    
+        try {
+            const response = await axios.post('http://localhost:5000/api/v1/auth/send-reset-code', { email });
+    
+            if (response.data.success) {
+                const token = response.data.resetToken
+                localStorage.setItem('resetToken', token);
+                setSuccess('Reset code sent to email.');
+                return true; // Indicate success
+            } else {
+                setError(response.data.message || 'Failed to send reset code. Please try again.');
+                return false; // Indicate failure
+            }
+        } catch (error) {
+            setError('An error occurred while sending the reset code. Please try again later.');
+            console.error('Error sending reset code:', error);
+            return false; // Indicate failure
+        }
+    };
+    
+
+    const handleForgotPasswordSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+    
+        const resetToken = localStorage.getItem('resetToken');
+    
+        if (!providedCode || !password) {
+            setError('Verification code and new password are required.');
+            return;
+        }
+    
+        try {
+            const response = await axios.post('http://localhost:5000/api/v1/auth/reset-password', {
+                email,
+                resetCode: providedCode, // Ensure this matches backend expected field
+                newPassword: password, // Ensure this matches backend expected field
+                resetToken // Ensure this matches backend expected field
+            });
+    
+            if (response.data.success) {
+                setSuccess('Password reset successful! You can now sign in with your new password.');
+                setShowSignIn(true);
+                setShowForgotPassword(false);
+            } else {
+                setError(response.data.message || 'Password reset failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error resetting password:', error);
+            setError(error.response?.data?.message || 'An error occurred while resetting password. Please try again later.');
+        }
+    };
+    
+
+        const showForgotPasswordForm = async () => {
+            setShowForgotPassword(true);
+            setShowSignIn(false);
+            setShowPassword(false);
+        
+            // Send the reset code immediately after showing the forgot password form
+            const success = await handleSendResetCode(email);
+            if (!success) {
+                setError('Please try again.');
+            }
+        };
+        
+
     return (
         <div className="login-logup">
             {showSignIn && (
@@ -126,14 +197,11 @@ const LoginLogup = () => {
                                 placeholder="Enter your email"
                                 required
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={handleEmailChange}
                             />
                         </div>
                         {error && <p className="error-message">{error}</p>}
-                        {/* <div className="forgot-password">
-                            <a type="button" onClick={() => showForgotPasswordForm(true)}>Forgot password?</a>
-                        </div> */}
-                        <button type="submit" style={{marginTop: "4rem"}}>CONTINUE</button>
+                        <button type="submit" style={{ marginTop: "4rem" }}>CONTINUE</button>
                     </form>
                 </div>
             )}
@@ -153,7 +221,7 @@ const LoginLogup = () => {
                         </div>
                         {error && <p className="error-message">{error}</p>}
                         <div className="forgot-password">
-                            <a type="button" onClick={() => showForgotPasswordForm(true)}>Forgot password?</a>
+                            <a type="button" onClick={showForgotPasswordForm}>Forgot password?</a>
                         </div>
                         <button type="submit">CONTINUE</button>
                     </form>
@@ -164,7 +232,7 @@ const LoginLogup = () => {
                 <div className="login-container">
                     <h1>VERIFICATION</h1>
                     <p>Verify your email and enter a new password</p>
-                    <form id="verification-form" onSubmit={handleSignUpSubmit}>
+                    <form id="verification-form" onSubmit={handleForgotPasswordSubmit}>
                         <div className="input-container">
                             <input
                                 type="text"
@@ -185,6 +253,8 @@ const LoginLogup = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
+                        {error && <p className="error-message">{error}</p>}
+                        {success && <p className="success-message">{success}</p>}
                         <button type="submit">CONTINUE</button>
                     </form>
                 </div>
@@ -213,35 +283,19 @@ const LoginLogup = () => {
                                     onChange={(e) => setName(e.target.value)}
                                 />
                             </div>
-                            <div class="input-container1">
+                            <div className="input-container1">
                                 <input 
                                     type="date" 
                                     placeholder="Date of birth" 
                                     required 
-                                    // Thêm birstday và hàm set birthday
-                                    // value={birstday}
-                                    // onChange={(e) => set(e.target.value)}
                                 />
                                 <input 
                                     type="text" 
-                                    id 
-                                    placeholder="Gender" 
-                                    required
-                                    // Thêm Gender và hàm set Gender
-                                    // value={gender}
-                                    // onChange={(e) => setPhone(e.target.value)}
-                                />
-                            </div>
-                            <div className="input-container1">
-                                <input
-                                    type="text"
-                                    placeholder="Phone"
+                                    placeholder="Phone Number" 
                                     required
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
                                 />
-                            </div>
-                            <div className="input-container1">
                                 <input
                                     type="text"
                                     placeholder="Address"
@@ -261,12 +315,11 @@ const LoginLogup = () => {
                             </div>
                             {error && <p className="error-message">{error}</p>}
                             {success && <p className="success-message">{success}</p>}
-                            <button type="submit">REGISTER NOW</button>
+                            <button type="submit">SIGN UP</button>
                         </form>
                     </div>
                 </div>
             )}
-
         </div>
     );
 };

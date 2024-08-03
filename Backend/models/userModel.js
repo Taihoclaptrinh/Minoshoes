@@ -1,40 +1,36 @@
 import mongoose from "mongoose";
-//Models are defined through the Schema interface.
 
 const userSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
         required: true,
         trim: true
     },
-    email:{
+    email: {
         type: String,
         required: true,
         unique: true
     },
-    password:{
+    password: {
         type: String,
-        require: true,
+        required: true,
     },
     phone: {
         type: String,
         required: true
     },
-    address:{
+    address: {
         type: String,
         required: true
     },
-    totalSpent:{
-        type: Number,
-        require: false,
-        default: 0
-    },
-    role:{
+    totalSpent: {
         type: Number,
         default: 0
     },
-},
-    {timestamps: true}
-);
+    role: {
+        type: Number,
+        default: 0
+    },
+}, { timestamps: true });
 
 export default mongoose.model('Users', userSchema);

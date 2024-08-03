@@ -1,13 +1,15 @@
-import express from "express";
-import dotenv from "dotenv";
-import morgan from "morgan";
-import connectDB from "./backend/config/db.js";
+import express from 'express';
+import dotenv from 'dotenv';
+import morgan from 'morgan';
+import connectDB from './Backend/config/db.js';
 import cors from 'cors';
 import path from 'path';
 import {
   checkEmailController,
   registerController,
   loginController,
+  sendResetCodeController,
+  resetPasswordController,
   testController,
   createUser,
   readUsers,
@@ -15,8 +17,8 @@ import {
   findUser,
   showAllUsers
 } from './Backend/controller/authController.js';
-import productRoute from './backend/routes/productRoute.js';
-import cartRoute from './backend/routes/cartRoute.js';
+import productRoute from './Backend/routes/productRoute.js';
+import cartRoute from './Backend/routes/cartRoute.js';
 
 dotenv.config();
 const app = express();
@@ -32,12 +34,14 @@ app.use(cors({
   origin: 'http://localhost:3000',
 }));
 app.use(express.json());
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 
-// Auth routes
+// Auth routes with rate limiters
 router.post('/check-email', checkEmailController);
 router.post('/register', registerController);
 router.post('/login', loginController);
+router.post('/send-reset-code', sendResetCodeController);
+router.post('/reset-password', resetPasswordController);
 router.get('/test', testController);
 router.post('/create-user', createUser);
 router.get('/read-users', readUsers);
@@ -47,8 +51,8 @@ router.get('/show-all-users', showAllUsers);
 app.use('/api/v1/auth', router);
 
 // Other routes
-app.use('/api/v1/products', productRoute);
-app.use('/api/v1/cart', cartRoute);
+app.use('/api/v1/auth/products', productRoute);
+app.use('/api/v1/auth/cart', cartRoute);
 
 // Serve frontend
 const __dirname = path.resolve();
