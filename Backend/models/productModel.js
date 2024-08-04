@@ -8,8 +8,9 @@ const productSchema = new mongoose.Schema({
     category: { type: String, required: true, default: "Uncategorized" },
     sizes: { type: [String], required: true },
     color: { type: [String], required: true },
-    stocks: { type: Number, required: true },
+    array: { type: Number, required: true },
     images: { type: [String], required: true },
+    code: {type: [String], required: true}
 },
     { timestamps: true }
 );

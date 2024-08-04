@@ -1,4 +1,5 @@
 import User from '../models/userModel.js';
+import Product from '../models/productModel.js'; // Import the Product model
 
 // Create User
 export const createUser = async (req, res) => {
@@ -55,5 +56,19 @@ export const deleteUser = async (req, res) => {
         res.status(200).json({ message: 'User deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting user', error });
+    }
+};
+
+// Get Summary
+export const getSummary = async (req, res) => {
+    try {
+        const userCount = await User.countDocuments();
+        const productCount = await Product.countDocuments(); // Ensure `Product` model is used
+        res.status(200).json({
+            userCount,
+            productCount
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching summary', error });
     }
 };

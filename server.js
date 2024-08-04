@@ -15,10 +15,12 @@ import {
   readUsers,
   deleteUser,
   findUser,
-  showAllUsers
+  showAllUsers,
 } from './Backend/controller/authController.js';
 import productRoute from './Backend/routes/productRoute.js';
 import cartRoute from './Backend/routes/cartRoute.js';
+import uploadRoute from './Backend/routes/uploadRoute.js';
+import userRoute from './Backend/routes/userRoute.js'
 
 dotenv.config();
 const app = express();
@@ -48,7 +50,10 @@ router.get('/read-users', readUsers);
 router.delete('/delete-user/:id', deleteUser);
 router.get('/find-user', findUser);
 router.get('/show-all-users', showAllUsers);
-app.use('/api/v1/auth', router);
+
+// Image upload route
+app.use('/api/v1/auth', uploadRoute);
+app.use('/api/v1/auth', userRoute);
 
 // Other routes
 app.use('/api/v1/auth/products', productRoute);
@@ -70,5 +75,5 @@ if (process.env.NODE_ENV === 'production') {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`.bgCyan.white);
+  console.log(`Server running on ${PORT}`);
 });
