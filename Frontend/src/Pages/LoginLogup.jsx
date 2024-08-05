@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./CSS/LoginLogup.css";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../UserContext.js'; // Đảm bảo đường dẫn chính xác
 
 const LoginLogup = () => {
     const [showSignIn, setShowSignIn] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
-    const [showSignUp, setShowSignUp] = useState(false);
+    const [showSignUp, setShowSignUp]    = useState(false);
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
@@ -17,11 +18,11 @@ const LoginLogup = () => {
     const [address, setAddress] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const { login } = useContext(UserContext); // Lấy hàm login từ UserContext
+
     const navigate = useNavigate();
 
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value);
-    };
+    const handleEmailChange = (e) => setEmail(e.target.value);
 
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
@@ -29,7 +30,7 @@ const LoginLogup = () => {
         setSuccess('');
 
         try {
-            const response = await axios.post('http://localhost:5000/api/v1/auth/check-email', { email });
+            const response = await axios.post('/api/v1/auth/check-email', { email });
             if (response.data.userExists) {
                 setShowPassword(true);
                 setShowSignIn(false);
@@ -60,7 +61,7 @@ const LoginLogup = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/v1/auth/register', {
+            const response = await axios.post('/api/v1/auth/register', {
                 name,
                 phone,
                 address,
@@ -94,11 +95,11 @@ const LoginLogup = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/v1/auth/login', { email, password });
+            const response = await axios.post('/api/v1/auth/login', { email, password });
             if (response.data.success) {
                 const user = response.data.user;
                 localStorage.setItem('user', JSON.stringify(user));
-                console.log('Login successful!', response.data);
+                login(user);
                 navigate('/');
             } else {
                 setError('Login failed. Please check your email and password.');
@@ -119,10 +120,10 @@ const LoginLogup = () => {
         }
     
         try {
-            const response = await axios.post('http://localhost:5000/api/v1/auth/send-reset-code', { email });
+            const response = await axios.post('/api/v1/auth/send-reset-code', { email });
     
             if (response.data.success) {
-                const token = response.data.resetToken
+                const token = response.data.resetToken;
                 localStorage.setItem('resetToken', token);
                 setSuccess('Reset code sent to email.');
                 return true; // Indicate success
@@ -136,7 +137,6 @@ const LoginLogup = () => {
             return false; // Indicate failure
         }
     };
-    
 
     const handleForgotPasswordSubmit = async (e) => {
         e.preventDefault();
@@ -151,11 +151,11 @@ const LoginLogup = () => {
         }
     
         try {
-            const response = await axios.post('http://localhost:5000/api/v1/auth/reset-password', {
+            const response = await axios.post('/api/v1/auth/reset-password', {
                 email,
-                resetCode: providedCode, // Ensure this matches backend expected field
-                newPassword: password, // Ensure this matches backend expected field
-                resetToken // Ensure this matches backend expected field
+                resetCode: providedCode, 
+                newPassword: password,
+                resetToken
             });
     
             if (response.data.success) {
@@ -170,20 +170,18 @@ const LoginLogup = () => {
             setError(error.response?.data?.message || 'An error occurred while resetting password. Please try again later.');
         }
     };
-    
 
-        const showForgotPasswordForm = async () => {
-            setShowForgotPassword(true);
-            setShowSignIn(false);
-            setShowPassword(false);
+    const showForgotPasswordForm = async () => {
+        setShowForgotPassword(true);
+        setShowSignIn(false);
+        setShowPassword(false);
         
-            // Send the reset code immediately after showing the forgot password form
-            const success = await handleSendResetCode(email);
-            if (!success) {
-                setError('Please try again.');
-            }
-        };
-        
+        // Send the reset code immediately after showing the forgot password form
+        const success = await handleSendResetCode();
+        if (!success) {
+            setError('Please try again.');
+        }
+    };
 
     return (
         <div className="login-logup">
@@ -236,17 +234,13 @@ const LoginLogup = () => {
                         <div className="input-container">
                             <input
                                 type="text"
-                                id="code"
-                                placeholder="Enter the code*"
+                                placeholder="Enter the verification code"
                                 required
                                 value={providedCode}
                                 onChange={(e) => setProvidedCode(e.target.value)}
                             />
-                        </div>
-                        <div className="input-container">
                             <input
                                 type="password"
-                                id="new-password"
                                 placeholder="Enter your new password"
                                 required
                                 value={password}
@@ -255,69 +249,56 @@ const LoginLogup = () => {
                         </div>
                         {error && <p className="error-message">{error}</p>}
                         {success && <p className="success-message">{success}</p>}
-                        <button type="submit">CONTINUE</button>
+                        <button type="submit">RESET PASSWORD</button>
                     </form>
                 </div>
             )}
 
             {showSignUp && (
-                <div className="signup-layout">
-                    <div className="signup-container">
-                        <h1>LET’S MAKE YOU A MEMBER</h1>
-                        <form id="signup-form" onSubmit={handleSignUpSubmit}>
-                            <div className="input-container1">
-                                <input
-                                    type="text"
-                                    placeholder="Verification Code"
-                                    required
-                                    value={providedCode}
-                                    onChange={(e) => setProvidedCode(e.target.value)}
-                                />
-                            </div>
-                            <div className="input-container1">
-                                <input
-                                    type="text"
-                                    placeholder="Name"
-                                    required
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                />
-                            </div>
-                            <div className="input-container1">
-                                <input 
-                                    type="date" 
-                                    placeholder="Date of birth" 
-                                    required 
-                                />
-                                <input 
-                                    type="text" 
-                                    placeholder="Phone Number" 
-                                    required
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Address"
-                                    required
-                                    value={address}
-                                    onChange={(e) => setAddress(e.target.value)}
-                                />
-                            </div>
-                            <div className="input-container1">
-                                <input
-                                    type="password"
-                                    placeholder="Password"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
-                            {error && <p className="error-message">{error}</p>}
-                            {success && <p className="success-message">{success}</p>}
-                            <button type="submit">SIGN UP</button>
-                        </form>
-                    </div>
+                <div className="login-container">
+                    <h1>REGISTER</h1>
+                    <form id="signup-form" onSubmit={handleSignUpSubmit}>
+                        <div className="input-container">
+                            <input
+                                type="text"
+                                placeholder="Enter your name"
+                                required
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Enter your phone"
+                                required
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Enter your address"
+                                required
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                            />
+                            <input
+                                type="password"
+                                placeholder="Enter your password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Enter the verification code"
+                                required
+                                value={providedCode}
+                                onChange={(e) => setProvidedCode(e.target.value)}
+                            />
+                        </div>
+                        {error && <p className="error-message">{error}</p>}
+                        {success && <p className="success-message">{success}</p>}
+                        <button type="submit">REGISTER</button>
+                    </form>
                 </div>
             )}
         </div>

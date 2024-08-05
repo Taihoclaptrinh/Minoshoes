@@ -17,6 +17,7 @@ import {
   findUser,
   showAllUsers,
 } from './Backend/controller/authController.js';
+import authRoutes from './Backend/routes/authRoute.js';
 import productRoute from './Backend/routes/productRoute.js';
 import cartRoute from './Backend/routes/cartRoute.js';
 import uploadRoute from './Backend/routes/uploadRoute.js';
@@ -54,6 +55,7 @@ router.get('/show-all-users', showAllUsers);
 // Image upload route
 app.use('/api/v1/auth', uploadRoute);
 app.use('/api/v1/auth', userRoute);
+app.use('/api/v1/auth', authRoutes);
 
 // Other routes
 app.use('/api/v1/auth/products', productRoute);

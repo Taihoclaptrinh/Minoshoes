@@ -35,8 +35,6 @@ const sendVerificationCode = async (email, verificationCode) => {
   }
 };
 
-
-
 // Kiểm tra email
 export const checkEmailController = async (req, res) => {
   try {

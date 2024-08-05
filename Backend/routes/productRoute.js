@@ -1,10 +1,14 @@
 import express from 'express';
-import { createProduct, getProducts, getProductById, updateProduct, deleteProduct, getRelatedProducts } from '../controller/productController.js';
+import { createProduct, getProducts,
+        getProductById, updateProduct,
+        deleteProduct, getRelatedProducts, 
+        searchProducts} from '../controller/productController.js';
 
 const router = express.Router();
 
 router.post('/', createProduct);
 router.get('/', getProducts);
+router.get('/search', searchProducts);  // Di chuyển lên trước /:id
 router.get('/:id', getProductById);
 router.put('/:id', updateProduct);
 router.delete('/:id', deleteProduct);

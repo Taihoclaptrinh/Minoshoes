@@ -118,3 +118,27 @@ export const getRelatedProducts = async (req, res) => {
         res.status(500).json({ message: "Server error while fetching related products", error });
     }
 };
+export const searchProducts = async (req, res) => {
+    const { query } = req.query;
+    try {
+        if (!query) {
+            return res.status(400).json({ message: 'Query parameter is required' });
+        }
+        
+        const products = await Product.find({
+            $or: [
+                { name: { $regex: query, $options: 'i' } },
+                { code: query }, // Tìm kiếm chính xác
+                { code: { $regex: query, $options: 'i' } } // Tìm kiếm một phần
+            ]
+        });
+
+        console.log('Search query:', query);
+        console.log('Found products:', products);
+
+        res.json(products);
+    } catch (error) {
+        console.error('Error searching products:', error);
+        res.status(500).json({ message: 'Server error while fetching products', error: error.message });
+    }
+};
