@@ -128,11 +128,11 @@ export const searchProducts = async (req, res) => {
         const products = await Product.find({
             $or: [
                 { name: { $regex: query, $options: 'i' } },
-                { code: query }, // Tìm kiếm chính xác
-                { code: { $regex: query, $options: 'i' } } // Tìm kiếm một phần
+                { code: query }, 
+                { code: { $regex: query, $options: 'i' } } 
             ]
         });
-
+        
         console.log('Search query:', query);
         console.log('Found products:', products);
 
