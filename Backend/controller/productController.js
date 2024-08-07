@@ -23,53 +23,6 @@ export const getProductById = async (req, res) => {
         res.status(500).json({ message: "Server error while fetching product", error });
     }
 };
-
-// Lấy tất cả sản phẩm với tùy chọn tìm kiếm, lọc và sắp xếp
-export const getProducts = async (req, res) => {
-    try {
-        const { search, sort, category, priceRange, page = 1, limit = 12 } = req.query;
-
-        let query = {};
-        if (search) {
-            query.name = { $regex: search, $options: 'i' }; // Tìm kiếm theo tên sản phẩm (không phân biệt hoa thường)
-        }
-        if (category) {
-            query.category = category; // Lọc theo danh mục
-        }
-        if (priceRange) {
-            const [minPrice, maxPrice] = priceRange.split('-').map(Number);
-            query.price = { $gte: minPrice, $lte: maxPrice }; // Lọc theo khoảng giá
-        }
-
-        let productsQuery = Product.find(query);
-
-        // Sắp xếp
-        if (sort) {
-            const [sortField, sortOrder] = sort.split(':');
-            const sortCriteria = { [sortField]: sortOrder === 'desc' ? -1 : 1 };
-            productsQuery = productsQuery.sort(sortCriteria);
-        }
-
-        // Phân trang 
-        const skip = (page - 1) * limit;
-        productsQuery = productsQuery.skip(skip).limit(Number(limit));
-
-        const products = await productsQuery.exec();
-        const total = await Product.countDocuments(query);
-
-        res.status(200).json({
-            total,
-            page: Number(page),
-            limit: Number(limit),
-            totalPages: Math.ceil(total / limit),
-            products
-        });
-    } catch (error) {
-        console.error("Error while fetching products:", error);
-        res.status(500).json({ message: "Server error while fetching products" });
-    }
-};
-
 // Cập nhật thông tin sản phẩm theo ID
 export const updateProduct = async (req, res) => {
     try {
@@ -140,5 +93,15 @@ export const searchProducts = async (req, res) => {
     } catch (error) {
         console.error('Error searching products:', error);
         res.status(500).json({ message: 'Server error while fetching products', error: error.message });
+    }
+};
+export const getProducts = async (req, res) => {
+    const limit = parseInt(req.query.limit) || 12; 
+
+    try {
+        const products = await Product.find().limit(limit);
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({ message: "Server error while fetching products", error });
     }
 };

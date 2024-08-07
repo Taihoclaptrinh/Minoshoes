@@ -3,8 +3,8 @@ import { comparePassword, hashPassword } from './../helpers/authHelper.js';
 import JWT from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 
-const EMAIL_USERNAME = 'lamchitaia1@gmail.com'; // Đảm bảo địa chỉ email chính xác
-const EMAIL_PASSWORD = 'tdhi afvh cyhd dktb'; // Đảm bảo mật khẩu chính xác
+const EMAIL_USERNAME = process.env.EMAIL_USERNAME; // Đảm bảo địa chỉ email chính xác
+const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD; // Đảm bảo mật khẩu chính xác
 
 
 // Thiết lập cấu hình gửi email

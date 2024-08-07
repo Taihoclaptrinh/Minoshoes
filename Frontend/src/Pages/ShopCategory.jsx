@@ -1,25 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './CSS/ProductCategory.css';
 
-const products = [
-    { id: 1, name: 'Product 1', price: 50, size: '8.0 UK', color: 'colour1', brand: 'Adidas', subBrand: 'Stan Smith', gender: 'Men' },
-    { id: 2, name: 'Product 2', price: 120, size: '9.0 UK', color: 'colour2', brand: 'Nike', subBrand: 'Air Max', gender: 'Women' },
-    { id: 3, name: 'Product 3', price: 75, size: '8.5 UK', color: 'colour1', brand: 'Adidas', subBrand: 'Gazelle', gender: 'Men' },
-    { id: 4, name: 'Product 4', price: 200, size: '9.5 UK', color: 'colour2', brand: 'Nike', subBrand: 'Dunk', gender: 'Women' },
-    { id: 5, name: 'Product 5', price: 60, size: '8.0 UK', color: 'colour1', brand: 'Adidas', subBrand: 'Super Star', gender: 'Men' },
-    { id: 6, name: 'Product 6', price: 150, size: '9.0 UK', color: 'colour2', brand: 'Nike', subBrand: 'Air Force 1', gender: 'Women' },
-    { id: 7, name: 'Product 7', price: 85, size: '8.5 UK', color: 'colour1', brand: 'Adidas', subBrand: 'Campus', gender: 'Men' },
-    { id: 8, name: 'Product 8', price: 220, size: '9.5 UK', color: 'colour2', brand: 'Nike', subBrand: 'Pegasus', gender: 'Women' },
-    { id: 9, name: 'Product 9', price: 55, size: '8.0 UK', color: 'colour1', brand: 'Adidas', subBrand: 'Spezial', gender: 'Men' },
-    { id: 10, name: 'Product 10', price: 140, size: '9.0 UK', color: 'colour2', brand: 'Nike', subBrand: 'Cortez', gender: 'Women' },
-    { id: 11, name: 'Product 11', price: 70, size: '8.5 UK', color: 'colour1', brand: 'Adidas', subBrand: 'SL72', gender: 'Men' },
-    { id: 12, name: 'Product 12', price: 190, size: '9.5 UK', color: 'colour2', brand: 'Nike', subBrand: 'Blazer', gender: 'Women' },
-    { id: 13, name: 'Product 13', price: 65, size: '8.0 UK', color: 'colour1', brand: 'Adidas', subBrand: 'Campus', gender: 'Men' },
-    { id: 14, name: 'Product 14', price: 170, size: '9.0 UK', color: 'colour2', brand: 'Nike', subBrand: 'Air Max', gender: 'Women' },
-    { id: 15, name: 'Product 15', price: 90, size: '8.5 UK', color: 'colour1', brand: 'Adidas', subBrand: 'Stan Smith', gender: 'Men' },
-];
-
 const ProductCategory = () => {
+  const [productData, setProductData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [priceRange, setPriceRange] = useState([0, 400]);
   const [sortedBy, setSortedBy] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
@@ -29,6 +14,24 @@ const ProductCategory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [openBrands, setOpenBrands] = useState([]);
   const [maxPrice, setMaxPrice] = useState(400);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('/api/v1/auth/products');
+        setProductData(response.data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   const handlePriceChange = (e) => {
     const value = Number(e.target.value);
@@ -85,7 +88,7 @@ const ProductCategory = () => {
   };
 
   const filterProducts = (products) => {
-    return products.filter(product =>
+    return products.filter((product) =>
       product.price >= priceRange[0] && product.price <= priceRange[1] &&
       (selectedSizes.length === 0 || selectedSizes.includes(product.size)) &&
       (selectedColors.length === 0 || selectedColors.includes(product.color)) &&
@@ -103,7 +106,7 @@ const ProductCategory = () => {
           return sortedProducts.sort((a, b) => b.price - a.price);
         case 'Newest':
           return sortedProducts.sort((a, b) => new Date(b.date) - new Date(a.date));
-        case 'Best Seller':
+        case 'Best Seller': 
           return sortedProducts.sort((a, b) => b.sales - a.sales);
         default:
           return sortedProducts;
@@ -111,7 +114,7 @@ const ProductCategory = () => {
     }, [...products]);
   };
 
-  const filteredAndSortedProducts = sortProducts(filterProducts(products)).slice((currentPage - 1) * 12, currentPage * 12);
+  // const filteredAndSortedProducts = sortProducts(filterProducts(productData)).slice((currentPage - 1) * 12, currentPage * 12);
 
   const handlePageChange = (direction) => {
     if (direction === 'up') {
@@ -131,10 +134,11 @@ const ProductCategory = () => {
       <div className="main-content">
         <section className="products">
           <div className="products-grid">
-            {filteredAndSortedProducts.map((product) => (
-              <div key={product.id} className="product-item">
-                <div className="product-image" />
+            {productData.map((product) => (
+              <div key={product._id} className="product-item">
+                <img src={product.images[0]} alt={product.name} className="product-image" />
                 <div className="product-name">{product.name}</div>
+                <div className="product-price">{product.price}</div>
               </div>
             ))}
           </div>
@@ -224,7 +228,7 @@ const ProductCategory = () => {
               <div>
                 {['Adidas', 'Nike', 'New Balance', 'Vans', 'Converse'].map((brand) => (
                   <div key={brand}>
-                    <div onClick={() => toggleBrand(brand)} style={{cursor: 'pointer', display: 'flex'}}>
+                    <div onClick={() => toggleBrand(brand)} style={{ cursor: 'pointer', display: 'flex' }}>
                       <h5>{brand}</h5>
                       <button className='subBrandButton' style={{ marginLeft: '8px' }}>{openBrands.includes(brand) ? '▲' : '▼'}</button>
                     </div>
@@ -249,27 +253,23 @@ const ProductCategory = () => {
           </div>
         </aside>
       </div>
-      <section className="pagination">
-        <span>Page</span>
-        <div className="current-page">{currentPage}</div>
-        <button className="pageButton" onClick={() => handlePageChange('up')}>▲</button>
-        <button className="pageButton" onClick={() => handlePageChange('down')}>▼</button>
-      </section>
+      <div className="pagination">
+        <button onClick={() => handlePageChange('down')}>Previous</button>
+        <button onClick={() => handlePageChange('up')}>Next</button>
+      </div>
     </div>
   );
 };
 
 const getBrandOptions = (brand) => {
   const brandOptions = {
-    Adidas: ['Stan Smith', 'Samba', 'Gazelle', 'Spezial', 'Super Star', 'SL72', 'Campus'],
-    Nike: ['Jordan', 'Air Max', 'Dunk', 'Air Force 1', 'Cortez', 'Blazer', 'Pegasus'],
-    'New Balance': ['574', '372', '550', '530', '2002', '9060', '990', '991'],
-    Vans: ['Classic', 'Vault', 'Old Skool', 'Slip-on', 'Authentic', 'SK8', 'Era'],
-    Converse: ['Classic Chuck', 'Chuck 70', 'Run Star', 'Life Platforms', 'One Star']
+    'Adidas': ['Adidas subBrand 1', 'Adidas subBrand 2'],
+    'Nike': ['Nike subBrand 1', 'Nike subBrand 2'],
+    'New Balance': ['New Balance subBrand 1', 'New Balance subBrand 2'],
+    'Vans': ['Vans subBrand 1', 'Vans subBrand 2'],
+    'Converse': ['Converse subBrand 1', 'Converse subBrand 2'],
   };
   return brandOptions[brand] || [];
 };
 
 export default ProductCategory;
-
-

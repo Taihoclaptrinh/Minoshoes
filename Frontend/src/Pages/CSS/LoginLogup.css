@@ -3,10 +3,8 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    height: 90vh;
+    height: auto;
     width: 100%;
-    border-bottom: 2px solid black;
-    border-radius: 0;
 }
 
 .login-container {
@@ -140,13 +138,13 @@ input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focu
     align-items: center;
 }
 
-.input-container1 {
+.signup-input-container {
     margin-bottom: 2rem;
     width: 100%; /* Đảm bảo input container rộng 100% */
     max-width: 502.5px; /* Giới hạn chiều rộng tối đa */
 }
 
-.input-container1 input {
+.signup-input-container input {
     padding: 0.5rem;
     font-size: 1rem;
     width: 100%;
@@ -161,13 +159,13 @@ input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focu
 
 }
 
-.input-container1 input[type="date"] {
+.signup-input-container input[type="date"] {
     width: calc(50% - 10px);
     margin-right: 10px;
     
 }
 
-.input-container1 input[type="date"] + input[type="text"] {
+.signup-input-container input[type="date"] + input[type="text"] {
     width: calc(50% - 10px);
 }
 

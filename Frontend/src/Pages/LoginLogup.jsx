@@ -234,14 +234,16 @@ const LoginLogup = () => {
                         <div className="input-container">
                             <input
                                 type="text"
-                                placeholder="Enter the verification code"
+                                placeholder="Verification Code*"
                                 required
                                 value={providedCode}
                                 onChange={(e) => setProvidedCode(e.target.value)}
                             />
-                            <input
+                        </div>
+                        <div className="input-container">
+                            <input style={{marginBottom:"1rem"}}
                                 type="password"
-                                placeholder="Enter your new password"
+                                placeholder="New Password*"
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -249,57 +251,65 @@ const LoginLogup = () => {
                         </div>
                         {error && <p className="error-message">{error}</p>}
                         {success && <p className="success-message">{success}</p>}
-                        <button type="submit">RESET PASSWORD</button>
+                        <button type="submit">CONFIRM</button>
                     </form>
                 </div>
             )}
 
             {showSignUp && (
-                <div className="login-container">
-                    <h1>REGISTER</h1>
-                    <form id="signup-form" onSubmit={handleSignUpSubmit}>
-                        <div className="input-container">
-                            <input
-                                type="text"
-                                placeholder="Enter your name"
-                                required
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            <input
-                                type="text"
-                                placeholder="Enter your phone"
-                                required
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                            />
-                            <input
-                                type="text"
-                                placeholder="Enter your address"
-                                required
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                            />
-                            <input
-                                type="password"
-                                placeholder="Enter your password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <input
-                                type="text"
-                                placeholder="Enter the verification code"
-                                required
-                                value={providedCode}
-                                onChange={(e) => setProvidedCode(e.target.value)}
-                            />
-                        </div>
-                        {error && <p className="error-message">{error}</p>}
-                        {success && <p className="success-message">{success}</p>}
-                        <button type="submit">REGISTER</button>
-                    </form>
-                </div>
+                <div class="signup-container">
+                <h1>LET’S MAKE YOU A MEMBER</h1>
+                <form id="signup-form" onSubmit={handleSignUpSubmit}>
+                    <div class="signup-input-container">
+                        <input
+                            type="text"
+                            placeholder="Name"
+                            required
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
+                    <div class="signup-input-container">
+                        <input
+                            type="text"
+                            placeholder="Phone"
+                            required
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                        />
+                    </div>
+                    <div class="signup-input-container">
+                        <input
+                            type="text"
+                            placeholder="Address"
+                            required
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                        />
+                    </div>
+                    <div class="signup-input-container">
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <div class="signup-input-container">
+                        <input
+                            type="text"
+                            placeholder="Verification Code"
+                            required
+                            value={providedCode}
+                            onChange={(e) => setProvidedCode(e.target.value)}
+                        />
+                    </div>
+                    {error && <p className="error-message">{error}</p>}
+                    {success && <p className="success-message">{success}</p>}
+                    <button type="submit">REGISTER</button>
+                </form>
+            </div>  
             )}
         </div>
     );
