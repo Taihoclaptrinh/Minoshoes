@@ -1,8 +1,6 @@
 .product-page {
   width: 100%;
-  /* height: 340vh; */
   max-height: 3400px;
-  /* max-height: 300rem; */
   display: flex;
   justify-content: center;
 }

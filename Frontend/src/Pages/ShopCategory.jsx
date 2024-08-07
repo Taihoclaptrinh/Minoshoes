@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './CSS/ProductCategory.css';
+import Footer from '../Components/Footer/Footer';
 
 const ProductCategory = () => {
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [priceRange, setPriceRange] = useState([0, 400]);
+  const [priceRange, setPriceRange] = useState([0, 5000000]);
   const [sortedBy, setSortedBy] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
@@ -13,13 +14,22 @@ const ProductCategory = () => {
   const [selectedGender, setSelectedGender] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [openBrands, setOpenBrands] = useState([]);
-  const [maxPrice, setMaxPrice] = useState(400);
+  const [maxPrice, setMaxPrice] = useState(5000000);
+  const [totalPages, setTotalPages] = useState(1); // Initialize totalPages
 
+  const productsPerPage = 12; // Define the number of products per page
+  
+  const formatPrice = (price) => {
+    return price.toLocaleString('vi-VN') + " VND";
+  };
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get('/api/v1/auth/products');
-        setProductData(response.data);
+        const products = response.data;
+        setProductData(products);
+        setTotalPages(Math.ceil(products.length / productsPerPage)); // Calculate totalPages
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -114,13 +124,13 @@ const ProductCategory = () => {
     }, [...products]);
   };
 
-  // const filteredAndSortedProducts = sortProducts(filterProducts(productData)).slice((currentPage - 1) * 12, currentPage * 12);
+  const filteredAndSortedProducts = sortProducts(filterProducts(productData)).slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
 
   const handlePageChange = (direction) => {
-    if (direction === 'up') {
+    if (direction === 'up' && currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
-    } else if (direction === 'down') {
-      setCurrentPage(currentPage > 1 ? currentPage - 1 : 1);
+    } else if (direction === 'down' && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -134,11 +144,14 @@ const ProductCategory = () => {
       <div className="main-content">
         <section className="products">
           <div className="products-grid">
-            {productData.map((product) => (
-              <div key={product._id} className="product-item">
+            {filteredAndSortedProducts.map((product) => (
+              <div key={product._id} className="product-item"
+              onClick={() => window.location.href = 'http://localhost:3000/product'}
+              >
+              {/* Thay đổi onclick ở trên để chuyển hướng */}
                 <img src={product.images[0]} alt={product.name} className="product-image" />
                 <div className="product-name">{product.name}</div>
-                <div className="product-price">{product.price}</div>
+                <div className="product-price">{formatPrice(product.price)}</div>
               </div>
             ))}
           </div>
@@ -147,13 +160,13 @@ const ProductCategory = () => {
           <div className="filter-section">
             <p id="FilterAndSort">Filter & Sort</p>
             <input type="reset" value="clear all" id="clear-all" onClick={() => {
-              setPriceRange([0, 400]);
+              setPriceRange([0, 5000000]);
               setSortedBy([]);
               setSelectedSizes([]);
               setSelectedColors([]);
               setSelectedBrands([]);
               setSelectedGender([]);
-              setMaxPrice(400);
+              setMaxPrice(5000000);
             }} />
             <div className="price-filter">
               <label>Price</label>
@@ -161,11 +174,11 @@ const ProductCategory = () => {
                 id="range"
                 type="range"
                 min="0"
-                max="400"
+                max="5000000"
                 value={maxPrice}
                 onChange={handlePriceChange}
               />
-              <span>{`$${priceRange[0]} - $${priceRange[1]}`}</span>
+              <span>{`${formatPrice(priceRange[0])} - ${formatPrice(priceRange[1])}`}</span>
             </div>
             <div className="sort-options">
               {['Price (Low - High)', 'Price (High - Low)', 'Newest', 'Best Seller'].map((option) => (
@@ -253,10 +266,22 @@ const ProductCategory = () => {
           </div>
         </aside>
       </div>
-      <div className="pagination">
-        <button onClick={() => handlePageChange('down')}>Previous</button>
-        <button onClick={() => handlePageChange('up')}>Next</button>
+      <div className="Category-pagination">
+          <span
+              className={`arrow ${currentPage === 1 ? "disabled" : ""}`}
+              onClick={() => handlePageChange('down')}
+          >
+              &lt;
+          </span>
+          <span className="page-number">{currentPage}</span>
+          <span
+              className={`arrow ${currentPage === totalPages ? "disabled" : ""}`}
+              onClick={() => handlePageChange('up')}
+          >
+              &gt;
+          </span>
       </div>
+      <Footer />
     </div>
   );
 };
@@ -265,9 +290,9 @@ const getBrandOptions = (brand) => {
   const brandOptions = {
     'Adidas': ['Adidas subBrand 1', 'Adidas subBrand 2'],
     'Nike': ['Nike subBrand 1', 'Nike subBrand 2'],
-    'New Balance': ['New Balance subBrand 1', 'New Balance subBrand 2'],
+    'Asics': ['New Balance subBrand 1', 'New Balance subBrand 2'],
     'Vans': ['Vans subBrand 1', 'Vans subBrand 2'],
-    'Converse': ['Converse subBrand 1', 'Converse subBrand 2'],
+    'Puma': ['Converse subBrand 1', 'Converse subBrand 2'],
   };
   return brandOptions[brand] || [];
 };

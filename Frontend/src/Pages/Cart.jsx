@@ -7,15 +7,19 @@ import { products as initialProductData } from "./cart_data.js";
 const Cart = () => {
     const [products, setProducts] = useState(initialProductData);
     const [totalCost, setTotalCost] = useState(0);
-    useEffect(() => {
-        calculateTotalCost();
-    }, [products]);
+    // Number of products to display at a time
+    const itemsPerPage = 4;
+    const [currentPage, setCurrentPage] = useState(0);
 
+    const formatPrice = (price) => {
+        return price.toLocaleString('vi-VN') + " VND";
+      };
     const calculateTotalCost = () => {
         const total = products.reduce((acc, product) => acc + product.price * product.quantity, 0);
         setTotalCost(total);
     };
 
+    // Handle quantity change
     const handleQuantityChange = (productId, delta) => {
         const updatedProducts = products.map(product => {
             if (product.id === productId) {
@@ -27,9 +31,6 @@ const Cart = () => {
         }).filter(product => product !== null);
         setProducts(updatedProducts);
     };
-    // Number of products to display at a time
-    const itemsPerPage = 5;
-    const [currentPage, setCurrentPage] = useState(0);
 
     // Calculate total number of pages
     const totalPages = Math.ceil(products.length / itemsPerPage);
@@ -41,6 +42,10 @@ const Cart = () => {
     const handlePageChange = (delta) => {
         setCurrentPage(prevPage => Math.max(0, Math.min(totalPages - 1, prevPage + delta)));
     };
+
+    useEffect(() => {
+        calculateTotalCost();
+    }, [products]);
 
     return (
         <div className="cart-page">
@@ -60,7 +65,7 @@ const Cart = () => {
                                                     <span className="cart_quantity">{product.quantity}</span>
                                                     <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.id, 1)}>+</button>
                                                 </td>
-                                                <td style={{}}>${product.price * product.quantity}</td>
+                                                <td>{formatPrice(product.price * product.quantity)}</td>
                                             </tr>
                                         ))}
                                     </table>
@@ -82,10 +87,8 @@ const Cart = () => {
                                     </div>
                                 </div>
                                 <div className="cart-total">
-                                    {/* Total: ${totalCost}
-                                     */}
                                     <span className="label">Total:</span>
-                                    <span className="value">${totalCost}</span>
+                                    <span className="value">{formatPrice(totalCost)}</span>
                                     <button>Buy</button>
                                 </div>
                             </div>
@@ -95,7 +98,7 @@ const Cart = () => {
             
             {/* <Contact_info /> */}
 
-            <Footer />
+            {/* <Footer /> */}
             </div>
         </div>
 
