@@ -5,6 +5,7 @@ import { productData } from "./NPdata.js";
 import Slider from "../Components/Slider/Slider.jsx";
 import Contact_info from "../Components/Contact_info/Contact_info.jsx"
 import Footer from "../Components/Footer/Footer.jsx"
+
 const Product = () => {
     const onAddtoCartHandler = (product) => {
         console.log("Product added to cart:", product);
@@ -12,8 +13,16 @@ const Product = () => {
 
     const [averageRating, setAverageRating] = useState(0);
     const [reviewCount, setReviewCount] = useState(0);
-    const [selectedColor, setSelectedColor] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+    // const [areReviewsExpanded, setAreReviewsExpanded] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const reviewsPerPage = 5;
+
+    const indexOfLastReview = currentPage * reviewsPerPage;
+    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    const currentReviews = productData.feedback.slice(indexOfFirstReview, indexOfLastReview);
+    const totalPages = Math.ceil(productData.feedback.length / reviewsPerPage);
 
     useEffect(() => {
         const calculateAverageRating = () => {
@@ -44,13 +53,32 @@ const Product = () => {
         );
     };
 
-    const handleColorClick = (color) => {
-        setSelectedColor(color);
-    };
-
     const handleSizeClick = (size) => {
         setSelectedSize(size);
     };
+
+    const toggleDescription = () => {
+        setIsDescriptionExpanded(!isDescriptionExpanded);
+    };
+
+    const handlePageChange = (direction) => {
+        if (direction === "prev" && currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        } else if (direction === "next" && currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const renderDescription = () => {
+        const descriptionLines = productData.description.split("\n");
+        if (descriptionLines.length <= 5 || isDescriptionExpanded) {
+            return descriptionLines.join("\n");
+        } else {
+            return descriptionLines.slice(0, 5).join("\n") + "...";
+        }
+    };
+
+
 
     return (
         <div className="product-page">
@@ -66,28 +94,35 @@ const Product = () => {
                                 ))}
                             </div>
                         </div>
+                        <div className={`product-description ${isDescriptionExpanded ? "expanded" : ""}`}>
+                            <h1>Product Description:</h1>
+                            <p>{renderDescription()}</p>
+                            {productData.description.split("\n").length > 5 && (
+                                <span className="show-more" onClick={toggleDescription}>
+                                    {isDescriptionExpanded ? "Show Less" : "Show More"}
+                                </span>
+                            )}
+                        </div>
                     </div>
                     {/* Where show the prize and name of product,
                         Customer can choose the size and colour */}
                     <div className="info-section">
                         <div className="text-group">
-                            <p style={{fontSize: "2rem"}}>{productData.category}</p>
+                            <p style={{fontSize: "1.8rem"}}>{productData.category}</p>
                             <h1>{productData.name}</h1>
                             <h2>{productData.price}</h2>
                         </div>
                 
-                        <h2 style={{marginTop: "6rem"}}>Colours</h2>
+                        <h2 style={{marginTop: "3rem"}}>Main colours</h2>
                         <div className="button-grid">
-                            {productData.colors.map((color, index) => (
-                                <button 
-                                    key={index}
-                                    className={selectedColor === color ? "selected" : ""}
-                                    onClick={() => handleColorClick(color)}
-                                >
+                            {productData.colors.map((color) => (
+                                <div className="color-box">
                                     {color}
-                                </button>
+                                    <div className="color-circle" style={{ backgroundColor: color }}></div>
+                                </div>
                             ))}
                         </div>
+
                         <h2>Sizes</h2>
                         <div className="button-grid">
                             {productData.sizes.map((size, index) => (
@@ -102,42 +137,55 @@ const Product = () => {
                         </div>
 
                         <div className="adding-button-container">
-                            <button  class="add-to-list">Wish list</button>
+                            {/* <button  class="add-to-list">Wish list</button> */}
                             <button onClick={() => onAddtoCartHandler(productData)} class="add-to-bag">Add to cart</button>
                         </div>
                     </div>    
                 </div>
-                <div className="product-description">
-                    <h1>Product Description:</h1>
-                    <p>{productData.description}</p>
-                </div>
-
+                
                 <div className="related-product">
                     <h1>Related Products:</h1>
                     <div className="related-product-slider">
                         <Slider />
                     </div>
                 </div>
+                
 
                 <div className="review-section">
-                    <div class="overall-rating">
-                        <h2>Reviews:</h2>
-                        <div class="rating">
-                            <span id="rating-score" className="rating-score">{averageRating}</span>
-                            <span id="overall-stars" className="stars">{renderStars(averageRating)}</span>
-                            <span id="review-count" className="review-count">{reviewCount} reviews</span>
+                    <div className="reviews">
+                        <div className="overall-rating">
+                            <h1>Reviews:</h1>
+                            <div className="rating">
+                                <span id="rating-score" className="rating-score">{averageRating}</span>
+                                <span id="overall-stars" className="stars">{renderStars(averageRating)}</span>
+                                <span id="review-count" className="review-count">{reviewCount} reviews</span>
+                            </div>
+                        </div>
+                        <div id="reviews">
+                            {currentReviews.map((review, index) => (
+                                <div key={index} className="review show">
+                                    <h3>{review.name}</h3>
+                                    <div className="stars">{renderStars(review.rating)}</div>
+                                    <p>{review.comment}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="review-pagination">
+                            <span
+                                className={`arrow ${currentPage === 1 ? "disabled" : ""}`}
+                                onClick={() => handlePageChange("prev")}
+                            >
+                                &lt;
+                            </span>
+                            <span className="page-number">{currentPage}</span>
+                            <span
+                                className={`arrow ${currentPage === totalPages ? "disabled" : ""}`}
+                                onClick={() => handlePageChange("next")}
+                            >
+                                &gt;
+                            </span>
                         </div>
                     </div>
-
-                    <div id="reviews" class="reviews">
-                        {productData.feedback.map((review, index) => (
-                            <div key={index} className="review">
-                                <h3>{review.name}</h3>
-                                <div className="stars">{renderStars(review.rating)}</div>
-                                <p>{review.comment}</p>
-                            </div>
-                        ))}
-                    </div>   
                 </div>   
                 <Footer />
             </div>                

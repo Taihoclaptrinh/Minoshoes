@@ -35,7 +35,6 @@
     cursor: pointer;
     border-color: black; 
     border: 2px solid #000;
-    /* border-radius: 5px; */
     padding: 10px 20px;
     bottom: -10%;
     right: 0;
@@ -59,12 +58,13 @@
   object-fit: cover;
 }
 .product--card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 -4px 8px 1px rgba(0, 0, 0, 0.2);
   max-width: 16rem;
   margin: auto 1rem;
   text-align: center;
-  border: none;
-  border-radius: 15px;
+  border-top: 1.5px solid whitesmoke;
+  border-radius: 0 15px;
+  background-color: #f2f2f3;
 }
 
 .product--name {

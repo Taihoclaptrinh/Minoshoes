@@ -127,7 +127,22 @@ const Navbar = () => {
                     </div>
                     <Link to='cart'><img src={shopping_cart} alt="" style={{ width: "30px", height: "30px" }} /></Link>
                     <div className="nav-cart-count">0</div>
-                    <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
+                    {user ? (
+                    <div className="nav-item user-greeting">
+                        <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
+                        <span>hi, {user.name}</span>
+                        {/* <button onClick={handleLogout} className="logout-button">Logout</button> */}
+                        <div style={{marginTop:"-3rem"}} className="dropdown-container">
+                            <div class="dropdown">
+                                <a href="#">User Info</a>
+                                <a onClick={handleLogout}>Log out</a>
+                            </div>
+                        </div>   
+                    </div>
+                    ) : (
+                        <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
+                    )}
+                    
                 </div>
             </div>
             {searchVisible && (
@@ -151,15 +166,7 @@ const Navbar = () => {
                 </div>
             )}
                 <div className="nav-cart-count">0</div>
-                {user ? (
-                    <div className="user-greeting">
-                        <span>hi {user.name}</span>
-                        <button onClick={handleLogout} className="logout-button">Logout</button>
-                    </div>
-                ) : (
-                    
-                    <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
-                )}
+                
             </div>
     );
 };
