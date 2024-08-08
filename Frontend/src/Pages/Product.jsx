@@ -145,11 +145,11 @@ const Product = () => {
                             {productData.color && productData.color.length > 0 ? (
                                 productData.color.map((color, index) => (
                                     <div key={index} className="color-box">
+                                        {color}
                                         <div 
                                             className="color-circle" 
                                             style={{ backgroundColor: color.toLowerCase() }} // Chuyển màu thành định dạng chữ thường để sử dụng trong style
                                         ></div>
-                                        <span className="color-name">{color}</span>
                                     </div>
                                 ))
                             ) : (
