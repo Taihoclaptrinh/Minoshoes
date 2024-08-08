@@ -7,7 +7,7 @@ dotenv.config();
 const EMAIL_USERNAME = process.env.EMAIL_USERNAME;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 
-// Thiết lập cấu hình gửi email
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -15,7 +15,6 @@ const transporter = nodemailer.createTransport({
     pass: EMAIL_PASSWORD,
   },
 });
-
 
 const sendVerificationCode = async (email, verificationCode) => {
   const mailOptions = {
@@ -178,6 +177,7 @@ export const loginController = async (req, res) => {
     });
   }
 };
+
 
 // Test controller
 export const testController = (req, res) => {

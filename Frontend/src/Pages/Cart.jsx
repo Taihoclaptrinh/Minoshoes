@@ -1,44 +1,60 @@
 import React, { useState, useEffect } from "react";
-import "./CSS/Cart.css"
-import Contact_info from "../Components/Contact_info/Contact_info.jsx"
-import Footer from "../Components/Footer/Footer.jsx"
-import { products as initialProductData } from "./cart_data.js";
+import axios from "axios";
+import "./CSS/Cart.css";
+import Contact_info from "../Components/Contact_info/Contact_info.jsx";
+import Footer from "../Components/Footer/Footer.jsx";
 
 const Cart = () => {
-    const [products, setProducts] = useState(initialProductData);
+    const [products, setProducts] = useState([]);
     const [totalCost, setTotalCost] = useState(0);
-    // Number of products to display at a time
     const itemsPerPage = 4;
     const [currentPage, setCurrentPage] = useState(0);
 
     const formatPrice = (price) => {
         return price.toLocaleString('vi-VN') + " VND";
-      };
+    };
+
     const calculateTotalCost = () => {
-        const total = products.reduce((acc, product) => acc + product.price * product.quantity, 0);
+        const total = products.reduce((acc, product) => acc + product.product.price * product.quantity, 0);
         setTotalCost(total);
     };
 
-    // Handle quantity change
-    const handleQuantityChange = (productId, delta) => {
-        const updatedProducts = products.map(product => {
-            if (product.id === productId) {
-                const newQuantity = product.quantity + delta;
-                if (newQuantity <= 0) return null;
-                return { ...product, quantity: newQuantity };
+    const handleQuantityChange = async (productId, delta) => {
+        try {
+            const token = localStorage.getItem('token');
+            const product = products.find(item => item.product._id === productId);
+            const newQuantity = product.quantity + delta;
+    
+            if (newQuantity <= 0) {
+                // Xóa sản phẩm khỏi giỏ hàng
+                await axios.delete(`/api/v1/auth/cart/remove-from-cart/${productId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } else {
+                // Cập nhật số lượng sản phẩm
+                await axios.put('/api/v1/auth/cart/update-cart', {
+                    productId,
+                    quantity: newQuantity,
+                    price: product.product.price
+                }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
             }
-            return product;
-        }).filter(product => product !== null);
-        setProducts(updatedProducts);
+    
+            // Lấy dữ liệu giỏ hàng đã cập nhật
+            const response = await axios.get('/api/v1/auth/cart/get-cart', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setProducts(response.data.cartItems);
+        } catch (error) {
+            console.error('Error updating cart:', error.response ? error.response.data : error);
+        }
     };
+    
 
-    // Calculate total number of pages
     const totalPages = Math.ceil(products.length / itemsPerPage);
-
-    // Get the products to display for the current page
     const displayedProducts = products.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
-    // Handle page change
     const handlePageChange = (delta) => {
         setCurrentPage(prevPage => Math.max(0, Math.min(totalPages - 1, prevPage + delta)));
     };
@@ -47,25 +63,41 @@ const Cart = () => {
         calculateTotalCost();
     }, [products]);
 
+    useEffect(() => {
+        const fetchCart = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('/api/v1/auth/cart/get-cart', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setProducts(response.data.cartItems);
+            } catch (error) {
+                console.error('Error fetching cart data:', error);
+            }
+        };
+
+        fetchCart();
+    }, []);
+
     return (
         <div className="cart-page">
             <div className="cart-page-layout">
                 <div className="cart-main-container">
                     <div className="cart-frame">
-                        <div class="cart-wrapper">
-                            <div class="cart">
+                        <div className="cart-wrapper">
+                            <div className="cart">
                                 <h2>YOUR CART</h2>
                                 <div className="cart_products-container">
                                     <table id="cart_product-table">
-                                        {products.map(product => (
-                                            <tr key={product.id}>
-                                                <td>{product.name}</td>
+                                        {displayedProducts.map(product => (
+                                            <tr key={product.product._id}>
+                                                <td>{product.product.name}</td>
                                                 <td className="cart_quantity-container">
-                                                    <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.id, -1)}>-</button>
+                                                    <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, -1)}>-</button>
                                                     <span className="cart_quantity">{product.quantity}</span>
-                                                    <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.id, 1)}>+</button>
+                                                    <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, 1)}>+</button>
                                                 </td>
-                                                <td>{formatPrice(product.price * product.quantity)}</td>
+                                                <td>{formatPrice(product.product.price * product.quantity)}</td>
                                             </tr>
                                         ))}
                                     </table>
@@ -96,13 +128,12 @@ const Cart = () => {
                     </div>
                 </div>
             
-            {/* <Contact_info /> */}
+                {/* <Contact_info /> */}
 
-            {/* <Footer /> */}
+                {/* <Footer /> */}
             </div>
         </div>
-
-    )
+    );
 }
 
-export default Cart
+export default Cart;

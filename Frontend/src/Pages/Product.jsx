@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./CSS/Product.css";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Slider from "../Components/Slider/Slider.jsx";
 import Footer from "../Components/Footer/Footer.jsx";
 
@@ -9,12 +9,12 @@ const Product = () => {
     const [productData, setProductData] = useState(null);
     const [averageRating, setAverageRating] = useState(0);
     const [reviewCount, setReviewCount] = useState(0);
-    const [selectedColor, setSelectedColor] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 5;
     const location = useLocation();
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const query = new URLSearchParams(location.search);
@@ -42,8 +42,31 @@ const Product = () => {
         }
     }, [location.search]);
 
-    const onAddtoCartHandler = (product) => {
-        console.log("Product added to cart:", product);
+    const onAddtoCartHandler = async (product) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+    
+        try {
+            const response = await axios.post('/api/v1/auth/cart/add-to-cart', {
+                productId: product._id,
+                quantity: 1,
+                price: product.price
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            if (response.status === 200) {
+                alert('Product added to cart successfully!');
+            }
+        } catch (error) {
+            console.error('Error adding product to cart:', error);
+            alert('Failed to add product to cart. Please try again.');
+        }
     };
 
     const renderStars = (rating) => {
@@ -63,10 +86,7 @@ const Product = () => {
         );
     };
 
-    const handleColorClick = (color) => {
-        setSelectedColor(color);
-    };
-
+    
     const handleSizeClick = (size) => {
         setSelectedSize(size);
     };

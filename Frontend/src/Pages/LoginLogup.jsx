@@ -2,12 +2,12 @@ import React, { useState, useContext } from "react";
 import "./CSS/LoginLogup.css";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../UserContext.js'; // Đảm bảo đường dẫn chính xác
+import { UserContext } from '../UserContext.js'; // Ensure correct path
 
 const LoginLogup = () => {
     const [showSignIn, setShowSignIn] = useState(true);
+    const [showSignUp, setShowSignUp] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [showSignUp, setShowSignUp]    = useState(false);
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
@@ -18,7 +18,7 @@ const LoginLogup = () => {
     const [address, setAddress] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const { login } = useContext(UserContext); // Lấy hàm login từ UserContext
+    const { login } = useContext(UserContext); // Get login function from UserContext
 
     const navigate = useNavigate();
 
@@ -67,8 +67,7 @@ const LoginLogup = () => {
                 address,
                 password,
                 email,
-                verificationCode,
-                providedCode
+                verificationCode
             });
 
             if (response.data.success) {
@@ -98,8 +97,9 @@ const LoginLogup = () => {
             const response = await axios.post('/api/v1/auth/login', { email, password });
             if (response.data.success) {
                 const user = response.data.user;
-                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('token', response.data.token);
                 login(user);
+                alert('Login successful!');
                 navigate('/');
             } else {
                 setError('Login failed. Please check your email and password.');
@@ -241,7 +241,7 @@ const LoginLogup = () => {
                             />
                         </div>
                         <div className="input-container">
-                            <input style={{marginBottom:"1rem"}}
+                            <input style={{ marginBottom: "1rem" }}
                                 type="password"
                                 placeholder="New Password*"
                                 required
@@ -257,59 +257,59 @@ const LoginLogup = () => {
             )}
 
             {showSignUp && (
-                <div class="signup-container">
-                <h1>LET’S MAKE YOU A MEMBER</h1>
-                <form id="signup-form" onSubmit={handleSignUpSubmit}>
-                    <div class="signup-input-container">
-                        <input
-                            type="text"
-                            placeholder="Name"
-                            required
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                    </div>
-                    <div class="signup-input-container">
-                        <input
-                            type="text"
-                            placeholder="Phone"
-                            required
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                        />
-                    </div>
-                    <div class="signup-input-container">
-                        <input
-                            type="text"
-                            placeholder="Address"
-                            required
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                        />
-                    </div>
-                    <div class="signup-input-container">
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-                    <div class="signup-input-container">
-                        <input
-                            type="text"
-                            placeholder="Verification Code"
-                            required
-                            value={providedCode}
-                            onChange={(e) => setProvidedCode(e.target.value)}
-                        />
-                    </div>
-                    {error && <p className="error-message">{error}</p>}
-                    {success && <p className="success-message">{success}</p>}
-                    <button type="submit">REGISTER</button>
-                </form>
-            </div>  
+                <div className="signup-container">
+                    <h1>LET’S MAKE YOU A MEMBER</h1>
+                    <form id="signup-form" onSubmit={handleSignUpSubmit}>
+                        <div className="signup-input-container">
+                            <input
+                                type="text"
+                                placeholder="Name"
+                                required
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
+                        <div className="signup-input-container">
+                            <input
+                                type="text"
+                                placeholder="Phone"
+                                required
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                            />
+                        </div>
+                        <div className="signup-input-container">
+                            <input
+                                type="text"
+                                placeholder="Address"
+                                required
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                            />
+                        </div>
+                        <div className="signup-input-container">
+                            <input
+                                type="password"
+                                placeholder="Password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+                        <div className="signup-input-container">
+                            <input
+                                type="text"
+                                placeholder="Verification Code"
+                                required
+                                value={providedCode}
+                                onChange={(e) => setProvidedCode(e.target.value)}
+                            />
+                        </div>
+                        {error && <p className="error-message">{error}</p>}
+                        {success && <p className="success-message">{success}</p>}
+                        <button type="submit">REGISTER</button>
+                    </form>
+                </div>
             )}
         </div>
     );
