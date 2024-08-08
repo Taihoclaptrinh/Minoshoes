@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './CSS/ProductCategory.css';
 import Footer from '../Components/Footer/Footer';
+import { useNavigate } from 'react-router-dom'; // Thêm import useNavigate
 
 const ProductCategory = () => {
   const [productData, setProductData] = useState([]);
@@ -18,7 +19,8 @@ const ProductCategory = () => {
   const [totalPages, setTotalPages] = useState(1); // Initialize totalPages
 
   const productsPerPage = 12; // Define the number of products per page
-  
+  const navigate = useNavigate(); // Khai báo useNavigate
+
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN') + " VND";
   };
@@ -133,6 +135,9 @@ const ProductCategory = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+  const handleProductClick = (productName) => {
+    navigate(`/product?name=${encodeURIComponent(productName)}`);
+  };
 
   return (
     <div className="product-category">
@@ -146,7 +151,7 @@ const ProductCategory = () => {
           <div className="products-grid">
             {filteredAndSortedProducts.map((product) => (
               <div key={product._id} className="product-item"
-              onClick={() => window.location.href = 'http://localhost:3000/product'}
+              onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
               >
               {/* Thay đổi onclick ở trên để chuyển hướng */}
                 <img src={product.images[0]} alt={product.name} className="product-image" />

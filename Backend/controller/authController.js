@@ -2,10 +2,10 @@ import userModel from '../models/userModel.js';
 import { comparePassword, hashPassword } from './../helpers/authHelper.js';
 import JWT from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
-
-const EMAIL_USERNAME = process.env.EMAIL_USERNAME; // Đảm bảo địa chỉ email chính xác
-const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD; // Đảm bảo mật khẩu chính xác
-
+import dotenv from 'dotenv';
+dotenv.config(); 
+const EMAIL_USERNAME = process.env.EMAIL_USERNAME;
+const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 
 // Thiết lập cấu hình gửi email
 const transporter = nodemailer.createTransport({
@@ -16,14 +16,30 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Hàm gửi mã xác thực qua email
 
 const sendVerificationCode = async (email, verificationCode) => {
   const mailOptions = {
     from: EMAIL_USERNAME,
     to: email,
-    subject: 'Verification Code',
-    text: `Your verification code is: ${verificationCode}`,
+    subject: 'Your Confirmation Code for Mino Shoes Store',
+    text: `Dear ${email},
+Thank you for creating an account with Mino Shoes Store. To complete your registration and ensure the security of your account, please use the following confirmation code: 
+${verificationCode}
+
+Please enter this code on our website to verify your email address and activate your account. This code will expire in 24 hours for security reasons.
+If you didn't request this code or need any assistance, please contact our customer support team at minoshoesstore@gmail.com.
+
+We're excited to have you join our community of shoe enthusiasts! Once your account is verified, you'll be able to:
+
+- Browse our latest shoe collections
+- Save your favorite styles
+- Receive exclusive offers and updates
+- Enjoy a seamless shopping experience
+
+Thank you for choosing Mino Shoes Store for your footwear needs.
+
+Best regards,
+Mino Shoes Team`,
   };
 
   try {
@@ -139,6 +155,7 @@ export const loginController = async (req, res) => {
     const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d',
     });
+    console.log('Generated Token:', token);
 
     res.status(200).send({
       success: true,
@@ -304,8 +321,36 @@ export const resetPasswordController = async (req, res) => {
     });
   }
 };
+// Hàm gửi mã reset mật khẩu
+export const sendResetCode = async (email, resetCode) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USERNAME,
+    to: email,
+    subject: 'Password Reset Code for Mino Shoes Store',
+    text: `Dear ${email},
 
+We received a request to reset the password for your account at Mino Shoes Store. To proceed with resetting your password, please use the following code:
 
+${resetCode}
+
+Enter this code on our password reset page to verify your identity and create a new password. This code will expire in 1 hour for security reasons.
+
+If you didn't request a password reset, please disregard this email and ensure your account is secure. If you have any concerns, contact our support team immediately at minoshoesstore@gmail.com.
+
+Thank you for being a valued customer of Mino Shoes Store.
+
+Best regards,
+Mino Shoes Store Security Team`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions); // Đảm bảo gọi hàm sendMail
+    return true;
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return false;
+  }
+};
 
 
 // Gửi mã reset qua email
@@ -324,7 +369,7 @@ export const sendResetCodeController = async (req, res) => {
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
     const resetToken = JWT.sign({ email, resetCode }, process.env.JWT_SECRET, { expiresIn: '15m' });
 
-    const success = await sendVerificationCode(email, resetCode);
+    const success = await sendResetCode(email, resetCode);
     if (!success) {
       return res.status(500).send({ message: 'Failed to send reset code' });
     }

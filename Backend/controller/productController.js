@@ -12,15 +12,16 @@ export const createProduct = async (req, res) => {
 };
 
 // Lấy thông tin sản phẩm theo ID
-export const getProductById = async (req, res) => {
+export const getProductByName = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const productName = req.params.name;
+        const product = await Product.findOne({ name: productName });
         if (!product) {
-            return res.status(404).json({ message: "Product not found" });
+            return res.status(404).json({ message: 'Product not found' });
         }
         res.status(200).json(product);
     } catch (error) {
-        res.status(500).json({ message: "Server error while fetching product", error });
+        res.status(500).json({ message: 'Server error while fetching product', error: error.message });
     }
 };
 // Cập nhật thông tin sản phẩm theo ID
