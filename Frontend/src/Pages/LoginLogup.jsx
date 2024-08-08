@@ -46,42 +46,49 @@ const LoginLogup = () => {
     };
 
     const handleSignUpSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setSuccess('');
-
+        e.preventDefault(); // Ngăn chặn hành vi mặc định của form submit
+        setError(''); // Xóa lỗi cũ
+        setSuccess(''); // Xóa thông báo thành công cũ
+    
+        // Kiểm tra mã xác thực
         if (verificationCode !== providedCode) {
-            setError('Verification code is incorrect.');
+            setError('Verification code is incorrect.'); // Hiển thị lỗi nếu mã xác thực không khớp
             return;
         }
-
+        
+        // Kiểm tra các trường thông tin
         if (!name || !phone || !address || !password) {
-            setError('All fields are required.');
+            setError('All fields are required.'); // Hiển thị lỗi nếu có trường thông tin thiếu
             return;
         }
-
+        alert(providedCode)
+        alert(verificationCode)
         try {
+            // Gửi yêu cầu đăng ký đến API
             const response = await axios.post('/api/v1/auth/register', {
                 name,
+                email,
+                password,
                 phone,
                 address,
-                password,
-                email,
-                verificationCode
+                verificationCode,
+                providedCode
             });
-
+    
+            // Xử lý kết quả trả về từ API
             if (response.data.success) {
-                setSuccess('Registration successful! You can now sign in.');
-                setShowSignIn(true);
-                setShowSignUp(false);
+                setSuccess('Registration successful! You can now sign in.'); // Hiển thị thông báo thành công
+                setShowSignIn(true); // Hiển thị form đăng nhập
+                setShowSignUp(false); // Ẩn form đăng ký
             } else {
-                setError(response.data.message || 'Registration failed. Please try again.');
+                setError(response.data.message || 'Registration failed. Please try again.'); // Hiển thị lỗi từ API hoặc thông báo lỗi chung
             }
         } catch (error) {
-            console.error('Error registering:', error);
-            setError(error.response?.data?.message || 'An error occurred while registering. Please try again later.');
+            console.error('Error registering:', error); // Ghi log lỗi ra console
+            setError(error.response?.data?.message || 'An error occurred while registering. Please try again later.'); // Hiển thị thông báo lỗi
         }
     };
+    
 
     const handleLoginSubmit = async (e) => {
         e.preventDefault();

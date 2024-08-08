@@ -89,10 +89,10 @@ export const checkEmailController = async (req, res) => {
 export const registerController = async (req, res) => {
   try {
     const { name, email, password, phone, address, verificationCode, providedCode } = req.body;
-
     if (!verificationCode || verificationCode !== providedCode) {
       return res.status(400).send({ message: 'Invalid verification code' });
     }
+    
     if (!name || !email || !password || !address) {
       return res.status(400).send({ message: 'All fields are required' });
     }
