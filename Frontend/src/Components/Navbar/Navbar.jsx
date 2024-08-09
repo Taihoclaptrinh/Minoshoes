@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useContext, useRef  } from "react"
 import "./Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../Assets/logo.png";
-import shopping_cart from "../Assets/shopping-cart.png";
-import search_icon from "../Assets/search_icon.png";
-import user_icon from "../Assets/user_icon.png";
 import { UserContext } from '../../UserContext.js'; // Đảm bảo đường dẫn chính xác
 
 const Navbar = () => {
@@ -12,6 +8,12 @@ const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState(""); // Trạng thái tìm kiếm
     const [searchVisible, setSearchVisible] = useState(false);
     const { user, logout } = useContext(UserContext);
+
+    const logo = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/logo.jpg";
+    const shopping_cart = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/icon-cart.jpg";
+    const search_icon = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/icon-search.jpg";
+    const user_icon = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/icon-ng.jpg";
+
     const navigate = useNavigate();
     const searchBarRef = useRef(null);
 
@@ -56,6 +58,7 @@ const Navbar = () => {
                     <Link to='/'><img src={logo} alt="" style={{ height: "80px" }} /></Link>
                 </div>
                 <ul className="nav-menu" style={{ opacity: searchVisible ? 0 : 1 }}>
+                    {/* thêm api vào onClick, tương tự với các mục click khác */}
                     <li class="nav-item" onClick={() => { setMenu("men") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='men'>MEN</Link>{menu === "men"}
                         <div className="dropdown-container">
                             <div class="dropdown">
@@ -94,7 +97,6 @@ const Navbar = () => {
                                     <a href="#">5</a>
                                     <a href="#">3.5</a>
                                     <a href="#">4</a>
-                                    
                                 </div>          
                             </div>
                         </div>    
@@ -131,10 +133,12 @@ const Navbar = () => {
                     <div className="nav-item user-greeting">
                         <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
                         <span>hi, {user.name}</span>
-                        {/* <button onClick={handleLogout} className="logout-button">Logout</button> */}
                         <div style={{marginTop:"-3rem"}} className="dropdown-container">
                             <div class="dropdown">
-                                <a href="#">User Info</a>
+                                {/* User info hiện cho người dùng bình thường
+                                    Admin dashboard chỉ hiện cho role Admin */}
+                                <a href="/userinfo">User Info</a>
+                                <a href="/admin/*">Admin dashboard</a>
                                 <a onClick={handleLogout}>Log out</a>
                             </div>
                         </div>   
@@ -153,7 +157,6 @@ const Navbar = () => {
                             placeholder="Search..."
                             value={searchQuery}
                             onChange={handleSearchChange}
-                            // style={{ padding: "5px", marginRight: "5px" }}
                         />
                     </form>
                     <div className="search-icon-after-layout">

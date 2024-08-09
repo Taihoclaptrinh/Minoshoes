@@ -135,8 +135,15 @@ const ProductCategory = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+
   const handleProductClick = (productName) => {
     navigate(`/product?name=${encodeURIComponent(productName)}`);
+  };
+
+  // Link API add to cart ở đây
+  const handleAddToCart = (product) => {
+    // Logic to add the product to the cart
+    console.log("Added to cart:", product.name);
   };
 
   return (
@@ -151,12 +158,29 @@ const ProductCategory = () => {
           <div className="products-grid">
             {filteredAndSortedProducts.map((product) => (
               <div key={product._id} className="product-item"
-              onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
               >
-              {/* Thay đổi onclick ở trên để chuyển hướng */}
-                <img src={product.images[0]} alt={product.name} className="product-image" />
-                <div className="product-name">{product.name}</div>
-                <div className="product-price">{formatPrice(product.price)}</div>
+                {/* Chỗ để kích hoạt API add to cart */}
+                <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
+                  +
+                </button>
+                <img 
+                  src={product.images[0]} 
+                  alt={product.name}
+                  onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                  className="product-image" 
+                />
+                <div 
+                  className="product-name"
+                  onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                >
+                  {product.name}
+                </div>
+                <div 
+                  className="product-price"
+                  onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                >
+                  {formatPrice(product.price)}
+                </div>
               </div>
             ))}
           </div>

@@ -108,6 +108,7 @@ const Cart = () => {
                                     <div className="payment-discount-row">
                                         <label htmlFor="payment-method">Payment Method</label>
                                         <select id="payment-method">
+                                            <option value="cod">COD</option>
                                             <option value="credit-card">Credit Card</option>
                                             <option value="paypal">PayPal</option>
                                             <option value="bank-transfer">Bank Transfer</option>

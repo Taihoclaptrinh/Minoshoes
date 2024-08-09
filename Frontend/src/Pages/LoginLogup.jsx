@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import "./CSS/LoginLogup.css";
+import AddressSelector from "../Components/Address/Address.jsx"
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.js'; // Ensure correct path
@@ -195,6 +196,7 @@ const LoginLogup = () => {
             {showSignIn && (
                 <div className="login-container">
                     <h1>WELCOME</h1>
+                    <h2 style={{fontWeight:"normal"}}>Enter your email to join us or sign in.</h2>
                     <form id="email-form" onSubmit={handleEmailSubmit}>
                         <div className="input-container">
                             <input
@@ -285,10 +287,11 @@ const LoginLogup = () => {
                                 onChange={(e) => setPhone(e.target.value)}
                             />
                         </div>
-                        <div className="signup-input-container">
+                        <AddressSelector setAddress={setAddress} />
+                        <div class="signup-input-container">
                             <input
                                 type="text"
-                                placeholder="Address"
+                                placeholder="Street Address"
                                 required
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}

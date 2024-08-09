@@ -1,9 +1,10 @@
 import React from "react"
 import "./Contact_info.css"
-import logo from "../Assets/Logo2_Image.png"
-import map from "../Assets/Map.png"
 
 export default function Contact_info(){
+  const logo = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/logo.jpg"
+  const map = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/map.jpeg"
+
   return (
     <div className="Contact-layout">
       <div className="Contact-container">

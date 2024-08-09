@@ -25,7 +25,8 @@ const Product = () => {
                 try {
                     const response = await axios.get(`/api/v1/auth/products/${encodeURIComponent(productName)}`);
                     setProductData(response.data);
-
+                    window.scrollTo(0, 0);
+                    
                     if (response.data.feedback && response.data.feedback.length > 0) {
                         const totalRating = response.data.feedback.reduce((acc, review) => acc + review.rating, 0);
                         const count = response.data.feedback.length;

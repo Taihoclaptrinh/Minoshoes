@@ -1,10 +1,11 @@
 import React from "react";
 import "./Gallary.css";
 import { Link } from "react-router-dom";
-import hotshoe4 from "../Assets/Image4.png";
+
 import ProductSlider from "./ProductSlider";
 
 const Gallary = () => {
+  const hotshoe4 = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/jordan-ng.jpeg";
   return (
     <div className="layout">
       <div className="layout-trending">
@@ -14,7 +15,7 @@ const Gallary = () => {
           <ProductSlider />
         </div>
         <div className="trending-button">
-          <Link to="/product" className="Gal_left-section">
+          <Link to="/new-arrivals" className="Gal_left-section">
             Shop
           </Link>
           <Link to="/product" className="Gal_right-section">

@@ -1,14 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Carousel from 'react-multi-carousel';
+import { useNavigate } from 'react-router-dom';
 import 'react-multi-carousel/lib/styles.css';
-import { responsive1 } from "./NPdata"; // Import responsive settings
 import "./Gallary.css";
 import "../Bestseller/Bestseller.css";
 
 const ProductSlider = () => {
+  const responsive1 = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 1024 },
+      items: 1, // Chỉ hiển thị 1 nhóm mỗi lần
+      slidesToSlide: 1,
+    },
+    desktop: {
+      breakpoint: { max: 1024, min: 768 },
+      items: 1, // Chỉ hiển thị 1 nhóm mỗi lần
+      slidesToSlide: 1,
+    },
+    tablet: {
+      breakpoint: { max: 768, min: 464 },
+      items: 1, // Chỉ hiển thị 1 nhóm mỗi lần
+      slidesToSlide: 1,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1, // Chỉ hiển thị 1 nhóm mỗi lần
+      slidesToSlide: 1,
+    },
+  };
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Khai báo useNavigate
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -24,6 +48,10 @@ const ProductSlider = () => {
 
     fetchProducts();
   }, []);
+
+  const handleProductClick = (productName) => {
+    navigate(`/product?name=${encodeURIComponent(productName)}`);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -42,19 +70,20 @@ const ProductSlider = () => {
           <div key={index} className="product-group">
             <div className="product-row">
               {chunk.slice(0, 2).map(product => (
-                <div key={product._id} className="nproduct-card">
+                <div key={product._id} className="nproduct-card"
+                onClick={() => handleProductClick(product.name)}>
                   <div className="nproduct_image">
                     <img src={product.images[0]} alt={product.name} className="nproduct_image" />
                   </div>
                   <h3>{product.name}</h3>
-                  {/* <p className="new_product-price">{product.price}</p> */}
                   <button>Buy Now</button>
                 </div>
               ))}
             </div>
             <div className="product-row">
               {chunk.slice(2, 4).map(product => (
-                <div key={product._id} className="nproduct-card">
+                <div key={product._id} className="nproduct-card"
+                onClick={() => handleProductClick(product.name)}>
                   <div className="nproduct_image">
                     <img src={product.images[0]} alt={product.name} className="nproduct_image" />
                   </div>

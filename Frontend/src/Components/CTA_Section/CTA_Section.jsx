@@ -1,8 +1,9 @@
 import React from "react";
 import "./CTA_Section.css";
-import CTA_Background from "../Assets/CTA_Background.png";
 
 export default function CTA_Section() {
+  const CTA_Background = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/jordan-giay.jpg"
+
   return (
     <div className="CTA-layout">
       <div className="CTA-background">
