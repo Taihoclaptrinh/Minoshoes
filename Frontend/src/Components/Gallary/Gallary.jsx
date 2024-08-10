@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Gallary.css";
 import { Link } from "react-router-dom";
-
+import Pop_up from "../Popup_PayOS/Popup";
 import ProductSlider from "./ProductSlider";
 
 const Gallary = () => {
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
   const hotshoe4 = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/jordan-ng.jpeg";
+
+  const handleExploreClick = () => {
+    setShowPopup(true);
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+    navigate("/"); // Redirect to the landing page
+  };
+
   return (
     <div className="layout">
       <div className="layout-trending">
@@ -18,11 +31,12 @@ const Gallary = () => {
           <Link to="/new-arrivals" className="Gal_left-section">
             Shop
           </Link>
-          <Link to="/product" className="Gal_right-section">
+          <div className="Gal_right-section" onClick={handleExploreClick}>
             Explore
-          </Link>
+          </div>
         </div>
       </div>
+      {showPopup && <Pop_up review="Thanh toán thành công!" onClose={closePopup} />}
     </div>
   );
 };

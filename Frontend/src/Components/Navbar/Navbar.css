@@ -50,7 +50,7 @@
 }
 .dropdown-container {
     position: absolute;
-    min-width: 160px;
+    min-width: 320px;
     height: 5rem;
 }
 .nav-item.show .dropdown-container {
