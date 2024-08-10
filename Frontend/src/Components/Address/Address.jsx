@@ -69,17 +69,17 @@ const AddressSelector = () => {
             </select>
         </div>
         <select
-                id="district"
-                value={selectedDistrict}
-                onChange={handleDistrictChange}
-                className='address-selector'
-                style={{width:"50%"}}
-            >
-                <option value="" selected>Select District/City</option>
-                {districts.map(district => (
-                <option key={district.Id} value={district.Id}>{district.Name}</option>
-                ))}
-            </select>
+            id="district"
+            value={selectedDistrict}
+            onChange={handleDistrictChange}
+            className='address-selector'
+            style={{width:"50%"}}
+        >
+            <option value="" selected>Select District/City</option>
+            {districts.map(district => (
+            <option key={district.Id} value={district.Id}>{district.Name}</option>
+            ))}
+        </select>
         <select
             id="ward"
             value={selectedWard}

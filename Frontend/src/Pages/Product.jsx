@@ -4,6 +4,7 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import Slider from "../Components/Slider/Slider.jsx";
 import Footer from "../Components/Footer/Footer.jsx";
+import Loader from "../Components/Loader/Loading.jsx";
 
 const Product = () => {
     const [productData, setProductData] = useState(null);
@@ -13,6 +14,8 @@ const Product = () => {
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [cartCount, setCartCount] = useState(0); // State for cart count
+    const [loading, setLoading] = useState(true);
+
     const reviewsPerPage = 5;
     const location = useLocation();
     const navigate = useNavigate(); 
@@ -140,7 +143,9 @@ const Product = () => {
     };
 
     if (!productData) {
-        return <div>Loading...</div>;
+        return <div style={{  display: "flex", justifyContent: "center", alignItems: "center", height:"100vh"  }}>
+                <Loader />
+                </div>;
     }
 
     const indexOfLastReview = currentPage * reviewsPerPage;
