@@ -1,6 +1,19 @@
 // Updated user inputs
 export const userInputs = [
   {
+    id: 'images',
+    label: "Images",
+    type: "file",
+    placeholder: "Upload images",
+    multiple: false,
+  },
+  {
+    id: 'name',
+    label: "User ID",
+    type: "text",
+    placeholder: "User ID",
+  },
+  {
     id: 'name',
     label: "Name",
     type: "text",
@@ -56,6 +69,12 @@ export const userInputs = [
 
 // Updated product inputs
 export const productInputs = [
+  {
+    id: 'name',
+    label: "Product ID",
+    type: "text",
+    placeholder: "Product ID",
+  },
   {
     id: 'name',
     label: "Name",
