@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import 'react-multi-carousel/lib/styles.css';
 import "./Gallary.css";
 import "../Bestseller/Bestseller.css";
+import Loader from "../Loader/Loading.jsx"
 
 const ProductSlider = () => {
   const responsive1 = {
@@ -54,7 +55,11 @@ const ProductSlider = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{  display: "flex", justifyContent: "center", alignItems: "center", height:"100%", width:"100%", marginTop: "25%"  }}>
+        <Loader />
+      </div>
+    )
   }
 
   const productChunks = [];

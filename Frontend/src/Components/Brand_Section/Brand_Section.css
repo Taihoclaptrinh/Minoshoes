@@ -2,7 +2,7 @@
     margin-top: 8%;
     position: relative;
     width: 100%;
-    height: 20vh;
+    height: 10rem;
     flex-shrink: 0;
     justify-content: center;
 }
@@ -23,7 +23,7 @@
     display: block;
     width: 100%;
     height: 45%;
-    max-height: 10vh;
+    max-height: 10rem;
     list-style: none;
     gap: 5%;
     display: flex;

@@ -68,44 +68,45 @@ const AddressSelector = ({ onAddressChange }) => {
   };
   return (
     <div className='address-container'>
-      <div>
+        <div>
+            <select
+                id="city"
+                value={selectedCity}
+                onChange={handleCityChange}
+                className='address-selector'
+                style={{width:"100%"}}
+            >
+                <option value="" selected>Select City/Province</option>
+                {cities.map(city => (
+                <option key={city.Id} value={city.Id}>{city.Name}</option>
+                ))}
+            </select>
+        </div>
         <select
-          id="city"
-          value={selectedCity}
-          onChange={handleCityChange}
-          className='address-selector'
-          style={{ width: "100%" }}
+                id="district"
+                value={selectedDistrict}
+                onChange={handleDistrictChange}
+                className='address-selector'
+                style={{width:"50%"}}
+            >
+                <option value="" selected>Select District/City</option>
+                {districts.map(district => (
+                <option key={district.Id} value={district.Id}>{district.Name}</option>
+                ))}
+            </select>
+        <select
+            id="ward"
+            value={selectedWard}
+            onChange={(e) => setSelectedWard(e.target.value)}
+            className='address-selector'     
+            style={{width:"50%"}} 
         >
-          <option value="">Select City/Province</option>
-          {cities.map(city => (
-            <option key={city.Id} value={city.Id}>{city.Name}</option>
-          ))}
+            <option value="" selected>Select Ward</option>
+            {wards.map(ward => (
+            <option key={ward.Id} value={ward.Id}>{ward.Name}</option>
+            ))}
         </select>
-      </div>
-      <select
-        id="district"
-        value={selectedDistrict}
-        onChange={handleDistrictChange}
-        className='address-selector'
-        style={{ width: "50%" }}
-      >
-        <option value="">Select District/City</option>
-        {districts.map(district => (
-          <option key={district.Id} value={district.Id}>{district.Name}</option>
-        ))}
-      </select>
-      <select
-        id="ward"
-        value={selectedWard}
-        onChange={(e) => setSelectedWard(e.target.value)}
-        className='address-selector'
-        style={{ width: "50%" }}
-      >
-        <option value="">Select Ward</option>
-        {wards.map(ward => (
-          <option key={ward.Id} value={ward.Id}>{ward.Name}</option>
-        ))}
-      </select>
+        
     </div>
   );
 };

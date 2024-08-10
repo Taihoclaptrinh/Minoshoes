@@ -6,6 +6,7 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import im_src from "../Assets/Image2.png"
 import Feedback from "./Review-contents"
+import Loader from "../Loader/Loading.jsx"
 
 const Reviews = () => {
   const [review, setReview] = useState(null);
@@ -108,7 +109,7 @@ const Reviews = () => {
             <img className="feedback--image" src={im_src} alt="feedback image" />
             <div className="feedback--content">
               <div>
-                {review ? <Feedback review={review} /> : <p>Loading...</p>}
+                {review ? <Feedback review={review} /> : <Loader />}
               </div>
             </div>        
           </div>

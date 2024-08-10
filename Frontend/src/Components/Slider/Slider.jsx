@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Product from "./Product";
+import Loader from "../Loader/Loading";
 import "./Slider.css"
 import axios from "axios";
 
@@ -24,7 +25,11 @@ const Slider = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{  display: "flex", justifyContent: "center", alignItems: "center", height:"100%"  }}>
+        <Loader />
+      </div>
+    )
   }
   
   return (

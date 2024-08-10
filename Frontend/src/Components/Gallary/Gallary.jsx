@@ -21,9 +21,9 @@ const Gallary = () => {
           <Link to="/new-arrivals" className="Gal_left-section">
             Shop
           </Link>
-          <div className="Gal_right-section">
+          <Link to="/product" className="Gal_right-section" >
             Explore
-          </div>
+          </Link>
         </div>
       </div>
     </div>

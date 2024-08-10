@@ -3,6 +3,7 @@ import axios from 'axios';
 import './CSS/ProductCategory.css';
 import Footer from '../Components/Footer/Footer';
 import { useNavigate } from 'react-router-dom'; // Thêm import useNavigate
+import Loader from "../Components/Loader/Loading.jsx"
 
 const ProductCategory = () => {
   const [productData, setProductData] = useState([]);
@@ -42,7 +43,11 @@ const ProductCategory = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{  display: "flex", justifyContent: "center", alignItems: "center", marginTop: "10%"  }}>
+        <Loader />
+      </div>
+    );
   }
 
   const handlePriceChange = (e) => {

@@ -2,7 +2,7 @@
     position: relative;
     display: flex;
     width: 74vw;
-    max-height: 65vh;
+    max-height: 40rem;
     flex-shrink: 0;
     justify-content: center; 
     background-color: red;
