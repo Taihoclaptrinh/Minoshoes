@@ -100,4 +100,20 @@ export const removeFromCart = async (req, res) => {
   }
 };
 
-  
+export const countCart = async (req, res) => {
+  try {
+      const userId = req.user._id;
+      const cart = await cartModel.findOne({ user: userId });
+
+      if (!cart) {
+          return res.status(404).send({ message: 'Cart not found' });
+      }
+
+      const totalQuantity = cart.cartItems.reduce((accum, item) => accum + item.quantity, 0);
+
+      res.status(200).send({ totalQuantity });
+  } catch (error) {
+      console.error('Error counting cart items:', error);
+      res.status(500).send({ message: 'Error counting cart items', error });
+  }
+};

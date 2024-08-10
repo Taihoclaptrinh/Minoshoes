@@ -16,6 +16,7 @@
   "description": "",
   "dependencies": {
     "@azure/storage-blob": "^12.24.0",
+    "@payos/node": "^1.0.8",
     "bcrypt": "^5.1.1",
     "colors": "^1.4.0",
     "concurrently": "^8.2.2",
@@ -25,10 +26,12 @@
     "express-rate-limit": "^7.4.0",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "mongoose": "^8.4.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.13",
-    "nodemon": "^3.1.2"
+    "nodemon": "^3.1.2",
+    "ws": "^8.18.0"
   }
 }

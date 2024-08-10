@@ -1,14 +1,15 @@
-import React, { useEffect, useState, useContext, useRef  } from "react"
+import React, { useEffect, useState, useContext, useRef } from "react";
 import "./Navbar.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from '../../UserContext.js'; // Đảm bảo đường dẫn chính xác
+import axios from 'axios'; // Import axios for API calls
 
 const Navbar = () => {
     const [menu, setMenu] = useState("shop");
     const [searchQuery, setSearchQuery] = useState(""); // Trạng thái tìm kiếm
     const [searchVisible, setSearchVisible] = useState(false);
+    const [cartCount, setCartCount] = useState(0); // State to hold cart item count
     const { user, logout } = useContext(UserContext);
-
     const logo = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/logo.jpg";
     const shopping_cart = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/icon-cart.jpg";
     const search_icon = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/icon-search.jpg";
@@ -16,6 +17,7 @@ const Navbar = () => {
 
     const navigate = useNavigate();
     const searchBarRef = useRef(null);
+    const location = useLocation(); // Access current location
 
     const handleLogout = () => {
         if (logout) {
@@ -40,6 +42,7 @@ const Navbar = () => {
             navigate(`/search?query=${searchQuery}`); // Chuyển hướng đến trang tìm kiếm với query
         }
     };
+
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -47,8 +50,99 @@ const Navbar = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const fetchCartCount = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const response = await axios.get('/api/v1/auth/cart/count', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    console.log("API response:", response.data); // Để debug
+                    if (response.data && typeof response.data.totalQuantity === 'number') {
+                        setCartCount(response.data.totalQuantity);
+                    } else {
+                        console.error("Invalid response format:", response.data);
+                    }
+                } else {
+                    setCartCount(0);
+                }
+            } catch (error) {
+                console.error('Error fetching cart count:', error);
+                setCartCount(0);
+            }
+        };
+
+        if (user) {
+            fetchCartCount();
+            const intervalId = setInterval(fetchCartCount, 30000);
+        
+            // Thêm event listener để cập nhật cartCount
+            const handleCartCountUpdate = (event) => {
+              setCartCount(event.detail);
+            };
+            window.addEventListener('cartCountUpdated', handleCartCountUpdate);
+        
+            return () => {
+              clearInterval(intervalId);
+              window.removeEventListener('cartCountUpdated', handleCartCountUpdate);
+            };
+          } else {
+            setCartCount(0);
+          }
+        }, [user, location.pathname]);
+
+    useEffect(() => {
+        console.log("Current cart count:", cartCount);
+    }, [cartCount]);
+
     const toggleDropdown = (menuName) => {
         setMenu(menu === menuName ? "" : menuName);
+    };
+
+    const updateCartCount = async (action) => {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            console.error("No token found");
+            return;
+        }
+
+        // Cập nhật cục bộ dựa trên hành động của người dùng
+        if (action === 'increase') {
+            setCartCount(prevCount => prevCount + 1);
+        } else if (action === 'decrease' && cartCount > 0) {
+            setCartCount(prevCount => prevCount - 1);
+        }
+
+        try {
+            const response = await axios.post('/api/v1/auth/cart/update', {
+                action: action
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.data && typeof response.data.totalQuantity === 'number') {
+                setCartCount(response.data.totalQuantity); // Cập nhật lại từ API
+            } else {
+                console.error("Invalid response format:", response.data);
+            }
+        } catch (error) {
+            console.error('Error updating cart count:', error);
+            // Nếu có lỗi, bạn có thể khôi phục trạng thái trước đó nếu cần
+        }
+    };
+
+    const handleAddProduct = () => {
+        updateCartCount('increase');
+    };
+
+    const handleRemoveProduct = () => {
+        updateCartCount('decrease');
     };
     
     return (
@@ -128,8 +222,7 @@ const Navbar = () => {
                         />
                     </div>
                     <Link to='cart'><img src={shopping_cart} alt="" style={{ width: "30px", height: "30px" }} /></Link>
-                    <div className="nav-cart-count">0</div>
-                    {user ? (
+                    <div className="nav-cart-count">{cartCount !== undefined ? cartCount : 0}</div>                    {user ? (
                     <div className="nav-item user-greeting">
                         <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
                         <span>hi, {user.name}</span>

@@ -17,6 +17,7 @@ import {
   findUser,
   showAllUsers,
 } from './Backend/controller/authController.js';
+import payosRoutes from './Backend/routes/payosRoute.js'; 
 import authRoutes from './Backend/routes/authRoute.js';
 import productRoute from './Backend/routes/productRoute.js';
 import cartRoute from './Backend/routes/cartRoute.js';
@@ -39,6 +40,8 @@ app.use(cors({
 app.use(express.json());
 app.use(morgan('dev'));
 
+app.use('/api/v1/payos', payosRoutes);
+
 // Auth routes with rate limiters
 router.post('/check-email', checkEmailController);
 router.post('/register', registerController);
@@ -60,6 +63,8 @@ app.use('/api/v1/auth', authRoutes);
 // Other routes
 app.use('/api/v1/auth/products', productRoute);
 app.use('/api/v1/auth/cart', cartRoute);
+
+
 
 // Serve frontend
 const __dirname = path.resolve();

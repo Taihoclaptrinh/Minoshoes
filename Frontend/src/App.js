@@ -1,7 +1,7 @@
-import "./App.css"
+import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import "./App.css";
 import { productInputs, userInputs, orderInputs } from "./formSource";
-
 
 // Admin Components
 import AdminNavbar from './Components/AdminNavbar/AdminNavbar';
@@ -20,7 +20,7 @@ import ShopCategory from './Pages/ShopCategory';
 import Cart from './Pages/Cart';
 import LoginLogup from './Pages/LoginLogup';
 import Product from './Pages/Product';
-import UserInfo from './Pages/UserInfoPage'
+import UserInfo from './Pages/UserInfoPage';
 
 // Admin App Component
 const AdminApp = () => (
@@ -30,23 +30,18 @@ const AdminApp = () => (
       <AdminSidebar />
       <div className="mainContent">
         <Routes>
-          <Route path="/">
-            <Route index element={<AdminHome />} />
-            <Route path="users">
-              <Route index element={<AdminUserList />} />
-              <Route path=":userId" element={<AdminSingle />} />
-              <Route path="new" element={<AdminNew inputs={userInputs} title="Add New User" />} />
-            </Route>
-            <Route path="products">
-              <Route index element={<AdminProductList />} />
-              <Route path=":productId" element={<AdminSingle />} />
-              <Route path="new" element={<AdminNew inputs={productInputs} title="Add New Product" />} />
-            </Route>
-            <Route path="orders">
-              <Route index element={<AdminOrderList />} />
-              <Route path=":orderId" element={<AdminSingle />} />
-              <Route path="new" element={<AdminNew inputs={orderInputs} title="Add New Order" />} />
-            </Route>
+          <Route path="/" element={<AdminHome />} />
+          <Route path="users" element={<AdminUserList />}>
+            <Route path=":userId" element={<AdminSingle />} />
+            <Route path="new" element={<AdminNew inputs={userInputs} title="Add New User" />} />
+          </Route>
+          <Route path="products" element={<AdminProductList />}>
+            <Route path=":productId" element={<AdminSingle />} />
+            <Route path="new" element={<AdminNew inputs={productInputs} title="Add New Product" />} />
+          </Route>
+          <Route path="orders" element={<AdminOrderList />}>
+            <Route path=":orderId" element={<AdminSingle />} />
+            <Route path="new" element={<AdminNew inputs={orderInputs} title="Add New Order" />} />
           </Route>
         </Routes>
       </div>
@@ -56,21 +51,21 @@ const AdminApp = () => (
 
 // Shop App Component
 const ShopApp = () => (
-  <div className="ShopApp">
-    <Navbar />
-    <Routes>
-      <Route path='/' element={<Shop />} />
-      <Route path='/men' element={<ShopCategory category="men" />} />
-      <Route path='/women' element={<ShopCategory category="women" />} />
-      <Route path='/brands' element={<ShopCategory category="brands" />} />
-      <Route path='/new-arrivals' element={<ShopCategory category="new-arrivals" />} />
-      <Route path='/sale' element={<ShopCategory category="sale" />} />
-      <Route path='/cart' element={<Cart />} />
-      <Route path='/login' element={<LoginLogup />} />
-      <Route path='/product' element={<Product />} />
-      <Route path='/userinfo' element={<UserInfo />} />
-    </Routes>
-  </div>
+    <div className="ShopApp">
+      <Navbar /> {/* Navbar no longer needs countCart prop */}
+      <Routes>
+        <Route path='/' element={<Shop />} />
+        <Route path='/men' element={<ShopCategory category="men" />} />
+        <Route path='/women' element={<ShopCategory category="women" />} />
+        <Route path='/brands' element={<ShopCategory category="brands" />} />
+        <Route path='/new-arrivals' element={<ShopCategory category="new-arrivals" />} />
+        <Route path='/sale' element={<ShopCategory category="sale" />} />
+        <Route path='/cart' element={<Cart />} />
+        <Route path='/login' element={<LoginLogup />} />
+        <Route path='/product' element={<Product />} />
+        <Route path='/userinfo' element={<UserInfo />} />
+      </Routes>
+    </div>
 );
 
 // Main App Component

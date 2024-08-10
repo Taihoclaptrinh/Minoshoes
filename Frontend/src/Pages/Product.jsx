@@ -12,6 +12,7 @@ const Product = () => {
     const [selectedSize, setSelectedSize] = useState(null);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [cartCount, setCartCount] = useState(0); // State for cart count
     const reviewsPerPage = 5;
     const location = useLocation();
     const navigate = useNavigate(); 
@@ -43,6 +44,27 @@ const Product = () => {
         }
     }, [location.search]);
 
+    useEffect(() => {
+        // Fetch and set initial cart count on component mount
+        const fetchCartCount = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const response = await axios.get('/api/v1/auth/cart/count', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    setCartCount(response.data.totalQuantity); // Assuming response contains cart count
+                } catch (error) {
+                    console.error('Error fetching cart count:', error);
+                }
+            }
+        };
+
+        fetchCartCount();
+    }, []);
+
     const onAddtoCartHandler = async (product) => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -63,6 +85,9 @@ const Product = () => {
     
             if (response.status === 200) {
                 alert('Product added to cart successfully!');
+                const newCartCount = response.data.totalQuantity; // Assuming the response contains the updated cart count
+                setCartCount(response.data.totalQuantity); // Update cart count based on response
+
             }
         } catch (error) {
             console.error('Error adding product to cart:', error);

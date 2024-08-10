@@ -1,4 +1,3 @@
-import express from 'express';
 import PayOS from '@payos/node';
 
 const payos = new PayOS(
@@ -7,48 +6,22 @@ const payos = new PayOS(
   'd9e4c705b499d53fad53c5a42ca385a2153a632042f0c9ca4182b9e59eb4a4d4'
 );
 
-const app = express();
-app.use(express.static('public'));
-app.use(express.json());
-
-const YOUR_DOMAIN = 'http://localhost:3000';
-
-app.get('/', (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Trang chủ</title>
-    </head>
-    <body>
-      <h1>Chào mừng đến với trang thanh toán</h1>
-      <form action="/create-payment-link" method="post">
-        <button type="submit">Tạo liên kết thanh toán</button>
-      </form>
-    </body>
-    </html>
-  `);
-});
-
-app.post('/create-payment-link', async (req, res) => {
+export const createPaymentLink = async (req, res) => {
   try {
+    const { amount, description } = req.body;
+    const orderCode = Math.floor(Math.random() * 9000000000000); // Sinh số ngẫu nhiên nhỏ hơn 9007199254740991
     const order = {
-      amount: 1000,
-      description: 'Thanh toán',
-      orderCode: 11, // Sửa thành orderCode
-      returnUrl: `${YOUR_DOMAIN}/success.html`,
-      cancelUrl: `${YOUR_DOMAIN}/cancel.html`
+      amount,
+      description,
+      orderCode,
+      returnUrl: 'http://localhost:3000/success',
+      cancelUrl: 'http://localhost:3000/cancel'
     };
 
     const paymentLink = await payos.createPaymentLink(order);
-
-    res.redirect(303, paymentLink.checkoutUrl);
+    res.json({ checkoutUrl: paymentLink.checkoutUrl });
   } catch (error) {
     console.error('Error creating payment link:', error);
     res.status(500).send('Lỗi khi tạo liên kết thanh toán');
   }
-});
-
-app.listen(3000, () => console.log('Server is running on port 3000'));
+};
