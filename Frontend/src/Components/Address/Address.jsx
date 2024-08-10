@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import "./Address.css"
-const AddressSelector = () => {
+import "./Address.css";
+
+const AddressSelector = ({ onAddressChange }) => {
   const [cities, setCities] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -21,6 +22,20 @@ const AddressSelector = () => {
     };
     fetchCities();
   }, []);
+
+  useEffect(() => {
+    if (onAddressChange) {
+      const city = cities.find(city => city.Id === selectedCity);
+      const district = city?.Districts.find(district => district.Id === selectedDistrict);
+      const ward = district?.Wards.find(ward => ward.Id === selectedWard);
+
+      onAddressChange({
+        city: city?.Name || '',
+        district: district?.Name || '',
+        ward: ward?.Name || '',
+      });
+    }
+  }, [selectedCity, selectedDistrict, selectedWard, cities, onAddressChange]);
 
   const handleCityChange = (e) => {
     const cityId = e.target.value;
@@ -51,48 +66,46 @@ const AddressSelector = () => {
       }
     }
   };
-
   return (
     <div className='address-container'>
-        <div>
-            <select
-                id="city"
-                value={selectedCity}
-                onChange={handleCityChange}
-                className='address-selector'
-                style={{width:"100%"}}
-            >
-                <option value="" selected>Select City/Province</option>
-                {cities.map(city => (
-                <option key={city.Id} value={city.Id}>{city.Name}</option>
-                ))}
-            </select>
-        </div>
+      <div>
         <select
-                id="district"
-                value={selectedDistrict}
-                onChange={handleDistrictChange}
-                className='address-selector'
-                style={{width:"50%"}}
-            >
-                <option value="" selected>Select District/City</option>
-                {districts.map(district => (
-                <option key={district.Id} value={district.Id}>{district.Name}</option>
-                ))}
-            </select>
-        <select
-            id="ward"
-            value={selectedWard}
-            onChange={(e) => setSelectedWard(e.target.value)}
-            className='address-selector'     
-            style={{width:"50%"}} 
+          id="city"
+          value={selectedCity}
+          onChange={handleCityChange}
+          className='address-selector'
+          style={{ width: "100%" }}
         >
-            <option value="" selected>Select Ward</option>
-            {wards.map(ward => (
-            <option key={ward.Id} value={ward.Id}>{ward.Name}</option>
-            ))}
+          <option value="">Select City/Province</option>
+          {cities.map(city => (
+            <option key={city.Id} value={city.Id}>{city.Name}</option>
+          ))}
         </select>
-        
+      </div>
+      <select
+        id="district"
+        value={selectedDistrict}
+        onChange={handleDistrictChange}
+        className='address-selector'
+        style={{ width: "50%" }}
+      >
+        <option value="">Select District/City</option>
+        {districts.map(district => (
+          <option key={district.Id} value={district.Id}>{district.Name}</option>
+        ))}
+      </select>
+      <select
+        id="ward"
+        value={selectedWard}
+        onChange={(e) => setSelectedWard(e.target.value)}
+        className='address-selector'
+        style={{ width: "50%" }}
+      >
+        <option value="">Select Ward</option>
+        {wards.map(ward => (
+          <option key={ward.Id} value={ward.Id}>{ward.Name}</option>
+        ))}
+      </select>
     </div>
   );
 };

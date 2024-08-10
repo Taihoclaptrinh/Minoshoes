@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "./CSS/Cart.css";
-
-import { Link } from 'react-router-dom'; // Thêm useHistory
-import { UserContext } from '../UserContext.js'; // Đảm bảo đường dẫn chính xác
-// import Contact_info from "../Components/Contact_info/Contact_info.jsx";
-// import Footer from "../Components/Footer/Footer.jsx";
+import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../UserContext.js';
+import Pop_up from '../Components/Popup_PayOS/Popup.jsx';
 
 const Cart = () => {
     const [products, setProducts] = useState([]);
@@ -13,11 +11,11 @@ const Cart = () => {
     const [totalItems, setTotalItems] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const itemsPerPage = 4;
     const [currentPage, setCurrentPage] = useState(0);
-
+    const [showPopup, setShowPopup] = useState(false);
+    const navigate = useNavigate();
     const { user } = useContext(UserContext);
-    // const history = useHistory(); // Sử dụng useHistory để điều hướng
+    const itemsPerPage = 4;
 
     const formatPrice = (price) => {
         return price.toLocaleString('vi-VN') + " VND";
@@ -47,7 +45,19 @@ const Cart = () => {
             console.error('Error updating total cart count:', error);
         }
     };
-    // Hàm điều hướng đến trang thanh toán
+
+    const checkPaymentStatus = async (orderIdOrPaymentId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`/api/v1/payos/check-payment-status/${orderIdOrPaymentId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return response.data.status === 'success';
+        } catch (error) {
+            console.error('Error checking payment status:', error);
+            return false;
+        }
+    };
 
     const handleBuy = async () => {
         setIsLoading(true);
@@ -60,17 +70,37 @@ const Cart = () => {
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+
             if (response.data && response.data.checkoutUrl) {
-                window.location.href = response.data.checkoutUrl;
+                const paymentWindow = window.open(response.data.checkoutUrl, '_blank');
+                
+                const checkInterval = setInterval(async () => {
+                    if (paymentWindow.closed) {
+                        clearInterval(checkInterval);
+                        const paymentSuccessful = await checkPaymentStatus(response.data.orderId);
+                        if (paymentSuccessful) {
+                            setShowPopup(true);
+                            // Thực hiện các hành động khác sau khi thanh toán thành công
+                            // Ví dụ: cập nhật giỏ hàng, xóa sản phẩm đã mua, etc.
+                        } else {
+                            setError('Payment was not completed successfully.');
+                        }
+                        setIsLoading(false);
+                    }
+                }, 5000);
             } else {
                 throw new Error('Invalid response from payment link creation');
             }
         } catch (error) {
             console.error('Error creating payment link:', error);
             setError('Unable to process payment. Please try again later.');
-        } finally {
             setIsLoading(false);
         }
+    };
+
+    const closePopup = () => {
+        setShowPopup(false);
+        navigate("/");
     };
 
     const handleQuantityChange = async (productId, delta) => {
@@ -164,7 +194,7 @@ const Cart = () => {
                                                 </table>
                                             </div>
                                             <p>Total Items: {totalItems}</p>
-                                            <p>Address: {user.address || "Address not provided"}</p> {/* Display user's address */}
+                                            <p>Address: {user.address || "Address not provided"}</p>
                                             <div className="payment-discount-container">
                                                 <div className="payment-discount-row">
                                                     <label htmlFor="payment-method">Payment Method</label>
@@ -181,16 +211,16 @@ const Cart = () => {
                                                 </div>
                                             </div>
                                             {error && <div className="error-message">{error}</div>}
-                                                <div className="cart-total">
-                                                    <span className="label">Total:</span>
-                                                    <span className="value">{formatPrice(totalCost)}</span>
-                                                    <button 
-                                                        onClick={handleBuy} 
-                                                        disabled={isLoading || products.length === 0 || totalCost === 0}
-                                                    >
-                                                        {isLoading ? 'Processing...' : 'Buy'}
-                                                    </button>
-                                                </div>
+                                            <div className="cart-total">
+                                                <span className="label">Total:</span>
+                                                <span className="value">{formatPrice(totalCost)}</span>
+                                                <button 
+                                                    onClick={handleBuy} 
+                                                    disabled={isLoading || products.length === 0 || totalCost === 0}
+                                                >
+                                                    {isLoading ? 'Processing...' : 'Buy'}
+                                                </button>
+                                            </div>
                                         </>
                                     ) : (
                                         <p>Your cart is empty. Start shopping now!</p>
@@ -206,9 +236,10 @@ const Cart = () => {
                         </div>
                     )}
                 </div>
-                {/* <Contact_info /> */}
-                {/* <Footer /> */}
             </div>
+            {showPopup && <Pop_up review="Thanh toán thành công!" onClose={closePopup} />}
         </div>
-    );}
+    );
+};
+
 export default Cart;

@@ -4,6 +4,7 @@ import AddressSelector from "../Components/Address/Address.jsx"
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.js'; // Ensure correct path
+import { faTreeCity } from "@fortawesome/free-solid-svg-icons";
 
 const LoginLogup = () => {
     const [showSignIn, setShowSignIn] = useState(true);
@@ -16,8 +17,8 @@ const LoginLogup = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
-    const [error, setError] = useState('');
+    const [address, setAddress] = useState({city: '', district: '', ward: ''});
+        const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const { login } = useContext(UserContext); // Get login function from UserContext
 
@@ -62,8 +63,8 @@ const LoginLogup = () => {
             setError('All fields are required.'); // Hiển thị lỗi nếu có trường thông tin thiếu
             return;
         }
-        alert(providedCode)
-        alert(verificationCode)
+        const fullAddress = `${address.street}, ${address.ward}, ${address.district}, ${address.city}`;
+
         try {
             // Gửi yêu cầu đăng ký đến API
             const response = await axios.post('/api/v1/auth/register', {
@@ -71,7 +72,7 @@ const LoginLogup = () => {
                 email,
                 password,
                 phone,
-                address,
+                address: fullAddress,
                 verificationCode,
                 providedCode
             });
@@ -117,7 +118,6 @@ const LoginLogup = () => {
             setError('An error occurred while logging in.');
         }
     };
-
     const handleSendResetCode = async () => {
         setError('');
         setSuccess('');
@@ -190,7 +190,14 @@ const LoginLogup = () => {
             setError('Please try again.');
         }
     };
-
+    const handleAddressChange = (newAddress) => {
+        setAddress(prevAddress => ({
+            ...prevAddress,
+            city: newAddress.city,
+            district: newAddress.district,
+            ward: newAddress.ward
+        }));
+    };
     return (
         <div className="login-logup">
             {showSignIn && (
@@ -265,7 +272,7 @@ const LoginLogup = () => {
                 </div>
             )}
 
-            {showSignUp && (
+        {showSignUp && (
                 <div className="signup-container">
                     <h1>LET’S MAKE YOU A MEMBER</h1>
                     <form id="signup-form" onSubmit={handleSignUpSubmit}>
@@ -287,14 +294,14 @@ const LoginLogup = () => {
                                 onChange={(e) => setPhone(e.target.value)}
                             />
                         </div>
-                        <AddressSelector setAddress={setAddress} />
-                        <div class="signup-input-container">
+                        <AddressSelector onAddressChange={handleAddressChange} />
+                        <div className="signup-input-container">
                             <input
                                 type="text"
                                 placeholder="Street Address"
                                 required
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
+                                value={address.street}
+                                onChange={(e) => setAddress(prevAddress => ({ ...prevAddress, street: e.target.value }))}
                             />
                         </div>
                         <div className="signup-input-container">
