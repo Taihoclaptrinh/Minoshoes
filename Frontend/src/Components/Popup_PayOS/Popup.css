@@ -5,6 +5,17 @@
     width: 400px;
     background-color: whitesmoke;
 }
+.modalbox .circle_faTime {
+    display: flex;
+    justify-content: center;
+    /* width: 50px; */
+}
+.modalbox .circle_faTime .cf1 {
+    border: 2px solid red;
+    border-radius: 50%;
+    padding: 2px 2.5px 2px 2.5px;
+    width: 30px;
+}
 .modalbox.btnback{
     text-align: center;
     justify-content: center;

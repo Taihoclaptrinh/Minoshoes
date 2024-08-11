@@ -133,12 +133,6 @@ const Cart = () => {
             setIsLoading(false);
         }
     };
-    
-    const closePopup = async () => {
-        setShowPopup(false);
-        await clearCart();
-        navigate("/");
-    };
 
     const handleQuantityChange = async (productId, delta) => {
         const token = localStorage.getItem('token');
@@ -279,7 +273,7 @@ const Cart = () => {
                             isSuccess={false} 
                             review="Please log in to view your cart" 
                             message="You need to be logged in to access your shopping cart" 
-                            onClose={closePopup} 
+                            confirm="Move to LoginPage"
                             href="/login"
                         />
                     )}
@@ -290,7 +284,7 @@ const Cart = () => {
                     isSuccess={true} 
                     review="Payment Successful!" 
                     message="Your order will be delivered as soon as possible." 
-                    onClose={closePopup} 
+                    confirm="Back to HomePage"
                     href="/"
                 />
             }
