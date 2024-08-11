@@ -12,7 +12,7 @@ const Navbar = () => {
     const { user, logout } = useContext(UserContext);
     const logo = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/logo.jpg";
     const shopping_cart = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/icon-cart.jpg";
-    const search_icon = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/icon-search.jpg";
+    const search_icon = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/search_icon.png";
     const user_icon = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/icon-ng.jpg";
 
     const navigate = useNavigate();
@@ -23,6 +23,16 @@ const Navbar = () => {
         if (logout) {
             logout();
             navigate('/login'); // Chuyển hướng người dùng đến trang đăng nhập sau khi đăng xuất
+        }
+    };
+
+    const handleSearchIconClick = () => {
+        if (searchVisible && searchQuery.trim()) {
+            navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchVisible(false);
+            setSearchQuery('');
+        } else {
+            setSearchVisible(!searchVisible);
         }
     };
 
@@ -242,10 +252,13 @@ const Navbar = () => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <button type="submit" className="search-button">
-                        <img src={search_icon} alt="Search" />
-                    </button>
                 </form>
+                <div type="submit" className="search-icon-after-layout">
+                    <img src={search_icon} 
+                        alt="Search Icon" 
+                        onClick={handleSearchIconClick}
+                    />
+                </div>
             </div>
         )}
                 <div className="nav-cart-count">0</div>

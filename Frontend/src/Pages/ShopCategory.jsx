@@ -26,13 +26,31 @@ const ProductCategory = () => {
     return price.toLocaleString('vi-VN') + " VND";
   };
   
+  // useEffect(() => {
+  //   const fetchProducts = async () => {
+  //     try {
+  //       const response = await axios.get('/api/v1/auth/products');
+  //       const products = response.data;
+  //       setProductData(products);
+  //       setTotalPages(Math.ceil(products.length / productsPerPage)); // Calculate totalPages
+  //     } catch (error) {
+  //       console.error('Error fetching products:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchProducts();
+  // }, []);
+  // Test result search 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get('/api/v1/auth/products');
+        const searchQuery = new URLSearchParams(location.search).get('query');
+        const response = await axios.get(`/api/v1/auth/products${searchQuery ? `/search?query=${encodeURIComponent(searchQuery)}` : ''}`);
         const products = response.data;
         setProductData(products);
-        setTotalPages(Math.ceil(products.length / productsPerPage)); // Calculate totalPages
+        setTotalPages(Math.ceil(products.length / productsPerPage));
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -40,7 +58,7 @@ const ProductCategory = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [location.search]); // Re-fetch when the search query changes
 
   if (loading) {
     return (
@@ -160,35 +178,43 @@ const ProductCategory = () => {
       </header>
       <div className="main-content">
         <section className="products">
+          {filteredAndSortedProducts.length === 0 ? (
+            <div className="no-results">
+                <p style={{color:"red", fontSize:"1.5rem"}}>
+                  Sorry, we don't have the product you are looking for :_(
+                </p>
+            </div>
+          ) : (
           <div className="products-grid">
             {filteredAndSortedProducts.map((product) => (
-              <div key={product._id} className="product-item"
-              >
-                {/* Chỗ để kích hoạt API add to cart */}
-                <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
-                  +
-                </button>
-                <img 
-                  src={product.images[0]} 
-                  alt={product.name}
-                  onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
-                  className="product-image" 
-                />
-                <div 
-                  className="product-name"
-                  onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                <div key={product._id} className="product-item"
                 >
-                  {product.name}
+                  {/* Chỗ để kích hoạt API add to cart */}
+                  <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
+                    +
+                  </button>
+                  <img 
+                    src={product.images[0]} 
+                    alt={product.name}
+                    onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                    className="product-image" 
+                  />
+                  <div 
+                    className="product-name"
+                    onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                  >
+                    {product.name}
+                  </div>
+                  <div 
+                    className="product-price"
+                    onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                  >
+                    {formatPrice(product.price)}
+                  </div>
                 </div>
-                <div 
-                  className="product-price"
-                  onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
-                >
-                  {formatPrice(product.price)}
-                </div>
-              </div>
             ))}
           </div>
+          )}
         </section>
         <aside className="filters sticky">
           <div className="filter-section">

@@ -4,41 +4,43 @@ import './Popup.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
-const Pop_up = ({ review, onClose }) => {
+const Pop_up = ({ isSuccess, review, message, onClose, href }) => {
     return (
         <div className="overlay active">
             <div className="popup active">
                 <div className="modalbox center">
-                    <FontAwesomeIcon icon={faCircleCheck}  style={{ fontSize: '40px', color: "#50c878" }}/>
-                    <h1 style={{color:"#50c878"}}>{review}</h1>
-                    <p style={{marginBottom:"50px"}}>Đơn hàng sẽ được giao đến bạn trong thời gian sớm nhất</p>
+                    <div 
+                        className="icon-wrapper" 
+                        style={{
+                            border: "3px solid",
+                            borderColor: isSuccess ? "#50c878" : "#ff0000",
+                            borderRadius: "50%", 
+                            padding: "10px", 
+                            display: "inline-block",
+                        }}
+                    >
+                        <FontAwesomeIcon 
+                            icon={isSuccess ? faCircleCheck : faTimes} 
+                            style={{ fontSize: '40px', color: "#ffffff" }}
+                        />
+                    </div>
+                    <h1 style={{ color: isSuccess ? "#50c878" : "#ff0000" }}>{review}</h1>
+                    <p style={{ marginBottom: "50px" }}>{message}</p>
                     <div className="btnback">
-                        <a className='btn' href="/" onClick={onClose}>Back to HomePage</a >
+                        <a className='btn' href={href} onClick={onClose}>Back to HomePage</a>
                     </div>
                 </div>
             </div>
         </div>
     );
 };
-// Cú pháp sài Popup, cần link vô sau khi check thanh toán đã thành công.
-
-// const [showPopup, setShowPopup] = useState(false);
-// const navigate = useNavigate();
-    // Hàm check tình trạng thanh toán (sửa lại để sài)
-// const isTrue= () => {
-//      setShowPopup(true);
-// };
-    // Giữ nguyên bấm xác nhận sẽ về home page
-// const closePopup = () => {
-//     setShowPopup(false);
-//     navigate("/"); // Redirect to the landing page
-// };
-    // câu gọi ra (format lại nếu thích)
-// {showPopup && <Pop_up review="Thanh toán thành công!" onClose={closePopup} />}
 
 Pop_up.propTypes = {
-    review: PropTypes.string.isRequired,
+    isSuccess: PropTypes.bool.isRequired, // Determines icon and color
+    review: PropTypes.string.isRequired, // Main message to display
+    message: PropTypes.string.isRequired, // Additional message to display
     onClose: PropTypes.func.isRequired, // onClose callback prop
+    href: PropTypes.string.isRequired, // Redirect link
 };
 
 export default Pop_up;

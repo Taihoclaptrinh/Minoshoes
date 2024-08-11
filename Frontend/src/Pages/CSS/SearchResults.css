@@ -5,6 +5,8 @@
 .search-results-layout {
     max-width: 1200px;
     margin: 0 auto;
+    background-color: aqua;
+    margin-bottom: 2rem;
 }
 
 .search-results-grid {

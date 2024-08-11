@@ -158,7 +158,7 @@
     background-color: white;
 }
 .search-phare .search-bar {
-    width: 60%;
+    width:60%;
     height: 50%;
     outline: none;
 }
@@ -181,10 +181,11 @@
     border-radius: 30px;
     padding: 0.6rem;
 }
+
 .search-icon-after-layout:hover {
     background-color: rgba(109, 105, 105, 0.847);
 }
-.search-bar button {
+.search-icon-after-layout div[type="submit"]  {
     font-size: 16px;
     border: none;
     border-radius: 30px;

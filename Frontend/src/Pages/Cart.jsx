@@ -98,9 +98,14 @@ const Cart = () => {
         }
     };
 
+    // const closePopup = () => {
+    //     setShowPopup(false);
+    //     navigate("/");
+    // };
+
     const closePopup = () => {
         setShowPopup(false);
-        navigate("/");
+        navigate("/"); // Redirect to the landing page
     };
 
     const handleQuantityChange = async (productId, delta) => {
@@ -229,15 +234,25 @@ const Cart = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="cart-login-prompt">
-                            <h2>Please log in to view your cart</h2>
-                            <p>You need to be logged in to access your shopping cart.</p>
-                            <Link to="/login" className="login-button">Log In</Link>
-                        </div>
+                        <Pop_up 
+                            isSuccess={false} 
+                            review="Please log in to view your cart" 
+                            message="You need to be logged in to access your shopping cart" 
+                            onClose={closePopup} 
+                            href="/login"
+                        />
                     )}
                 </div>
             </div>
-            {showPopup && <Pop_up review="Thanh toán thành công!" onClose={closePopup} />}
+            {showPopup && 
+                <Pop_up 
+                    isSuccess={true} 
+                    review="Payment Successful!" 
+                    message="Your order will be delivered as soon as possible." 
+                    onClose={closePopup} 
+                    href="/"
+                />
+            }
         </div>
     );
 };
