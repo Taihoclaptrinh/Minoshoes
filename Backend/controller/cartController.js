@@ -78,8 +78,6 @@ export const updateCart = async (req, res) => {
   }
 };
 
-
-  
 // Remove item from cart
 export const removeFromCart = async (req, res) => {
   try {
@@ -117,3 +115,5 @@ export const countCart = async (req, res) => {
       res.status(500).send({ message: 'Error counting cart items', error });
   }
 };
+
+

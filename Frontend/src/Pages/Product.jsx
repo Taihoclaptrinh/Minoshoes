@@ -75,11 +75,17 @@ const Product = () => {
             return;
         }
     
+        if (!selectedSize) {
+            alert('Please select a size before adding to cart.');
+            return;
+        }
+    
         try {
             const response = await axios.post('/api/v1/auth/cart/add-to-cart', {
                 productId: product._id,
                 quantity: 1,
-                price: product.price
+                price: product.price,
+                size: selectedSize  // Thêm size vào đây
             }, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -88,9 +94,8 @@ const Product = () => {
     
             if (response.status === 200) {
                 alert('Product added to cart successfully!');
-                const newCartCount = response.data.totalQuantity; // Assuming the response contains the updated cart count
-                setCartCount(response.data.totalQuantity); // Update cart count based on response
-
+                const newCartCount = response.data.totalQuantity;
+                setCartCount(response.data.totalQuantity);
             }
         } catch (error) {
             console.error('Error adding product to cart:', error);

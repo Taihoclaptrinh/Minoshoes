@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { productInputs, userInputs, orderInputs } from "./formSource";
 
 import SearchResults from './Pages/SearchResult';
+import { UserProvider } from './UserContext';
 
 // Admin Components
 import AdminNavbar from "./Components/AdminNavbar/AdminNavbar";
@@ -77,12 +78,15 @@ const ShopApp = () => (
 // Main App Component
 function App() {
   return (
+    <UserProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/admin/*" element={<AdminApp />} />
         <Route path="/*" element={<ShopApp />} />
       </Routes>
     </BrowserRouter>
+    </UserProvider>
+
   );
 }
 

@@ -13,17 +13,17 @@ const Cart = () => {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [showPopup, setShowPopup] = useState(false);
-    const [shippingFee, setShippingFee] = useState(0);
-    const [sizes, setSizes] = useState([]);
-    const [stocks, setStocks] = useState([]);
-
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
-    const [paymentMethod, setPaymentMethod] = useState('--');
     const itemsPerPage = 4;
 
     const formatPrice = (price) => {
         return price.toLocaleString('vi-VN') + " VND";
+    };
+
+    const calculateTotalCost = () => {
+        const total = products.reduce((acc, product) => acc + product.product.price * product.quantity, 0);
+        setTotalCost(total);
     };
 
     const updateTotalItems = () => {
@@ -45,18 +45,7 @@ const Cart = () => {
             console.error('Error updating total cart count:', error);
         }
     };
-    const calculateShippingFee = (address) => {
-        if (address && address.toLowerCase().includes('Hồ Chí Minh')) {
-            return 14000;
-        }
-        return 30000;
-    };
-    useEffect(() => {
-        if (user && user.address) {
-            const fee = calculateShippingFee(user.address);
-            setShippingFee(fee);
-        }
-    }, [user]);
+
     const checkPaymentStatus = async (orderIdOrPaymentId) => {
         try {
             const token = localStorage.getItem('token');
@@ -70,72 +59,50 @@ const Cart = () => {
         }
     };
 
-    const calculateTotalCost = () => {
-        const subtotal = products.reduce((acc, product) => acc + product.product.price * product.quantity, 0);
-        setTotalCost(subtotal + shippingFee);
-    };
-
-    const clearCart = async () => {
-        const token = localStorage.getItem('token');
-        try {
-            for (const product of products) {
-                await axios.delete(`/api/v1/auth/cart/remove-from-cart/${product.product._id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-            }
-            setProducts([]);
-            setTotalCost(0);
-            setTotalItems(0);
-            updateTotalCartCount();
-        } catch (error) {
-            console.error('Error clearing cart:', error);
-        }
-    };
-
-
-
     const handleBuy = async () => {
         setIsLoading(true);
         setError(null);
-    
         try {
-            if (paymentMethod === 'COD') {
-                setShowPopup(true);
-                await clearCart();   // Thực hiện các tác vụ khác, như xóa giỏ hàng
+            const token = localStorage.getItem('token');
+            const response = await axios.post('/api/v1/payos/create-payment-link', {
+                amount: totalCost,
+                description: `Payment for ${totalItems} items`,
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-            } else if (paymentMethod === 'E-Banking') {
-                // Thanh toán E-Banking qua PayOS
-                const token = localStorage.getItem('token');
-                const response = await axios.post('/api/v1/payos/create-payment-link', {
-                    amount: totalCost,
-                    description: `Payment for ${totalItems} items`,
-                }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-    
-                if (response.data && response.data.checkoutUrl) {
-                    // Điều hướng người dùng đến trang thanh toán
-                    window.location.href = response.data.checkoutUrl;
-    
-                    // Sau khi người dùng quay lại từ trang thanh toán, kiểm tra trạng thái thanh toán
-                    const paymentSuccess = await checkPaymentStatus(response.data.orderIdOrPaymentId);
-                    if (paymentSuccess) {
-                        await clearCart(); // Xóa giỏ hàng khi thanh toán thành công
-                    } else {
-                        setError('Payment was not successful. Please try again.');
+            if (response.data && response.data.checkoutUrl) {
+                const paymentWindow = window.open(response.data.checkoutUrl, '_blank');
+                
+                const checkInterval = setInterval(async () => {
+                    if (paymentWindow.closed) {
+                        clearInterval(checkInterval);
+                        const paymentSuccessful = await checkPaymentStatus(response.data.orderId);
+                        if (paymentSuccessful) {
+                            setShowPopup(true);
+                            // Thực hiện các hành động khác sau khi thanh toán thành công
+                            // Ví dụ: cập nhật giỏ hàng, xóa sản phẩm đã mua, etc.
+                        } else {
+                            setError('Payment was not completed successfully.');
+                        }
+                        setIsLoading(false);
                     }
-                } else {
-                    throw new Error('Invalid response from payment link creation');
-                }
+                }, 5000);
+            } else {
+                throw new Error('Invalid response from payment link creation');
             }
         } catch (error) {
-            console.error('Error processing payment:', error);
+            console.error('Error creating payment link:', error);
             setError('Unable to process payment. Please try again later.');
-        } finally {
             setIsLoading(false);
         }
     };
-    
+
+    // const closePopup = () => {
+    //     setShowPopup(false);
+    //     navigate("/");
+    // };
+
     const closePopup = async () => {
         setShowPopup(false);
         await clearCart();
@@ -232,7 +199,7 @@ const Cart = () => {
                                                         </tr>
                                                     ))}
                                                 </table>
-                                            </div>
+                                                </div>
                                             <p>Total Items: {totalItems}</p>
                                             <p>Address: {user.address || "Address not provided"}</p>
                                             <p>Shipping Fee: {formatPrice(shippingFee)}</p>
@@ -256,15 +223,11 @@ const Cart = () => {
                                             </div>
                                             {error && <div className="error-message">{error}</div>}
                                             <div className="cart-total">
-                                                <span className="label">Subtotal:</span>
-                                                <span className="value">{formatPrice(totalCost - shippingFee)}</span>
-                                                <span className="label">Shipping Fee:</span>
-                                                <span className="value">{formatPrice(shippingFee)}</span>
                                                 <span className="label">Total:</span>
                                                 <span className="value">{formatPrice(totalCost)}</span>
                                                 <button 
                                                     onClick={handleBuy} 
-                                                    disabled={isLoading || products.length === 0 || totalCost === 0 || !paymentMethod}
+                                                    disabled={isLoading || products.length === 0 || totalCost === 0}
                                                 >
                                                     {isLoading ? 'Processing...' : 'Buy'}
                                                 </button>
