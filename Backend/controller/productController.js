@@ -106,3 +106,49 @@ export const getProducts = async (req, res) => {
         res.status(500).json({ message: "Server error while fetching products", error });
     }
 };
+export const checkout = async (req, res) => {
+    try {
+        const userId = req.user._id; // Đảm bảo req.user có _id
+
+        // Lấy giỏ hàng của người dùng
+        const cart = await cartModel.findOne({ user: userId }).populate('cartItems.product');
+
+        if (!cart) {
+            return res.status(404).json({ message: "Cart not found" });
+        }
+
+        // Cập nhật số lượng tồn kho cho mỗi sản phẩm trong giỏ hàng
+        for (let item of cart.cartItems) {
+            const product = item.product; // Kiểm tra nếu trường đúng là `product`
+            
+            if (!product) {
+                throw new Error(`Product is missing for item ${item._id}`);
+            }
+
+            if (!product._id) {
+                throw new Error(`Product ID is missing for item ${item._id}`);
+            }
+
+            const sizeIndex = product.sizes.indexOf(item.size);
+
+            if (sizeIndex === -1) {
+                throw new Error(`Invalid size ${item.size} for product ${product._id}`);
+            }
+
+            if (product.stocks[sizeIndex] < item.quantity) {
+                throw new Error(`Not enough stock for product ${product._id}, size ${item.size}`);
+            }
+
+            // Giảm số lượng tồn kho
+            product.stocks[sizeIndex] -= item.quantity;
+            await product.save();
+        }
+
+        // Xóa giỏ hàng sau khi thanh toán
+        await cartModel.findByIdAndDelete(cart._id);
+
+        res.status(200).json({ message: "Checkout successful" });
+    } catch (error) {
+        res.status(500).json({ message: "Server error during checkout", error: error.message });
+    }
+};
