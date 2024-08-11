@@ -3,6 +3,8 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { productInputs, userInputs, orderInputs } from "./formSource";
 
+import SearchResults from './Pages/SearchResult';
+
 // Admin Components
 import AdminNavbar from "./Components/AdminNavbar/AdminNavbar";
 import AdminSidebar from "./Components/AdminSidebar/AdminSidebar";
@@ -67,6 +69,7 @@ const ShopApp = () => (
       <Route path="/login" element={<LoginLogup />} />
       <Route path="/product" element={<Product />} />
       <Route path="/userinfo" element={<UserInfo />} />
+      <Route path="/search" element={<SearchResults />} /> 
     </Routes>
   </div>
 );

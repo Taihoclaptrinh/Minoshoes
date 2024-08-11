@@ -38,8 +38,10 @@ const Navbar = () => {
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        if (searchQuery) {
-            navigate(`/search?query=${searchQuery}`); // Chuyển hướng đến trang tìm kiếm với query
+        if (searchQuery.trim()) {
+            navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchVisible(false);
+            setSearchQuery('');
         }
     };
 
@@ -60,7 +62,6 @@ const Navbar = () => {
                             'Authorization': `Bearer ${token}`
                         }
                     });
-                    console.log("API response:", response.data); // Để debug
                     if (response.data && typeof response.data.totalQuantity === 'number') {
                         setCartCount(response.data.totalQuantity);
                     } else {
@@ -77,7 +78,6 @@ const Navbar = () => {
 
         if (user) {
             fetchCartCount();
-            const intervalId = setInterval(fetchCartCount, 30000);
         
             // Thêm event listener để cập nhật cartCount
             const handleCartCountUpdate = (event) => {
@@ -86,7 +86,6 @@ const Navbar = () => {
             window.addEventListener('cartCountUpdated', handleCartCountUpdate);
         
             return () => {
-              clearInterval(intervalId);
               window.removeEventListener('cartCountUpdated', handleCartCountUpdate);
             };
           } else {
@@ -137,14 +136,6 @@ const Navbar = () => {
         }
     };
 
-    const handleAddProduct = () => {
-        updateCartCount('increase');
-    };
-
-    const handleRemoveProduct = () => {
-        updateCartCount('decrease');
-    };
-    
     return (
         <div className="navbar">
             <div className="nav-content">
@@ -243,24 +234,20 @@ const Navbar = () => {
                 </div>
             </div>
             {searchVisible && (
-                <div className="search-phare" ref={searchBarRef}>
-                    <form onSubmit={handleSearchSubmit} className={`search-bar ${searchVisible ? "" : "hidden"}`}>
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                        />
-                    </form>
-                    <div className="search-icon-after-layout">
-                        <img
-                            src={search_icon}
-                            alt="Search Icon"
-                            onClick={handleSearchChange}
-                        />
-                    </div>
-                </div>
-            )}
+            <div className="search-phare" ref={searchBarRef}>
+                <form onSubmit={handleSearchSubmit} className={`search-bar ${searchVisible ? "" : "hidden"}`}>
+                    <input
+                        type="text"
+                        placeholder="Search by name or code..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <button type="submit" className="search-button">
+                        <img src={search_icon} alt="Search" />
+                    </button>
+                </form>
+            </div>
+        )}
                 <div className="nav-cart-count">0</div>
                 
             </div>
