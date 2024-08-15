@@ -1,6 +1,6 @@
 import "./AdminDatatable.css";
 import { DataGrid } from "@mui/x-data-grid";
-import { productColumns, productRows } from "../../datatablesource.js"; 
+import { productColumns, productRows } from "../../datatablesource.js"; // Adjust the path as needed
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
@@ -16,28 +16,26 @@ const AdminProductDatatable = () => {
       field: "action",
       headerName: "Action",
       width: 200,
-      renderCell: (params) => {
-        return (
-          <div className="cellAction">
-            <Link to={`/admin/products/${params.row.id}`} style={{ textDecoration: "none" }}>
-              <div className="viewButton">View</div>
-            </Link>
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row.id)}
-            >
-              Delete
-            </div>
+      renderCell: (params) => (
+        <div className="cellAction">
+          <Link to={`/admin/products/${params.row.id}`} className="viewButton">
+            View
+          </Link>
+          <div
+            className="deleteButton"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            Delete
           </div>
-        );
-      },
+        </div>
+      ),
     },
   ];
 
   return (
     <div className="AdminDatatable">
       <div className="datatableTitle">
-        Add New Product
+        Products
         <Link to="/admin/products/new" className="link">
           Add New
         </Link>

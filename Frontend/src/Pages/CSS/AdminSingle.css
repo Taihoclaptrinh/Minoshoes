@@ -28,6 +28,7 @@
 .AdminSingle .singleContainer .top .left,
 .AdminSingle .singleContainer .top .right {
   flex: 1;
+  min-width: 0;
 }
 
 .AdminSingle .singleContainer .top .left {
@@ -49,11 +50,6 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-size: 14px;
-}
-
-.AdminSingle .singleContainer .top .left .buttonContainer .editButton:hover,
-.AdminSingle .singleContainer .top .left .buttonContainer .saveButton:hover {
-  background-color: #f0f0f0;
 }
 
 .AdminSingle .singleContainer .top .left .buttonContainer .editButton {
@@ -86,6 +82,10 @@
   gap: 20px;
 }
 
+.AdminSingle .singleContainer .top .left .item .imagePreviewContainer {
+  flex-shrink: 0;
+}
+
 .AdminSingle .singleContainer .top .left .item .itemImg {
   width: 150px;
   height: 150px;
@@ -98,6 +98,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
 .AdminSingle .singleContainer .top .left .item .details .itemTitle {
@@ -108,27 +110,55 @@
 
 .AdminSingle .singleContainer .top .left .item .details .detailItem {
   display: flex;
+  flex-wrap: nowrap;
   gap: 10px;
   align-items: center;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .AdminSingle .singleContainer .top .left .item .details .detailItem .itemKey {
   font-weight: bold;
   color: #777;
+  width: 100px;
+  flex-shrink: 0;
 }
 
 .AdminSingle .singleContainer .top .left .item .details .detailItem .itemValue {
   color: #333;
+  font-size: 15px;
+  flex: 1;
+  min-width: 0;
+  margin: 10px 0;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 48%;
+  display: flex;
+  gap: 5px;
+  position: relative;
 }
 
-.AdminSingle .singleContainer .top .left .item .details .detailItem .itemValue input[type="text"],
-.AdminSingle .singleContainer .top .left .item .details .detailItem .itemValue input[type="email"],
-.AdminSingle .singleContainer .top .left .item .details .detailItem .itemValue input[type="number"] {
+.AdminSingle .singleContainer .top .left .item .details .detailItem .itemValue input {
+  width: 100%;
+  max-width: 100%;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 100%;
-  max-width: 300px;
+  font-size: 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AdminSingle .singleContainer .top .left .item .details .detailItem .itemValue input:focus {
+  z-index: 1;
+  width: auto;
+  min-width: 100%;
+  max-width: none;
 }
 
 .AdminSingle .singleContainer .top .right .chartContainer {
@@ -137,37 +167,4 @@
   background-color: #f9f9f9;
   border-radius: 10px;
   padding: 20px;
-}
-
-.AdminSingle .singleContainer .bottom .latestTransaction {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.AdminSingle .singleContainer .bottom .latestTransaction h2 {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-}
-
-.AdminSingle .singleContainer .bottom .latestTransaction .transactionDetail {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.AdminSingle .singleContainer .bottom .latestTransaction .transactionDetail .detailItem {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.AdminSingle .singleContainer .bottom .latestTransaction .transactionDetail .detailItem .itemKey {
-  font-weight: bold;
-  color: #555;
-}
-
-.AdminSingle .singleContainer .bottom .latestTransaction .transactionDetail .detailItem .itemValue {
-  color: #333;
 }

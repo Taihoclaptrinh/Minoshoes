@@ -12,7 +12,6 @@ const AdminHome = () => {
           <AdminWidget type="user" />
           <AdminWidget type="order" />
           <AdminWidget type="earning" />
-          <AdminWidget type="balance" />
         </div>
         <div className="charts">
           <AdminFeatured />

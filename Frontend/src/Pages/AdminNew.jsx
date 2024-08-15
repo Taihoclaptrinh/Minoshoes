@@ -8,7 +8,7 @@ const AdminNew = ({ inputs, title, formType }) => {
       [input.id]: input.value || (input.type === "file" ? [] : ""), // Initialize file inputs as empty arrays
     }), {})
   );
-  
+
   const [previewImages, setPreviewImages] = useState([]);
 
   // Pre-fill specific fields for user form
@@ -26,15 +26,24 @@ const AdminNew = ({ inputs, title, formType }) => {
   const handleFileChange = (e, id) => {
     const files = e.target.files;
     setFormData((prevData) => ({ ...prevData, [id]: files }));
-    
+
     // Update preview images
     const fileArray = Array.from(files);
-    const imageUrls = fileArray.map(file => URL.createObjectURL(file));
+    const imageUrls = fileArray.map((file) => URL.createObjectURL(file));
     setPreviewImages(imageUrls);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Ensure numeric values are non-negative
+    for (const key in formData) {
+      if (["price", "totalAmount"].includes(key) && Number(formData[key]) < 0) {
+        alert(`${key} must be a non-negative value.`);
+        return;
+      }
+    }
+
     // Process form submission logic here
     console.log("Form Data:", formData);
     // For file uploads, you may need to handle FormData and submit it via API
@@ -49,7 +58,8 @@ const AdminNew = ({ inputs, title, formType }) => {
         <div className="bottom">
           <div className="left">
             {/* Show preview images if needed */}
-            {(formType === "product" || formType === "user") && previewImages.length > 0 ? (
+            {(formType === "product" || formType === "user") &&
+            previewImages.length > 0 ? (
               <div className="imagePreviewContainer">
                 {previewImages.map((image, index) => (
                   <img
@@ -76,7 +86,7 @@ const AdminNew = ({ inputs, title, formType }) => {
               {inputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
-                  {input.type === 'file' ? (
+                  {input.type === "file" ? (
                     <input
                       type={input.type}
                       placeholder={input.placeholder}
@@ -88,7 +98,15 @@ const AdminNew = ({ inputs, title, formType }) => {
                       type={input.type}
                       placeholder={input.placeholder}
                       value={formData[input.id]}
-                      onChange={(e) => handleInputChange(input.id, e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange(input.id, e.target.value)
+                      }
+                      disabled={
+                        (formType === "user" &&
+                          (input.id === "userRole" ||
+                            input.id === "userTotalSpent")) ||
+                        false
+                      }
                     />
                   )}
                 </div>

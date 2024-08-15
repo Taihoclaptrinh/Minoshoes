@@ -54,7 +54,6 @@ export const orderRows = [
       { productId: 1, quantity: 2, price: 200 },
       { productId: 2, quantity: 1, price: 100 },
     ],
-    totalAmount: 300,
     shippingAddress: '123 Main St, Anytown, USA',
     paymentMethod: 'Credit Card',
     paymentStatus: 'Paid',
@@ -69,7 +68,6 @@ export const orderRows = [
       { productId: 3, quantity: 1, price: 150 },
       { productId: 4, quantity: 3, price: 50 },
     ],
-    totalAmount: 300,
     shippingAddress: '456 Elm St, Othertown, USA',
     paymentMethod: 'PayPal',
     paymentStatus: 'Pending',
@@ -82,12 +80,65 @@ export const orderRows = [
 export const orderColumns = [
   { field: "id", headerName: "ID", width: 90 },
   { field: "userID", headerName: "User ID", width: 150 },
-  { field: "items", headerName: "Items", width: 150 },
-  { field: "totalAmount", headerName: "Total Amount", width: 150 },
+  {
+    field: "items",
+    headerName: "Items",
+    width: 250,
+    renderCell: (params) => (
+      <div>
+        {params.value.map((item, index) => (
+          <div key={index}>
+            Product ID: {item.productId}, Quantity: {item.quantity}, Price: {item.price}
+          </div>
+        ))}
+      </div>
+    ),
+  },
   { field: "shippingAddress", headerName: "Shipping Address", width: 200 },
   { field: "paymentMethod", headerName: "Payment Method", width: 150 },
   { field: "paymentStatus", headerName: "Payment Status", width: 150 },
   { field: "orderStatus", headerName: "Order Status", width: 150 },
+  { field: "createAt", headerName: "Created At", width: 150 },
+  { field: "updateAt", headerName: "Updated At", width: 150 },
+];
+
+export const productColumns = [
+  { field: "id", headerName: "ID", width: 90 },
+  { field: "name", headerName: "Name", width: 150 },
+  { field: "description", headerName: "Description", width: 200 },
+  { field: "price", headerName: "Price", width: 100 },
+  { field: "brand", headerName: "Brand", width: 100 },
+  { field: "category", headerName: "Category", width: 100 },
+  {
+    field: "sizes",
+    headerName: "Sizes",
+    width: 150,
+    renderCell: (params) => params.value.join(", "),
+  },
+  {
+    field: "color",
+    headerName: "Colors",
+    width: 150,
+    renderCell: (params) => params.value.join(", "),
+  },
+  {
+    field: "stocks",
+    headerName: "Stocks",
+    width: 150,
+    renderCell: (params) => params.value.join(", "),
+  },
+  {
+    field: "images",
+    headerName: "Images",
+    width: 200,
+    renderCell: (params) => (
+      <div>
+        {params.value.map((image, index) => (
+          <img key={index} src={image} alt={`Product ${index}`} style={{ width: 50, height: 50, margin: 2 }} />
+        ))}
+      </div>
+    ),
+  },
   { field: "createAt", headerName: "Created At", width: 150 },
   { field: "updateAt", headerName: "Updated At", width: 150 },
 ];
@@ -104,18 +155,4 @@ export const userColumns = [
   { field: "updateAt", headerName: "Updated At", width: 150 },
 ];
 
-export const productColumns = [
-  { field: "id", headerName: "ID", width: 90 },
-  { field: "name", headerName: "Name", width: 150 },
-  { field: "description", headerName: "Description", width: 200 },
-  { field: "price", headerName: "Price", width: 100 },
-  { field: "brand", headerName: "Brand", width: 100 },
-  { field: "category", headerName: "Category", width: 100 },
-  { field: "sizes", headerName: "Sizes", width: 100 },
-  { field: "color", headerName: "Colors", width: 100 },
-  { field: "stocks", headerName: "Stocks", width: 100 },
-  { field: "images", headerName: "Images", width: 200 },
-  { field: "createAt", headerName: "Created At", width: 150 },
-  { field: "updateAt", headerName: "Updated At", width: 150 },
-];
 

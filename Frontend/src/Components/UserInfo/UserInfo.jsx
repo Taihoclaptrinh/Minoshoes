@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import './UserInfo.css';
+import AddressSelector from '../Address/Address'; // Import the AddressSelector component
 
 const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -41,14 +42,9 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
     setUpdatedUser({ ...updatedUser, [name]: value });
   };
 
-  const handleDateChange = (e) => {
-    setUpdatedUser({ ...updatedUser, dob: e.target.value });
-  };
-
-  const handleAddressChange = (e, index) => {
-    const { value } = e.target;
+  const handleAddressChange = (city, district, ward, street, index) => {
     const newAddresses = updatedUser.addresses.map((address, i) =>
-      i === index ? value : address
+      i === index ? { city, district, ward, street } : address
     );
     setUpdatedUser({ ...updatedUser, addresses: newAddresses });
   };
@@ -84,7 +80,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
                 onChange={handleChange}
               />
             </label>
-            <label className='Gender_label'>
+            <label className="Gender_label">
               Gender:
               <select
                 name="gender"
@@ -95,14 +91,16 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
                 <option value="Female">Female</option>
               </select>
             </label>
-            <br/><br/>
+            <br /><br />
             <label>
               Date of Birth:
               <input
                 type="date"
                 name="dob"
-                value={updatedUser.dob}
-                onChange={handleDateChange}
+                value={updatedUser.dob.split('T')[0]}  // Chuyển đổi định dạng ngày để tương thích với <input type="date">
+                onChange={(e) =>
+                  setUpdatedUser({ ...updatedUser, dob: e.target.value })
+                }
               />
             </label>
             <label>
@@ -133,7 +131,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
               <strong>Full name:</strong> {user.fullName}
             </p>
             <p>
-              <strong>Date of birth:</strong> {new Date(user.dob).toLocaleDateString()}
+              <strong>Date of birth:</strong> {new Date(user.dob).toLocaleDateString()} 
             </p>
             <p>
               <strong>Gender:</strong> {user.gender}
@@ -152,6 +150,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
       </div>
     </>
   );
+  
 
   const renderAddress = () => (
     <>
@@ -162,14 +161,31 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
         {isEditing ? (
           <form>
             {updatedUser.addresses.slice(0, 2).map((address, index) => (
-              <label key={index}>
-                {`Address ${index + 1}:`}
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => handleAddressChange(e, index)}
+              <div key={index}>
+                <label>{`Address ${index + 1}:`}</label>
+                <AddressSelector
+                  onChange={(city, district, ward) =>
+                    handleAddressChange(city, district, ward, address.street, index)
+                  }
+                  initialAddress={address} // Pass initial address data
                 />
-              </label>
+                <label>
+                  Street:
+                  <input
+                    type="text"
+                    value={address.street || ''}
+                    onChange={(e) =>
+                      handleAddressChange(
+                        address.city,
+                        address.district,
+                        address.ward,
+                        e.target.value,
+                        index
+                      )
+                    }
+                  />
+                </label>
+              </div>
             ))}
             <button type="button" onClick={handleSave} className="save">
               Save
@@ -179,7 +195,8 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
           <>
             {user.addresses.slice(0, 2).map((address, index) => (
               <p key={index}>
-                <strong>Address {index + 1}:</strong> {address}
+                <strong>Address {index + 1}:</strong>{' '}
+                {`${address.street}, ${address.ward}, ${address.district}, ${address.city}`}
               </p>
             ))}
             <button onClick={handleEdit} className="edit">
@@ -239,10 +256,18 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
               </label>
-              <button type="button" onClick={handleDeleteConfirm} className="confirm-delete">
+              <button
+                type="button"
+                onClick={handleDeleteConfirm}
+                className="confirm-delete"
+              >
                 Confirm
               </button>
-              <button type="button" onClick={() => setDeletingOrderId(null)} className="cancel-delete">
+              <button
+                type="button"
+                onClick={() => setDeletingOrderId(null)}
+                className="cancel-delete"
+              >
                 Cancel
               </button>
             </form>

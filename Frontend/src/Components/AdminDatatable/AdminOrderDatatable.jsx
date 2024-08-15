@@ -16,28 +16,26 @@ const AdminOrderDatatable = () => {
       field: "action",
       headerName: "Action",
       width: 200,
-      renderCell: (params) => {
-        return (
-          <div className="cellAction">
-            <Link to={`/admin/orders/${params.row.id}`} style={{ textDecoration: "none" }}>
-              <div className="viewButton">View</div>
-            </Link>
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row.id)}
-            >
-              Delete
-            </div>
+      renderCell: (params) => (
+        <div className="cellAction">
+          <Link to={`/admin/orders/${params.row.id}`} className="viewButton">
+            View
+          </Link>
+          <div
+            className="deleteButton"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            Delete
           </div>
-        );
-      },
+        </div>
+      ),
     },
   ];
 
   return (
     <div className="AdminDatatable">
       <div className="datatableTitle">
-        Add New Order
+        Orders
         <Link to="/admin/orders/new" className="link">
           Add New
         </Link>

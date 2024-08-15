@@ -1,198 +1,178 @@
-// Updated user inputs
 export const userInputs = [
   {
-    id: 'images',
+    id: 'userImage', // Unique ID
     label: "Images",
     type: "file",
     placeholder: "Upload images",
     multiple: false,
   },
   {
-    id: 'name',
-    label: "User ID",
-    type: "text",
-    placeholder: "User ID",
-  },
-  {
-    id: 'name',
+    id: 'userName', // Unique ID
     label: "Name",
     type: "text",
     placeholder: "John Doe",
   },
   {
-    id: 'email',
+    id: 'userEmail', // Unique ID
     label: "Email",
     type: "email",
     placeholder: "john.doe@example.com",
   },
   {
-    id: 'password',
+    id: 'userPassword', // Unique ID
     label: "Password",
     type: "password",
     placeholder: "Enter password",
   },
   {
-    id: 'phone',
+    id: 'userPhone', // Unique ID
     label: "Phone",
     type: "tel",
     placeholder: "123-456-7890",
   },
   {
-    id: 'address',
+    id: 'userAddress', // Unique ID
     label: "Address",
     type: "text",
     placeholder: "123 Main St, Anytown, USA",
   },
   {
-    id: 'totalSpent',
+    id: 'userTotalSpent', // Unique ID
     label: "Total Spent",
     type: "number",
     placeholder: "0",
+    min: 0, // Ensure non-negative values
   },
   {
-    id: 'role',
+    id: 'userRole', // Unique ID
     label: "Role",
     type: "text",
-    placeholder: "User",
+    placeholder: "Admin",
   },
   {
-    id: 'createAt',
+    id: 'userCreateAt', // Unique ID
     label: "Created At",
     type: "date",
   },
   {
-    id: 'updateAt',
+    id: 'userUpdateAt', // Unique ID
     label: "Updated At",
     type: "date",
   },
 ];
-
-// Updated product inputs
 export const productInputs = [
   {
-    id: 'name',
-    label: "Product ID",
-    type: "text",
-    placeholder: "Product ID",
-  },
-  {
-    id: 'name',
+    id: 'productName', // Unique ID
     label: "Name",
     type: "text",
     placeholder: "Product Name",
   },
   {
-    id: 'description',
+    id: 'productDescription', // Unique ID
     label: "Description",
     type: "text",
     placeholder: "Description of the product",
   },
   {
-    id: 'price',
+    id: 'productPrice', // Unique ID
     label: "Price",
     type: "number",
     placeholder: "100",
+    min: 0, // Ensure non-negative values
   },
   {
-    id: 'brand',
+    id: 'productBrand', // Unique ID
     label: "Brand",
     type: "text",
     placeholder: "Brand Name",
   },
   {
-    id: 'category',
+    id: 'productCategory', // Unique ID
     label: "Category",
     type: "text",
     placeholder: "Product Category",
   },
   {
-    id: 'sizes',
+    id: 'productSizes', // Unique ID
     label: "Sizes",
     type: "text",
     placeholder: "S, M, L",
   },
   {
-    id: 'color',
+    id: 'productColor', // Unique ID
     label: "Colors",
     type: "text",
     placeholder: "Red, Blue",
   },
   {
-    id: 'stocks',
+    id: 'productStocks', // Unique ID
     label: "Stocks",
     type: "text",
     placeholder: "10, 20, 15",
   },
   {
-    id: 'images',
+    id: 'productImages', // Unique ID
     label: "Images",
     type: "file",
     placeholder: "Upload images",
     multiple: true,
   },
   {
-    id: 'createAt',
+    id: 'productCreateAt', // Unique ID
     label: "Created At",
     type: "date",
   },
   {
-    id: 'updateAt',
+    id: 'productUpdateAt', // Unique ID
     label: "Updated At",
     type: "date",
   },
 ];
-
-// Updated order inputs
 export const orderInputs = [
   {
-    id: 'userID',
+    id: 'userId',
     label: "User ID",
-    type: "number",
-    placeholder: "1",
+    type: "text",
+    placeholder: "Enter User ID",
+    maxLength: 20, // Example maxLength
   },
   {
-    id: 'items',
+    id: 'orderItems', // Unique ID
     label: "Items",
     type: "text",
     placeholder: "Product ID: 1, Quantity: 2, Price: 200",
   },
   {
-    id: 'totalAmount',
-    label: "Total Amount",
-    type: "number",
-    placeholder: "0",
-  },
-  {
-    id: 'shippingAddress',
+    id: 'orderShippingAddress', // Unique ID
     label: "Shipping Address",
     type: "text",
     placeholder: "123 Main St, Anytown, USA",
   },
   {
-    id: 'paymentMethod',
+    id: 'orderPaymentMethod', // Unique ID
     label: "Payment Method",
     type: "text",
     placeholder: "Credit Card",
   },
   {
-    id: 'paymentStatus',
+    id: 'orderPaymentStatus', // Unique ID
     label: "Payment Status",
     type: "text",
     placeholder: "Paid",
   },
   {
-    id: 'orderStatus',
-    label: "Order Status",
+    id: 'orderDeliveryStatus', // Unique ID
+    label: "Delivery Status",
     type: "text",
     placeholder: "Shipped",
   },
   {
-    id: 'createAt',
+    id: 'orderCreateAt', // Unique ID
     label: "Created At",
     type: "date",
   },
   {
-    id: 'updateAt',
+    id: 'orderUpdateAt', // Unique ID
     label: "Updated At",
     type: "date",
   },
