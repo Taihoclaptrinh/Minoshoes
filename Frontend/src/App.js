@@ -5,6 +5,9 @@ import { productInputs, userInputs, orderInputs } from "./formSource";
 
 import SearchResults from './Pages/SearchResult';
 import { UserProvider } from './UserContext';
+import PrivacyPolicy from "./Components/Docs/privacy_policy";
+import CookiesSetting from "./Components/Docs/cookies_setting";
+import TermOfService from "./Components/Docs/term_of_service";
 
 // Admin Components
 import AdminNavbar from "./Components/AdminNavbar/AdminNavbar";
@@ -24,6 +27,7 @@ import Cart from "./Pages/Cart";
 import LoginLogup from "./Pages/LoginLogup";
 import Product from "./Pages/Product";
 import UserInfo from "./Pages/UserInfoPage";
+
 
 // Admin App Component
 const AdminApp = () => (
@@ -83,6 +87,9 @@ function App() {
       <Routes>
         <Route path="/admin/*" element={<AdminApp />} />
         <Route path="/*" element={<ShopApp />} />
+        <Route path="/agreement-service/privacy-policy" element={<PrivacyPolicy />} /> 
+        <Route path="/agreement-service/term-of-service" element={<TermOfService />} /> 
+        <Route path="/agreement-service/cookies-setting" element={<CookiesSetting />} /> 
       </Routes>
     </BrowserRouter>
     </UserProvider>

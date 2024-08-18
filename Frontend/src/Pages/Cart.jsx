@@ -225,9 +225,9 @@ const Cart = () => {
                                                     ))}
                                                 </table>
                                             </div>
-                                            <p>Total Items: {totalItems}</p>
-                                            <p>Address: {user.address || "Address not provided"}</p>
-                                            <p>Shipping Fee: {formatPrice(shippingFee)}</p>
+                                            <p style={{borderTop:"1px solid black", paddingTop:"1rem"}}>Total Items: {totalItems}</p>
+                                            <p style={{marginTop:"0.5rem"}}>Address: {user.address || "Address not provided"}</p>
+                                            <p style={{marginTop:"0.5rem"}}>Shipping Fee: {formatPrice(shippingFee)}</p>
                                             <div className="payment-discount-container">
                                             <div className="payment-discount-row">
                                                 <label htmlFor="payment-method">Payment Method</label>
@@ -248,11 +248,15 @@ const Cart = () => {
                                             </div>
                                             {error && <div className="error-message">{error}</div>}
                                             <div className="cart-total">
-                                                <span className="label">Subtotal:</span>
-                                                <span className="value">{formatPrice(totalCost - shippingFee)}</span>
-                                                <span className="label">Shipping Fee:</span>
-                                                <span className="value">{formatPrice(shippingFee)}</span>
-                                                <span className="label">Total:</span>
+                                                <div className="element-total" style={{marginBottom: "0.5rem"}}> 
+                                                    <span >Subtotal:
+                                                        <span className="value">{formatPrice(totalCost - shippingFee)}</span>
+                                                    </span>
+                                                    <span >Shipping Fee:
+                                                        <span className="value">{formatPrice(shippingFee)}</span>
+                                                    </span>
+                                                </div>
+                                                <span >Total:</span>
                                                 <span className="value">{formatPrice(totalCost)}</span>
                                                 <button 
                                                     onClick={handleBuy} 
