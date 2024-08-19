@@ -10,7 +10,6 @@ import PrivacyPolicy from "./Components/Docs/privacy_policy";
 import CookiesSetting from "./Components/Docs/cookies_setting";
 import TermOfService from "./Components/Docs/term_of_service";
 
-
 // Admin Components
 import AdminNavbar from "./Components/AdminNavbar/AdminNavbar";
 import AdminSidebar from "./Components/AdminSidebar/AdminSidebar";
@@ -32,6 +31,7 @@ import Cart from "./Pages/Cart";
 import LoginLogup from "./Pages/LoginLogup";
 import Product from "./Pages/Product";
 import UserInfo from "./Pages/UserInfoPage";
+
 
 // Admin App Component
 const AdminApp = () => (

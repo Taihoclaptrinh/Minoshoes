@@ -179,3 +179,4 @@ const TermOfService = () => {
 };
 
 export default TermOfService
+
