@@ -14,8 +14,6 @@ const Cart = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [showPopup, setShowPopup] = useState(false);
     const [shippingFee, setShippingFee] = useState(0);
-    const [sizes, setSizes] = useState([]);
-    const [stocks, setStocks] = useState([]);
 
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
@@ -49,7 +47,7 @@ const Cart = () => {
         if (address && address.toLowerCase().includes('Hồ Chí Minh')) {
             return 14000;
         }
-        return 30000;
+        return 1000;
     };
     useEffect(() => {
         if (user && user.address) {
@@ -57,6 +55,7 @@ const Cart = () => {
             setShippingFee(fee);
         }
     }, [user]);
+
     const checkPaymentStatus = async (orderIdOrPaymentId) => {
         try {
             const token = localStorage.getItem('token');
@@ -69,6 +68,7 @@ const Cart = () => {
             return false;
         }
     };
+    
 
     const calculateTotalCost = () => {
         const subtotal = products.reduce((acc, product) => acc + product.product.price * product.quantity, 0);
@@ -78,17 +78,18 @@ const Cart = () => {
     const clearCart = async () => {
         const token = localStorage.getItem('token');
         try {
-            for (const product of products) {
-                await axios.delete(`/api/v1/auth/cart/remove-from-cart/${product.product._id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-            }
+            const response = await axios.delete('/api/v1/auth/cart/clear', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log('Clear cart response:', response.data);
             setProducts([]);
             setTotalCost(0);
             setTotalItems(0);
-            updateTotalCartCount();
+            await updateTotalCartCount();
+            return true;
         } catch (error) {
             console.error('Error clearing cart:', error);
+            return false;
         }
     };
 
@@ -97,31 +98,53 @@ const Cart = () => {
         setError(null);
     
         try {
+            const token = localStorage.getItem('token');
+            const orderItems = {
+                orderItems: products.map(product => ({
+                    product: product.product._id,
+                    name: product.product.name,
+                    quantity: product.quantity,
+                    price: product.product.price,
+                    size: product.size
+                })),
+                shippingAddress: {
+                    fullName: user.name,
+                    address: user.address,
+                    phoneNumber: user.phone,
+                },
+                paymentMethod,
+                shippingPrice: shippingFee,
+                totalPrice: totalCost
+            };
+    
             if (paymentMethod === 'COD') {
-                setShowPopup(true);
-                await clearCart();   // Thực hiện các tác vụ khác, như xóa giỏ hàng
-
+                // Create the order immediately for COD
+                const response = await axios.post('/api/v1/orders/create-order', orderItems, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+    
+                if (response.status === 201) {
+                    const cleared = await clearCart(); // Wait for cart to clear
+                    if (cleared) {
+                        setShowPopup(true); // Show success pop-up
+                    } else {
+                        setError('Order created but failed to clear cart. Please refresh the page.');
+                    }
+                } else {
+                    throw new Error('Failed to create order');
+                }
             } else if (paymentMethod === 'E-Banking') {
-                // Thanh toán E-Banking qua PayOS
-                const token = localStorage.getItem('token');
-                const response = await axios.post('/api/v1/payos/create-payment-link', {
+                const paymentResponse = await axios.post('/api/v1/payos/create-payment-link', {
                     amount: totalCost,
                     description: `Payment for ${totalItems} items`,
                 }, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-    
-                if (response.data && response.data.checkoutUrl) {
-                    // Điều hướng người dùng đến trang thanh toán
-                    window.location.href = response.data.checkoutUrl;
-    
-                    // Sau khi người dùng quay lại từ trang thanh toán, kiểm tra trạng thái thanh toán
-                    const paymentSuccess = await checkPaymentStatus(response.data.orderIdOrPaymentId);
-                    if (paymentSuccess) {
-                        await clearCart(); // Xóa giỏ hàng khi thanh toán thành công
-                    } else {
-                        setError('Payment was not successful. Please try again.');
-                    }
+                if (paymentResponse.data && paymentResponse.data.checkoutUrl) {
+                    localStorage.setItem('pendingOrder', JSON.stringify(orderItems));
+                    const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
+                    alert(pendingOrder)
+                    window.location.href = paymentResponse.data.checkoutUrl;
                 } else {
                     throw new Error('Invalid response from payment link creation');
                 }
@@ -133,6 +156,45 @@ const Cart = () => {
             setIsLoading(false);
         }
     };
+    useEffect(() => {
+        const handlePaymentCompletion = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const orderCode = urlParams.get('orderCode'); // Chỉnh sửa ở đây, lấy đúng tham số
+    
+            if (status === 'PAID' && orderCode) {
+                const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
+                if (pendingOrder) {
+                    try {
+                        const token = localStorage.getItem('token');
+                        const response = await axios.post('/api/v1/orders/create-order', pendingOrder, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+    
+                        if (response.status === 201) {
+                            const cleared = await clearCart();
+                            if (cleared) {
+                                setShowPopup(true);
+                                localStorage.removeItem('pendingOrder');
+                            } else {
+                                setError('Order created but failed to clear cart. Please refresh the page.');
+                            }
+                        } else {
+                            throw new Error('Failed to create order after successful payment');
+                        }
+                    } catch (error) {
+                        console.error('Error creating order after payment:', error);
+                        setError('Payment successful but failed to create order. Please contact support.');
+                    }
+                }
+            }
+        };
+    
+        handlePaymentCompletion();
+    }, []);
+    
+    
+    
 
     const handleQuantityChange = async (productId, delta) => {
         const token = localStorage.getItem('token');
@@ -211,18 +273,18 @@ const Cart = () => {
                                         <>
                                             <div className="cart_products-container">
                                                 <table id="cart_product-table">
-                                                    {displayedProducts.map(product => (
-                                                        <tr key={product.product._id}>
-                                                            <td>{product.product.name}</td>
-                                                            <td>Size: {product.size}</td>  {/* Thêm dòng này */}
-                                                            <td className="cart_quantity-container">
-                                                                <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, -1)}>-</button>
-                                                                <span className="cart_quantity">{product.quantity}</span>
-                                                                <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, 1)}>+</button>
-                                                            </td>
-                                                            <td>{formatPrice(product.product.price * product.quantity)}</td>
-                                                        </tr>
-                                                    ))}
+                                                {displayedProducts.map(product => (
+                                                    <tr key={product.product._id}>
+                                                        <td>{product.product.name}</td>
+                                                        <td>Size: {product.size}</td>  {/* This line displays the selected size */}
+                                                        <td className="cart_quantity-container">
+                                                            <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, -1)}>-</button>
+                                                            <span className="cart_quantity">{product.quantity}</span>
+                                                            <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, 1)}>+</button>
+                                                        </td>
+                                                        <td>{formatPrice(product.product.price * product.quantity)}</td>
+                                                    </tr>
+                                                ))}
                                                 </table>
                                             </div>
                                             <p>Total Items: {totalItems}</p>

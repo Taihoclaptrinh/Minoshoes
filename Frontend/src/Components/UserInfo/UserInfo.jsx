@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import './UserInfo.css';
-import AddressSelector from '../Address/Address'; // Import the AddressSelector component
+// import AddressSelector from '../Address/Address'; // Import the AddressSelector component
 
 const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -65,42 +65,19 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
       <div className="details-content">
         <div className="avatar">
           <img
-            src="https://th.bing.com/th/id/OIP.XjtD-t15oASjdfRvYim11wHaEX?rs=1&pid=ImgDetMain"
+            src="https://toigingiuvedep.vn/wp-content/uploads/2022/01/anh-meo-cute.jpg"
             alt="Avatar"
           />
         </div>
         {isEditing ? (
           <form>
             <label>
-              Full Name:
+              Name:
               <input
                 type="text"
-                name="fullName"
-                value={updatedUser.fullName}
+                name="name"
+                value={updatedUser.name}
                 onChange={handleChange}
-              />
-            </label>
-            <label className="Gender_label">
-              Gender:
-              <select
-                name="gender"
-                value={updatedUser.gender}
-                onChange={handleChange}
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </label>
-            <br /><br />
-            <label>
-              Date of Birth:
-              <input
-                type="date"
-                name="dob"
-                value={updatedUser.dob.split('T')[0]}  // Chuyển đổi định dạng ngày để tương thích với <input type="date">
-                onChange={(e) =>
-                  setUpdatedUser({ ...updatedUser, dob: e.target.value })
-                }
               />
             </label>
             <label>
@@ -121,6 +98,15 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
                 onChange={handleChange}
               />
             </label>
+            <label>
+              Address:
+              <input
+                type="text"
+                name="address"
+                value={updatedUser.address}
+                onChange={handleChange}
+              />
+            </label>
             <button type="button" onClick={handleSave} className="save">
               Save
             </button>
@@ -128,19 +114,16 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
         ) : (
           <>
             <p>
-              <strong>Full name:</strong> {user.fullName}
+              <strong>Name:</strong> {user.name}
             </p>
             <p>
-              <strong>Date of birth:</strong> {new Date(user.dob).toLocaleDateString()} 
-            </p>
-            <p>
-              <strong>Gender:</strong> {user.gender}
-            </p>
-            <p>
-              <strong>Email address:</strong> {user.email}
+              <strong>Email:</strong> {user.email}
             </p>
             <p>
               <strong>Phone Number:</strong> {user.phone}
+            </p>
+            <p>
+              <strong>Address:</strong> {user.address}
             </p>
             <button onClick={handleEdit} className="edit">
               Edit
@@ -150,7 +133,6 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
       </div>
     </>
   );
-  
 
   const renderAddress = () => (
     <>
@@ -160,45 +142,24 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
       <div className="details-content">
         {isEditing ? (
           <form>
-            {updatedUser.addresses.slice(0, 2).map((address, index) => (
-              <div key={index}>
-                <label>{`Address ${index + 1}:`}</label>
-                <AddressSelector
-                  onChange={(city, district, ward) =>
-                    handleAddressChange(city, district, ward, address.street, index)
-                  }
-                  initialAddress={address} // Pass initial address data
-                />
-                <label>
-                  Street:
-                  <input
-                    type="text"
-                    value={address.street || ''}
-                    onChange={(e) =>
-                      handleAddressChange(
-                        address.city,
-                        address.district,
-                        address.ward,
-                        e.target.value,
-                        index
-                      )
-                    }
-                  />
-                </label>
-              </div>
-            ))}
+            <label>
+              Address:
+              <input
+                type="text"
+                name="address"
+                value={updatedUser.address}
+                onChange={handleChange}
+              />
+            </label>
             <button type="button" onClick={handleSave} className="save">
               Save
             </button>
           </form>
         ) : (
           <>
-            {user.addresses.slice(0, 2).map((address, index) => (
-              <p key={index}>
-                <strong>Address {index + 1}:</strong>{' '}
-                {`${address.street}, ${address.ward}, ${address.district}, ${address.city}`}
-              </p>
-            ))}
+            <p>
+              <strong>Address:</strong> {user.address}
+            </p>
             <button onClick={handleEdit} className="edit">
               Edit
             </button>
@@ -225,7 +186,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
               width: 150,
               renderCell: (params) => (
                 <DeleteIcon
-                  onClick={() => handleDelete(params.row.id)}
+                  onClick={() => handleDelete(params.row._id)}
                   className="delete-icon"
                   style={{ cursor: 'pointer', color: '#e57373' }}
                 />

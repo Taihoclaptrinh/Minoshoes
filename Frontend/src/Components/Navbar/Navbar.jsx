@@ -18,6 +18,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const searchBarRef = useRef(null);
     const location = useLocation(); // Access current location
+;
 
     const handleLogout = () => {
         if (logout) {
@@ -25,7 +26,6 @@ const Navbar = () => {
             navigate('/login'); // Chuyển hướng người dùng đến trang đăng nhập sau khi đăng xuất
         }
     };
-
     const handleSearchIconClick = () => {
         if (searchVisible && searchQuery.trim()) {
             navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
@@ -34,10 +34,6 @@ const Navbar = () => {
         } else {
             setSearchVisible(!searchVisible);
         }
-    };
-
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
     };
 
     const handleClickOutside = (event) => {
@@ -61,7 +57,6 @@ const Navbar = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
-
     useEffect(() => {
         const fetchCartCount = async () => {
             try {
@@ -85,7 +80,6 @@ const Navbar = () => {
                 setCartCount(0);
             }
         };
-
         if (user) {
             fetchCartCount();
         
@@ -229,18 +223,19 @@ const Navbar = () => {
                         <span>hi, {user.name}</span>
                         <div style={{marginTop:"-3rem"}} className="dropdown-container">
                             <div class="dropdown">
-                                {/* User info hiện cho người dùng bình thường
-                                    Admin dashboard chỉ hiện cho role Admin */}
                                 <a href="/userinfo">User Info</a>
-                                <a href="/admin/*">Admin dashboard</a>
+                                {user && user.role === 1 && ( 
+                                    <a href="/admin/">Admin dashboard</a>
+                                )}
                                 <a onClick={handleLogout}>Log out</a>
                             </div>
-                        </div>   
+                        </div>
                     </div>
-                    ) : (
-                        <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
-                    )}
-                    
+                ) : (
+                    <Link to='login'>
+                        <img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} />
+                    </Link>
+                )}
                 </div>
             </div>
             {searchVisible && (

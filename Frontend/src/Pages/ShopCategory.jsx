@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './CSS/ProductCategory.css';
 import Footer from '../Components/Footer/Footer';
-import { useNavigate } from 'react-router-dom'; // Thêm import useNavigate
-import Loader from "../Components/Loader/Loading.jsx"
+import { useNavigate, useLocation } from 'react-router-dom';
+import Loader from "../Components/Loader/Loading.jsx";
 
 const ProductCategory = () => {
   const [productData, setProductData] = useState([]);
@@ -17,37 +17,28 @@ const ProductCategory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [openBrands, setOpenBrands] = useState([]);
   const [maxPrice, setMaxPrice] = useState(5000000);
-  const [totalPages, setTotalPages] = useState(1); // Initialize totalPages
-
-  const productsPerPage = 12; // Define the number of products per page
-  const navigate = useNavigate(); // Khai báo useNavigate
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchCompleted, setSearchCompleted] = useState(false);
+  const [filteredAndSortedProducts, setFilteredAndSortedProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [isFiltering, setIsFiltering] = useState(false);
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const productsPerPage = 12;
 
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN') + " VND";
   };
   
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const response = await axios.get('/api/v1/auth/products');
-  //       const products = response.data;
-  //       setProductData(products);
-  //       setTotalPages(Math.ceil(products.length / productsPerPage)); // Calculate totalPages
-  //     } catch (error) {
-  //       console.error('Error fetching products:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, []);
-  // Test result search 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
+      setSearchCompleted(false);
       try {
         const searchQuery = new URLSearchParams(location.search).get('query');
-        const response = await axios.get(`/api/v1/auth/products${searchQuery ? `/search?query=${encodeURIComponent(searchQuery)}` : ''}`);
+        const colorQuery = selectedColors.length > 0 ? `&color=${selectedColors.join(',')}` : '';
+        const response = await axios.get(`/api/v1/auth/products${searchQuery ? `/search?query=${encodeURIComponent(searchQuery)}${colorQuery}` : colorQuery}`);
         const products = response.data;
         setProductData(products);
         setTotalPages(Math.ceil(products.length / productsPerPage));
@@ -55,18 +46,45 @@ const ProductCategory = () => {
         console.error('Error fetching products:', error);
       } finally {
         setLoading(false);
+        setSearchCompleted(true);
       }
     };
     fetchProducts();
-  }, [location.search]); // Re-fetch when the search query changes
+  }, [location.search, selectedColors]);
 
-  if (loading) {
-    return (
-      <div style={{  display: "flex", justifyContent: "center", alignItems: "center", marginTop: "10%"  }}>
-        <Loader />
-      </div>
-    );
-  }
+  const fetchProductsByColor = useCallback(async (colors) => {
+    setIsFiltering(true);
+    try {
+      const response = await axios.get(`/api/v1/auth/products/color`, {
+        params: { color: colors }
+      });
+      setProductData(response.data);
+      setTotalPages(Math.ceil(response.data.length / productsPerPage));
+      setFilteredProducts(response.data);
+    } catch (error) {
+      console.error('Error fetching products by color:', error);
+      setFilteredProducts([]);
+    } finally {
+      setIsFiltering(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedColors.length > 0) {
+      fetchProductsByColor(selectedColors);
+    } else {
+      setFilteredProducts(productData);
+    }
+  }, [selectedColors, fetchProductsByColor, productData]);
+
+  useEffect(() => {
+    const filtered = filterProducts(productData);
+    const sorted = sortProducts(filtered);
+    const start = (currentPage - 1) * productsPerPage;
+    const end = start + productsPerPage;
+    const sliced = sorted.slice(start, end);
+    setFilteredAndSortedProducts(sliced);
+  }, [productData, selectedColors, selectedSizes, selectedBrands, selectedGender, priceRange, sortedBy, currentPage]);
 
   const handlePriceChange = (e) => {
     const value = Number(e.target.value);
@@ -90,14 +108,29 @@ const ProductCategory = () => {
     );
   };
 
-  const handleColorChange = (color) => {
-    setSelectedColors((prevSelectedColors) =>
-      prevSelectedColors.includes(color)
-        ? prevSelectedColors.filter((c) => c !== color)
-        : [...prevSelectedColors, color]
-    );
-  };
+  const handleColorChange = async (color) => {
+    const updatedColors = selectedColors.includes(color)
+      ? selectedColors.filter((c) => c !== color)
+      : [...selectedColors, color];
+  
+    setSelectedColors(updatedColors);
+    setSearchCompleted(false);
+    setLoading(true);
 
+    try {
+      const response = await axios.get(`/api/v1/auth/products/color`, {
+        params: { color: updatedColors }
+      });
+      setProductData(response.data);
+      setTotalPages(Math.ceil(response.data.length / productsPerPage));
+    } catch (error) {
+      console.error('Error fetching products by color:', error);
+    } finally {
+      setLoading(false);
+      setSearchCompleted(true);
+    }
+  };
+  
   const handleBrandChange = (brand) => {
     setSelectedBrands((prevSelectedBrands) =>
       prevSelectedBrands.includes(brand)
@@ -123,13 +156,17 @@ const ProductCategory = () => {
   };
 
   const filterProducts = (products) => {
-    return products.filter((product) =>
-      product.price >= priceRange[0] && product.price <= priceRange[1] &&
-      (selectedSizes.length === 0 || selectedSizes.includes(product.size)) &&
-      (selectedColors.length === 0 || selectedColors.includes(product.color)) &&
-      (selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand)) &&
-      (selectedGender.length === 0 || selectedGender.includes(product.gender))
-    );
+    return products.filter((product) => {
+      const colorMatch = selectedColors.length === 0 || selectedColors.includes(product.color);
+      return (
+        product.price >= priceRange[0] &&
+        product.price <= priceRange[1] &&
+        (selectedSizes.length === 0 || selectedSizes.includes(product.size)) &&
+        colorMatch &&
+        (selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand)) &&
+        (selectedGender.length === 0 || selectedGender.includes(product.gender))
+      );
+    });
   };
 
   const sortProducts = (products) => {
@@ -149,23 +186,22 @@ const ProductCategory = () => {
     }, [...products]);
   };
 
-  const filteredAndSortedProducts = sortProducts(filterProducts(productData)).slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
-
   const handlePageChange = (direction) => {
-    if (direction === 'up' && currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    } else if (direction === 'down' && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    setCurrentPage((prevPage) => {
+      if (direction === 'up' && prevPage < totalPages) {
+        return prevPage + 1;
+      } else if (direction === 'down' && prevPage > 1) {
+        return prevPage - 1;
+      }
+      return prevPage;
+    });
   };
 
   const handleProductClick = (productName) => {
     navigate(`/product?name=${encodeURIComponent(productName)}`);
   };
 
-  // Link API add to cart ở đây
   const handleAddToCart = (product) => {
-    // Logic to add the product to the cart
     console.log("Added to cart:", product.name);
   };
 
@@ -178,42 +214,44 @@ const ProductCategory = () => {
       </header>
       <div className="main-content">
         <section className="products">
-          {filteredAndSortedProducts.length === 0 ? (
+          {loading ? (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "10%" }}>
+              <Loader />
+            </div>
+          ) : searchCompleted && filteredAndSortedProducts.length === 0 ? (
             <div className="no-results">
-                <p style={{color:"red", fontSize:"1.5rem"}}>
-                  Sorry, we don't have the product you are looking for :_(
-                </p>
+              <p style={{color:"red", fontSize:"1.5rem"}}>
+                Sorry, we don't have the product you are looking for :_(
+              </p>
             </div>
           ) : (
-          <div className="products-grid">
-            {filteredAndSortedProducts.map((product) => (
-                <div key={product._id} className="product-item"
-                >
-                  {/* Chỗ để kích hoạt API add to cart */}
+            <div className="products-grid">
+              {filteredAndSortedProducts.map((product) => (
+                <div key={product._id} className="product-item">
                   <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
                     +
                   </button>
                   <img 
                     src={product.images[0]} 
                     alt={product.name}
-                    onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                    onClick={() => handleProductClick(product.name)}
                     className="product-image" 
                   />
                   <div 
                     className="product-name"
-                    onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                    onClick={() => handleProductClick(product.name)}
                   >
                     {product.name}
                   </div>
                   <div 
                     className="product-price"
-                    onClick={() => handleProductClick(product.name)} // Cập nhật sự kiện onClick
+                    onClick={() => handleProductClick(product.name)}
                   >
                     {formatPrice(product.price)}
                   </div>
                 </div>
-            ))}
-          </div>
+              ))}
+            </div>
           )}
         </section>
         <aside className="filters sticky">
@@ -284,7 +322,7 @@ const ProductCategory = () => {
             <div className="color-filter">
               <h3>Colours</h3>
               <div>
-                {['colour1', 'colour2'].map((color) => (
+                {['White', 'Blue', 'Grey', 'Black'].map((color) => (
                   <label key={color}>
                     <input
                       type="checkbox"
@@ -327,19 +365,19 @@ const ProductCategory = () => {
         </aside>
       </div>
       <div className="Category-pagination">
-          <span
-              className={`arrow ${currentPage === 1 ? "disabled" : ""}`}
-              onClick={() => handlePageChange('down')}
-          >
-              &lt;
-          </span>
-          <span className="page-number">{currentPage}</span>
-          <span
-              className={`arrow ${currentPage === totalPages ? "disabled" : ""}`}
-              onClick={() => handlePageChange('up')}
-          >
-              &gt;
-          </span>
+        <span
+          className={`arrow ${currentPage === 1 ? "disabled" : ""}`}
+          onClick={() => handlePageChange('down')}
+        >
+          &lt;
+        </span>
+        <span className="page-number">{currentPage}</span>
+        <span
+          className={`arrow ${currentPage === totalPages ? "enabled" : ""}`}
+          onClick={() => handlePageChange('up')}
+        >
+          &gt;
+        </span>
       </div>
       <Footer />
     </div>
@@ -350,9 +388,9 @@ const getBrandOptions = (brand) => {
   const brandOptions = {
     'Adidas': ['Adidas subBrand 1', 'Adidas subBrand 2'],
     'Nike': ['Nike subBrand 1', 'Nike subBrand 2'],
-    'Asics': ['New Balance subBrand 1', 'New Balance subBrand 2'],
+    'New Balance': ['New Balance subBrand 1', 'New Balance subBrand 2'],
     'Vans': ['Vans subBrand 1', 'Vans subBrand 2'],
-    'Puma': ['Converse subBrand 1', 'Converse subBrand 2'],
+    'Converse': ['Converse subBrand 1', 'Converse subBrand 2'],
   };
   return brandOptions[brand] || [];
 };

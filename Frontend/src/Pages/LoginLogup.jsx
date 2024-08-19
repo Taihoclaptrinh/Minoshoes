@@ -4,7 +4,6 @@ import AddressSelector from "../Components/Address/Address.jsx"
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.js'; // Ensure correct path
-import { faTreeCity } from "@fortawesome/free-solid-svg-icons";
 
 const LoginLogup = () => {
     const [showSignIn, setShowSignIn] = useState(true);
@@ -96,28 +95,35 @@ const LoginLogup = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
-
+    
         if (!email || !password) {
             setError('Email and password are required.');
             return;
         }
-
+    
         try {
             const response = await axios.post('/api/v1/auth/login', { email, password });
             if (response.data.success) {
-                const user = response.data.user;
-                localStorage.setItem('token', response.data.token);
-                login(user);
-                alert('Login successful!');
+                const token = response.data.token;
+                localStorage.setItem('token', token);
+    
+                // Fetch full user data based on ID
+                const userResponse = await axios.get(`/api/v1/auth/users/${response.data.user._id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+    
+                const user = userResponse.data;
+                login(user); // Store user data in context and localStorage
                 navigate('/');
             } else {
                 setError('Login failed. Please check your email and password.');
             }
         } catch (error) {
             console.error('Error logging in:', error);
-            setError('An error occurred while logging in.');
+            setError('Your email/password is incorrect!');
         }
     };
+    
     const handleSendResetCode = async () => {
         setError('');
         setSuccess('');

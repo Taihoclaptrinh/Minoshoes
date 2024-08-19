@@ -1,85 +1,106 @@
+import React, { useEffect, useState } from "react";
 import "./AdminWidget.css";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import { Link } from "react-router-dom"; // Import Link
+import axios from "axios"; // Import axios for API calls
 
 const AdminWidget = ({ type }) => {
-  let data;
+  const [data, setData] = useState(null);
 
-  // Temporary data
-  const amount = 100;
-  const diff = 20;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let response;
+        if (type === "user") {
+          response = await axios.get('/api/v1/admin/count-user');
+        } else if (type === "order") {
+          response = await axios.get('/api/v1/admin/count-order');
+        }
 
-  switch (type) {
-    case "user":
-      data = {
-        title: "USERS",
-        isMoney: false,
-        link: "See all users",
-        path: "/admin/users",
-        icon: (
-          <PersonOutlinedIcon
-            className="icon"
-            style={{
-              color: "crimson",
-              backgroundColor: "rgba(255, 0, 0, 0.2)",
-            }}
-          />
-        ),
-      };
-      break;
-    case "order":
-      data = {
-        title: "ORDERS",
-        isMoney: false,
-        link: "View all orders",
-        path: "/admin/orders",
-        icon: (
-          <ShoppingCartOutlinedIcon
-            className="icon"
-            style={{
-              backgroundColor: "rgba(218, 165, 32, 0.2)",
-              color: "goldenrod",
-            }}
-          />
-        ),
-      };
-      break;
-    case "earning":
-      data = {
-        title: "EARNINGS",
-        isMoney: true,
-        link: "View net earnings",
-        icon: (
-          <MonetizationOnOutlinedIcon
-            className="icon"
-            style={{
-              backgroundColor: "rgba(0, 128, 0, 0.2)",
-              color: "green",
-            }}
-          />
-        ),
-      };
-      break;
-    default:
-      break;
-  }
+        if (response && response.data.success) {
+          setData({
+            ...data,
+            count: response.data.count,
+            diff: 20 // You can set diff to some meaningful value if needed
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [type]);
+
+  if (!data) return null;
+
+  const { count, diff } = data;
+
+  const widgetData = {
+    user: {
+      title: "USERS",
+      isMoney: false,
+      link: "See all users",
+      path: "/admin/users",
+      icon: (
+        <PersonOutlinedIcon
+          className="icon"
+          style={{
+            color: "crimson",
+            backgroundColor: "rgba(255, 0, 0, 0.2)",
+          }}
+        />
+      ),
+    },
+    order: {
+      title: "ORDERS",
+      isMoney: false,
+      link: "View all orders",
+      path: "/admin/orders",
+      icon: (
+        <ShoppingCartOutlinedIcon
+          className="icon"
+          style={{
+            backgroundColor: "rgba(218, 165, 32, 0.2)",
+            color: "goldenrod",
+          }}
+        />
+      ),
+    },
+    earning: {
+      title: "EARNINGS",
+      isMoney: true,
+      link: "View net earnings",
+      icon: (
+        <MonetizationOnOutlinedIcon
+          className="icon"
+          style={{
+            backgroundColor: "rgba(0, 128, 0, 0.2)",
+            color: "green",
+          }}
+        />
+      ),
+    },
+  };
+
+  const { title, isMoney, link, path, icon } = widgetData[type] || {};
 
   return (
     <div className="AdminWidget">
       <div className="left">
-        <span className="title">{data.title}</span>
+        <span className="title">{title}</span>
         <span className="counter">
-          {data.isMoney && "$"} {amount}
+          {isMoney && "$"} {count}
         </span>
-        {data.path ? (
-          <Link to={data.path} className="link">
-            {data.link}
+        {path ? (
+          <Link to={path} className="link">
+            {link}
           </Link>
         ) : (
-          <span className="link">{data.link}</span>
+          <span className="link">{link}</span>
         )}
       </div>
       <div className="right">
@@ -87,7 +108,7 @@ const AdminWidget = ({ type }) => {
           <KeyboardArrowUpIcon />
           {diff} %
         </div>
-        {data.icon}
+        {icon}
       </div>
     </div>
   );

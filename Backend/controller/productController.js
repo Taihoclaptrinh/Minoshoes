@@ -97,10 +97,8 @@ export const searchProducts = async (req, res) => {
     }
 };
 export const getProducts = async (req, res) => {
-    const limit = parseInt(req.query.limit) || 12; 
-
     try {
-        const products = await Product.find().limit(limit);
+        const products = await Product.find();
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ message: "Server error while fetching products", error });
@@ -150,5 +148,36 @@ export const checkout = async (req, res) => {
         res.status(200).json({ message: "Checkout successful" });
     } catch (error) {
         res.status(500).json({ message: "Server error during checkout", error: error.message });
+    }
+};
+export const searchProductsByColor = async (req, res) => {
+    // Get the color query parameter; it can be an array if multiple values are provided
+    const { color } = req.query; 
+
+    try {
+        // If color is not provided or is an empty string, return an error
+        if (!color || (Array.isArray(color) && color.length === 0)) {
+            return res.status(400).json({ message: 'Valid color query parameter is required' });
+        }
+
+        // Convert color to an array if it's a string
+        const colorArray = Array.isArray(color)
+            ? color.map(c => c.trim().toLowerCase())
+            : color.split(',').map(c => c.trim().toLowerCase()).filter(c => c !== '');
+
+        // Ensure that we have at least one valid color
+        if (colorArray.length === 0) {
+            return res.status(400).json({ message: 'At least one valid color must be provided' });
+        }
+
+        // Find products where the 'color' array field contains at least one of the specified colors
+        const products = await Product.find({
+            color: { $in: colorArray.map(c => new RegExp(`^${c}$`, 'i')) } // Use regex for exact matching
+        });
+
+        res.status(200).json(products);
+    } catch (error) {
+        console.error('Error searching products by color:', error);
+        res.status(500).json({ message: 'Server error while searching products by color', error: error.message });
     }
 };

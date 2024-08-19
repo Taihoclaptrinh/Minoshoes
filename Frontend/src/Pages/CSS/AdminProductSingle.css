@@ -1,0 +1,119 @@
+/* AdminProductSingle.css */
+
+/* General Styles */
+.admin-product-single {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  .single-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .top {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .left {
+    flex: 3;
+  }
+  
+  .right {
+    flex: 1;
+  }
+  
+  .button-container {
+    margin-bottom: 20px;
+  }
+  
+  .edit-button, .save-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .edit-button {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .save-button {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .item {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .image-preview-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .item-img {
+    max-width: 150px; /* Make images smaller */
+    height: auto;
+    border-radius: 5px;
+    object-fit: cover;
+  }
+  
+  .details {
+    flex: 2;
+  }
+  
+  .item-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .detail-item {
+    margin-bottom: 10px;
+  }
+  
+  .item-key {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .item-value {
+    background-color: #ffffff; /* Đặt màu nền cho rõ ràng */
+    color: #000000; /* Đặt màu chữ cho rõ ràng */
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  input.item-value {
+    border: 1px solid #007bff;
+    padding: 8px;
+    border-radius: 5px;
+  }
+  
+  .right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Additional Styles for Charts */
+  .admin-chart {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+  }
+  

@@ -11,7 +11,7 @@ const AdminNavbar = () => {
       <div className="wrapper">
         <div className="search">
           <Link to="/admin" style={{ textDecoration: "none" }}>
-            <span className="logo">Minoshoes</span>
+            <Link to="/" className="logo">Minoshoes</Link>
           </Link>
         </div> 
         <div className="items">

@@ -46,6 +46,25 @@ export const findUser = async (req, res) => {
     }
 };
 
+export const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+
+        // Find user by ID and update
+        const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating user', error });
+    }
+};
+
+
 // Delete User
 export const deleteUser = async (req, res) => {
     try {
@@ -58,6 +77,20 @@ export const deleteUser = async (req, res) => {
         res.status(500).json({ message: 'Error deleting user', error });
     }
 };
+
+export const findUserById = async (req, res) => {
+    try {
+        // Use req.params.id to find by _id field
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error finding user', error });
+    }
+};
+
 
 // Get Summary
 export const getSummary = async (req, res) => {

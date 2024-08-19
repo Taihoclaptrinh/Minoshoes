@@ -2,9 +2,14 @@ import React from 'react';
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { productInputs, userInputs, orderInputs } from "./formSource";
+import PaymentSuccess from './PaymentSuccess';
 
 import SearchResults from './Pages/SearchResult';
 import { UserProvider } from './UserContext';
+import PrivacyPolicy from "./Components/Docs/privacy_policy";
+import CookiesSetting from "./Components/Docs/cookies_setting";
+import TermOfService from "./Components/Docs/term_of_service";
+
 
 // Admin Components
 import AdminNavbar from "./Components/AdminNavbar/AdminNavbar";
@@ -13,7 +18,10 @@ import AdminHome from "./Pages/AdminHome";
 import AdminUserList from "./Pages/AdminUserList";
 import AdminProductList from "./Pages/AdminProductList";
 import AdminOrderList from "./Pages/AdminOrderList";
-import AdminSingle from "./Pages/AdminSingle";
+import AdminUserSingle from "./Pages/AdminUserSingle";
+import AdminProductSingle from "./Pages/AdminProductSingle";  
+import AdminOrderSingle from "./Pages/AdminOrderSingle";  
+
 import AdminNew from "./Pages/AdminNew";
 
 // Shop Components
@@ -36,17 +44,17 @@ const AdminApp = () => (
           <Route path="/" element={<AdminHome />} />
           <Route path="users">
             <Route index element={<AdminUserList />} />
-            <Route path=":userId" element={<AdminSingle />} />
+            <Route path=":userId" element={<AdminUserSingle />} />
             <Route path="new" element={<AdminNew inputs={userInputs} title="Add New User" formType="user" />} />
           </Route>
           <Route path="products">
             <Route index element={<AdminProductList />} />
-            <Route path=":productId" element={<AdminSingle />} />
+            <Route path=":productId" element={<AdminProductSingle />} />  {/* Correctly render AdminProductSingle */}
             <Route path="new" element={<AdminNew inputs={productInputs} title="Add New Product" formType="product" />} />
           </Route>
           <Route path="orders">
             <Route index element={<AdminOrderList />} />
-            <Route path=":orderId" element={<AdminSingle />} />
+            <Route path=":orderId" element={<AdminOrderSingle />} />  {/* Assuming AdminUserSingle handles orders too */}
             <Route path="new" element={<AdminNew inputs={orderInputs} title="Add New Order" formType="order" />} />
           </Route>
         </Routes>
@@ -83,11 +91,15 @@ function App() {
       <Routes>
         <Route path="/admin/*" element={<AdminApp />} />
         <Route path="/*" element={<ShopApp />} />
+        <Route path="/agreement-service/privacy-policy" element={<PrivacyPolicy />} /> 
+        <Route path="/agreement-service/term-of-service" element={<TermOfService />} /> 
+        <Route path="/agreement-service/cookies-setting" element={<CookiesSetting />} /> 
       </Routes>
     </BrowserRouter>
     </UserProvider>
 
   );
 }
+
 
 export default App;

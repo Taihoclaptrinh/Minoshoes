@@ -1,6 +1,7 @@
 import React from "react";
 import "./Footer.css";
 
+
 const Footer = () => {
     return (
         <div className="footer">
@@ -8,11 +9,11 @@ const Footer = () => {
                 &copy; 2024 Relume. All rights reserved.
             </div>
             <div className="footer-right">
-                <a href="/privacy-policy">Privacy Policy</a>
-                <a href="/terms-of-service">Terms of Service</a>
-                <a href="/cookies-settings">Cookies Settings</a>
+                <a href="/agreement-service/privacy-policy">Privacy Policy</a>
+                <a href="/agreement-service/term-of-service">Terms of Service</a>
+                <a href="/agreement-service/cookies-setting">Cookies Settings</a>
             </div>
-        </div>
+        </div> 
     );
 };
 

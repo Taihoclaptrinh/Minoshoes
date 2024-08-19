@@ -50,19 +50,20 @@
 }
 .dropdown-container {
     position: absolute;
-    min-width: 320px;
     height: 5rem;
+    background-color: red;
 }
 .nav-item.show .dropdown-container {
     display: block;
     max-height: 500px; /* adjust based on your content size */
     opacity: 1;
+    background-color: blue;
 }
 .dropdown {
     position: relative;
     display: none;
     background-color: #f9f9f9;
-    /* min-width: 160px; */
+    min-width: 200px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     top: 3.9rem;

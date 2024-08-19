@@ -23,6 +23,8 @@ import productRoute from './Backend/routes/productRoute.js';
 import cartRoute from './Backend/routes/cartRoute.js';
 import uploadRoute from './Backend/routes/uploadRoute.js';
 import userRoute from './Backend/routes/userRoute.js'
+import orderRoute from './Backend/routes/orderRoute.js';
+import adminRoute from './Backend/routes/adminRoute.js';
 
 dotenv.config();
 const app = express();
@@ -57,8 +59,10 @@ router.get('/show-all-users', showAllUsers);
 
 // Image upload route
 app.use('/api/v1/auth', uploadRoute);
+app.use('/api/v1/admin', adminRoute)
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/orders', orderRoute);
 
 // Other routes
 app.use('/api/v1/auth/products', productRoute);
