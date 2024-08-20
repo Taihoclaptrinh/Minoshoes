@@ -67,17 +67,13 @@ export const getOrdersByUserId = async (req, res) => {
         // Fetch all orders where the 'user' field matches the provided userId
         const orders = await Order.find({ user: userId });
 
-        // If no orders found, respond with a 404 status and a message
-        if (orders.length === 0) {
-            return res.status(404).json({ message: 'No orders found for this user' });
-        }
-
-        // Respond with the list of orders
+        // Respond with the list of orders, or an empty array if none found
         res.status(200).json(orders);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch orders', error: error.message });
     }
 };
+
 
 // Get all orders for a user
 export const getUserOrders = async (req, res) => {

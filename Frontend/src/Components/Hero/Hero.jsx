@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import "./Hero.css";
 
 const images = [
-    // "https://i.ibb.co/pjFN9pX/mino-welcome.png",
-    "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/bg.png"
+    "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/bg.png",
+    "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/bg1.jpg",
+    "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/bg2.jpg"
 ];
 
 const Hero = () => {

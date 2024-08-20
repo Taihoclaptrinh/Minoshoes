@@ -1,23 +1,16 @@
 import "./CSS/AdminNew.css";
 import { useState } from "react";
+import axios from "axios"; // Import axios for API calls
 
 const AdminNew = ({ inputs, title, formType }) => {
   const [formData, setFormData] = useState(
     inputs.reduce((acc, input) => ({
       ...acc,
-      [input.id]: input.value || (input.type === "file" ? [] : ""), // Initialize file inputs as empty arrays
+      [input.id]: input.value || (input.type === "file" ? [] : ""),
     }), {})
   );
 
   const [previewImages, setPreviewImages] = useState([]);
-
-  // Pre-fill specific fields for user form
-  if (formType === "user") {
-    formData.role = "admin";
-    formData.createAt = new Date().toISOString().split("T")[0]; // Auto-fill with current date
-    formData.updateAt = new Date().toISOString().split("T")[0];
-    formData.totalSpent = 0;
-  }
 
   const handleInputChange = (id, value) => {
     setFormData((prevData) => ({ ...prevData, [id]: value }));
@@ -27,26 +20,59 @@ const AdminNew = ({ inputs, title, formType }) => {
     const files = e.target.files;
     setFormData((prevData) => ({ ...prevData, [id]: files }));
 
-    // Update preview images
     const fileArray = Array.from(files);
     const imageUrls = fileArray.map((file) => URL.createObjectURL(file));
     setPreviewImages(imageUrls);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Ensure numeric values are non-negative
-    for (const key in formData) {
-      if (["price", "totalAmount"].includes(key) && Number(formData[key]) < 0) {
-        alert(`${key} must be a non-negative value.`);
-        return;
-      }
+    // Validate numeric fields
+    if (formData.productPrice < 0) {
+      alert("Price must be a non-negative value.");
+      return;
     }
 
-    // Process form submission logic here
-    console.log("Form Data:", formData);
-    // For file uploads, you may need to handle FormData and submit it via API
+    try {
+      // Create FormData for file upload
+      const fileData = new FormData();
+      if (formData.productImages.length > 0) {
+        Array.from(formData.productImages).forEach((file) => {
+          fileData.append('images', file); // Ensure the key matches the backend expectation
+        });
+        
+        // Upload images and get image URLs
+        const uploadResponse = await axios.post('/api/v1/auth/upload', fileData);
+        const { imageUrls } = uploadResponse.data;
+
+        // Prepare product data
+        const productData = {
+          code: formData.productCode,
+          name: formData.productName,
+          description: formData.productDescription,
+          price: Number(formData.productPrice),
+          brand: formData.productBrand,
+          category: formData.productCategory,
+          sizes: formData.productSizes.split(',').map(size => size.trim()),
+          color: formData.productColor.split(',').map(color => color.trim()),
+          stocks: formData.productStocks.split(',').map(stock => Number(stock.trim())),
+          images: imageUrls,
+          createdAt: formData.productCreateAt,
+          updatedAt: formData.productUpdateAt,
+        };
+        console.log(productData)
+        alert(`Product Data: ${JSON.stringify(productData, null, 2)}`);
+
+        // Send product data to the API to create a new product
+        const response = await axios.post('/api/v1/auth/products', productData);
+        console.log('Product created successfully:', response.data);
+      } else {
+        alert("Please upload at least one image.");
+      }
+    } catch (error) {
+      console.error('Error creating product:', error);
+    }
   };
 
   return (
@@ -57,9 +83,7 @@ const AdminNew = ({ inputs, title, formType }) => {
         </div>
         <div className="bottom">
           <div className="left">
-            {/* Show preview images if needed */}
-            {(formType === "product" || formType === "user") &&
-            previewImages.length > 0 ? (
+            {(formType === "product" || formType === "user") && previewImages.length > 0 ? (
               <div className="imagePreviewContainer">
                 {previewImages.map((image, index) => (
                   <img
@@ -82,7 +106,6 @@ const AdminNew = ({ inputs, title, formType }) => {
           </div>
           <div className="right">
             <form onSubmit={handleSubmit}>
-              {/* Render form inputs based on the passed `inputs` prop */}
               {inputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
@@ -91,27 +114,18 @@ const AdminNew = ({ inputs, title, formType }) => {
                       type={input.type}
                       placeholder={input.placeholder}
                       onChange={(e) => handleFileChange(e, input.id)}
-                      multiple={input.multiple} // Handle multiple file uploads if needed
+                      multiple={input.multiple}
                     />
                   ) : (
                     <input
                       type={input.type}
                       placeholder={input.placeholder}
                       value={formData[input.id]}
-                      onChange={(e) =>
-                        handleInputChange(input.id, e.target.value)
-                      }
-                      disabled={
-                        (formType === "user" &&
-                          (input.id === "userRole" ||
-                            input.id === "userTotalSpent")) ||
-                        false
-                      }
+                      onChange={(e) => handleInputChange(input.id, e.target.value)}
                     />
                   )}
                 </div>
               ))}
-
               <button type="submit">Submit</button>
             </form>
           </div>

@@ -9,7 +9,7 @@ const Bestsellers = () => {
           {/* <h2 className="head-up">Shop</h2> */}
           <h1>BEST SELLERS</h1>
           <h2>Discover our top-selling products that are loved by customers.
-              <div className="viewall-button" onClick={() => window.location.href = 'http://localhost:3000/new-arrivals'}>
+              <div className="viewall-button" onClick={() => window.location.href = '/new-arrivals'}>
                   View All
               </div>
           </h2>

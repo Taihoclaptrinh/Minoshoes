@@ -1,5 +1,6 @@
 import cartModel from '../models/cartModel.js';
 import productModel from '../models/productModel.js';
+import jwt from 'jsonwebtoken'; // Đảm bảo rằng import này có trong file của bạn
 
 // Get cart items
 export const getCart = async (req, res) => {
@@ -44,7 +45,7 @@ export const updateCart = async (req, res) => {
     const userId = req.user._id;
 
     // Validate input
-    if (typeof quantity !== 'number' || quantity <= 0) {
+    if (typeof quantity !== 'number' || quantity < 0) {
       return res.status(400).send({ message: 'Invalid quantity' });
     }
     if (typeof price !== 'number' || price <= 0) {
@@ -61,10 +62,16 @@ export const updateCart = async (req, res) => {
     const existingItemIndex = cart.cartItems.findIndex(item => 
       item.product.toString() === productId.toString() && item.size === size
     );
+
     if (existingItemIndex >= 0) {
-      // Update item
-      cart.cartItems[existingItemIndex].quantity = quantity;
-      cart.cartItems[existingItemIndex].price = price;
+      if (quantity === 0) {
+        // Remove item from cart if quantity is 0
+        cart.cartItems.splice(existingItemIndex, 1);
+      } else {
+        // Update item quantity and price
+        cart.cartItems[existingItemIndex].quantity = quantity;
+        cart.cartItems[existingItemIndex].price = price;
+      }
 
       // Save changes
       await cart.save();
@@ -78,28 +85,50 @@ export const updateCart = async (req, res) => {
   }
 };
 
-// Remove item from cart
+
 export const removeFromCart = async (req, res) => {
   try {
-    const { productId, size } = req.params; // Add size to the request parameters
-    const userId = req.user._id;
+    const { productId, size } = req.body; // Lấy productId và size từ body yêu cầu
+    const token = req.headers.authorization.split(' ')[1]; // Lấy token từ header
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Giải mã token
+
+    if (!decodedToken) {
+      return res.status(401).send({ message: 'Unauthorized' });
+    }
+
+    const userId = decodedToken._id; // Lấy userId từ token
+
+    // Tìm giỏ hàng của người dùng
     const cart = await cartModel.findOne({ user: userId });
 
     if (!cart) {
       return res.status(404).send({ message: 'Cart not found' });
     }
 
-    // Filter out the item by product ID and size
-    cart.cartItems = cart.cartItems.filter(item => 
+    // Xóa sản phẩm theo productId và size
+    const initialCartItemsLength = cart.cartItems.length;
+    cart.cartItems = cart.cartItems.filter(item =>
       item.product.toString() !== productId.toString() || item.size !== size
     );
-    await cart.save();
-    res.status(200).send(cart);
+
+    // Kiểm tra nếu không có sản phẩm nào bị xóa
+    if (cart.cartItems.length === initialCartItemsLength) {
+      return res.status(404).send({ message: 'Product not found in cart' });
+    }
+
+    // Lưu giỏ hàng sau khi đã xóa sản phẩm
+    const updatedCart = await cart.save();
+
+    // Trả về giỏ hàng đã được cập nhật
+    res.status(200).send({ message: 'Item removed successfully', cart: updatedCart });
   } catch (error) {
     console.error('Error removing from cart:', error);
-    res.status(500).send({ message: 'Error removing from cart', error });
+    res.status(500).send({ message: 'Error removing from cart', error: error.message });
   }
 };
+
+
+
 
 // Count total items in cart
 export const countCart = async (req, res) => {

@@ -8,7 +8,7 @@ const AZURE_STORAGE_ACCOUNT = process.env.AZURE_STORAGE_ACCOUNT;
 const AZURE_SAS_URL = process.env.AZURE_SAS_URL;
 const blobServiceClient = new BlobServiceClient(AZURE_SAS_URL);
 const CONTAINER_NAME='minoshoesprods';
-const FOLDER_NAME = 'main';
+const FOLDER_NAME = 'main2';
 
 // Configure multer for file upload
 const storage = multer.memoryStorage();

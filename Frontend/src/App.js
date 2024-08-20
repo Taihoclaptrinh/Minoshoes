@@ -49,12 +49,12 @@ const AdminApp = () => (
           </Route>
           <Route path="products">
             <Route index element={<AdminProductList />} />
-            <Route path=":productId" element={<AdminProductSingle />} />  {/* Correctly render AdminProductSingle */}
+            <Route path=":productId" element={<AdminProductSingle />} />  
             <Route path="new" element={<AdminNew inputs={productInputs} title="Add New Product" formType="product" />} />
           </Route>
           <Route path="orders">
             <Route index element={<AdminOrderList />} />
-            <Route path=":orderId" element={<AdminOrderSingle />} />  {/* Assuming AdminUserSingle handles orders too */}
+            <Route path=":orderId" element={<AdminOrderSingle />} />  
             <Route path="new" element={<AdminNew inputs={orderInputs} title="Add New Order" formType="order" />} />
           </Route>
         </Routes>

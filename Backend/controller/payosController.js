@@ -14,8 +14,8 @@ export const createPaymentLink = async (req, res) => {
       amount,
       description,
       orderCode,
-      returnUrl: 'http://localhost:3000/payment-success',
-      cancelUrl: 'http://localhost:3000'
+      returnUrl: '/payment-success',
+      cancelUrl: '/'
     };
 
     const paymentLink = await payos.createPaymentLink(order);

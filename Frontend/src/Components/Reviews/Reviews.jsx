@@ -23,44 +23,6 @@ const Reviews = () => {
 
       fetchReview();
   }, []);
-    // // Show star-rating
-    // const [stars, setStars] = useState(0);
-
-    // useEffect(() => {
-    //   const fetchStars = async () => {
-    //     try {
-    //       const response = await axios.get('/api/rating/1');
-    //       setStars(response.data.stars);
-    //     } catch (error) {
-    //       console.error('Error fetching star rating', error);
-    //     }
-    //   };
-
-    //   fetchStars();
-    // }, []);
-    // // Show Feedback context
-    // const [text, setText] = useState('');
-
-    // useEffect(() => {
-    //   const fetchText = async () => {
-    //       try {
-    //           const response = await axios.get('/api/review/1');
-    //           setText(response.data.text);
-    //       } catch (error) {
-    //           console.error('Error fetching review text', error);
-    //       }
-    //   };
-
-    //   fetchText();
-    // }, []);
-
-    // const StarRating = ({ stars }) => {
-    //   return (
-    //     <div className="star-rating">
-    //         <span style={{ width: `${stars * 20}%` }}>★★★★★</span>
-    //     </div>
-    //   );
-    // };
     
     const responsive = {
         superLargeDesktop: {
@@ -91,11 +53,11 @@ const Reviews = () => {
             <img className="feedback--image" src={im_src} alt="feedback image" />
             <div className="feedback--content">
               <div className="feedback--content-font">
-                  <p>ádasd
-                  Ngày đầu năm mới, anh chàng samurai vô chủ Senou Souichirou đến ngụ ở khu trọ Katagi tại Edo. Bắt đầu manh nha những hỗn loạn phá vỡ chuỗi ngày bình yên của dân cư khu trọ Katagi... Senou Souichirou là ai và liệu anh có thể sống bình yên bên những người dân ở Katagi?
+                  <p>
+                  The variety of shoes available was impressive, with a wide range of styles, sizes, and brands to choose from. The quality of the shoes is top-notch, and I can tell they are made to last. The store itself was clean, well-organized, and had a welcoming atmosphere.
                   </p>
-                  <p className="feedback--author-font">ád</p>
-                  <p className="feedback--role-font">ffff</p>
+                  <p className="feedback--author-font">Phan Vo Minh Tue</p>
+                  <p className="feedback--role-font">Binh Chanh district, Ho Chi Minh city </p>
               </div>
               {/* <div>
                 {review ? <Feedback review={review} /> : <p>Loading...</p>}
@@ -109,7 +71,13 @@ const Reviews = () => {
             <img className="feedback--image" src={im_src} alt="feedback image" />
             <div className="feedback--content">
               <div>
-                {review ? <Feedback review={review} /> : <Loader />}
+                <div className="feedback--content-font">
+                  <p>
+                  I am thoroughly impressed with the entire experience. The website is user-friendly, making it easy to browse through a wide variety of stylish and high-quality shoes. The detailed product descriptions and multiple photos for each item helped me make an informed decision.                </p>
+                  <p className="feedback--author-font">Lam Tai Chi</p>
+                  <p className="feedback--role-font">Cai Be, Tien Giang</p>
+                </div>
+                {/* {review ? <Feedback review={review} /> : <Loader />} */}
               </div>
             </div>        
           </div>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Gallary.css";
 import { Link } from "react-router-dom";
-import Pop_up from "../Popup_PayOS/Popup";
+import Pop_up from "../Popup/Popup";
 import ProductSlider from "./ProductSlider";
 
 const Gallary = () => {

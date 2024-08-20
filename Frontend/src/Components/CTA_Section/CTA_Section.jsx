@@ -15,10 +15,10 @@ export default function CTA_Section() {
         </div>
         <img src={CTA_Background} alt=""/>
         <div className="CTA-button">
-          <div className="CTA_left-section" onClick={() => window.location.href = 'http://localhost:3000/login'} >
+          <div className="CTA_left-section" onClick={() => window.location.href = '/login'} >
             Sign Up
           </div>
-          <div className="CTA_right-section" onClick={() => window.location.href = 'http://localhost:3001/new-arrivals'}>
+          <div className="CTA_right-section" onClick={() => window.location.href = '/new-arrivals'}>
             Learn More
           </div> 
         </div>

@@ -11,18 +11,18 @@ export const UserProvider = ({ children }) => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
-            if (parsedUser && parsedUser._id) { // Sử dụng _id thay vì id
+            if (parsedUser && parsedUser._id) { // Use _id instead of id
                 setUser(parsedUser);
-                console.log('User data loaded from localStorage:', parsedUser); // Log thông tin user khi tải từ localStorage
+                console.log('User data loaded from localStorage:', parsedUser);
             }
         }
     }, []);
 
     const login = (userData) => {
-        if (userData && userData._id) { // Kiểm tra _id thay vì id
+        if (userData && userData._id) { // Check _id instead of id
             setUser(userData);
             localStorage.setItem('user', JSON.stringify(userData));
-            console.log('User logged in:', userData); // Log thông tin user khi đăng nhập
+            console.log('User logged in:', userData);
             // Store token in localStorage if available
             if (userData.token) {
                 localStorage.setItem('token', userData.token);
@@ -32,7 +32,6 @@ export const UserProvider = ({ children }) => {
         }
     };
     
-
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
@@ -42,12 +41,17 @@ export const UserProvider = ({ children }) => {
     // Function to update user information
     const updateUser = async (newUserData) => {
         try {
-            const response = await axios.put('/api/v1/user', newUserData); // Replace with your API endpoint
-            const updatedUser = response.data;
-            if (updatedUser && updatedUser._id) { // Kiểm tra _id thay vì id
+            // Use the user's _id to make a request to the update API
+            const response = await axios.put(`/api/v1/auth/users/${user._id}`, newUserData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const updatedUser = response.data.user;
+            if (updatedUser && updatedUser._id) { // Check _id instead of id
                 setUser(updatedUser);
                 localStorage.setItem('user', JSON.stringify(updatedUser));
-                console.log('User updated:', updatedUser); // Log thông tin user khi cập nhật
+                console.log('User updated:', updatedUser);
             } else {
                 console.error('Updated user data does not contain _id');
             }

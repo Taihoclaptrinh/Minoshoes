@@ -3,7 +3,7 @@ import axios from "axios";
 import "./CSS/Cart.css";
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.js';
-import Pop_up from '../Components/Popup_PayOS/Popup.jsx';
+import Pop_up from '../Components/Popup/Popup.jsx';
 
 const Cart = () => {
     const [products, setProducts] = useState([]);
@@ -56,20 +56,6 @@ const Cart = () => {
         }
     }, [user]);
 
-    const checkPaymentStatus = async (orderIdOrPaymentId) => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`/api/v1/payos/check-payment-status/${orderIdOrPaymentId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            return response.data.status === 'success';
-        } catch (error) {
-            console.error('Error checking payment status:', error);
-            return false;
-        }
-    };
-    
-
     const calculateTotalCost = () => {
         const subtotal = products.reduce((acc, product) => acc + product.product.price * product.quantity, 0);
         setTotalCost(subtotal + shippingFee);
@@ -82,7 +68,7 @@ const Cart = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             console.log('Clear cart response:', response.data);
-            setProducts([]);
+            await fetchCart(); // Fetch updated cart
             setTotalCost(0);
             setTotalItems(0);
             await updateTotalCartCount();
@@ -92,6 +78,59 @@ const Cart = () => {
             return false;
         }
     };
+    
+    const handleQuantityChange = async (productId, delta, size) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('No token found');
+                return;
+            }
+            const updatedProducts = [...products];
+            const product = updatedProducts.find(item => item.product._id === productId && item.size === size);
+            
+            if (!product) {
+                console.error('Product not found in cart');
+                return;
+            }
+            const newQuantity = product.quantity + delta;
+            if (newQuantity == 0) {
+                // Remove item from cart
+                await axios.delete('/api/v1/auth/cart/remove-from-cart', {
+                    headers: { Authorization: `Bearer ${token}` },
+                    data: {
+                        productId,
+                        size
+                    }
+                });
+                // Remove item from local state
+                updatedProducts.splice(updatedProducts.indexOf(product), 1);
+            } else {
+                // Update quantity in local state
+                product.quantity = newQuantity;
+    
+                // Update cart in backend
+                await axios.put('/api/v1/auth/cart/update-cart', {
+                    productId,
+                    quantity: newQuantity,
+                    price: product.product.price,
+                    size // Ensure size is sent if needed
+                }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            }
+    
+            // Update state with the latest product list
+            setProducts(updatedProducts);
+    
+            // Update cart count or any other state related to cart
+            await updateTotalCartCount();
+    
+        } catch (error) {
+            console.error('Error handling quantity change:', error);
+        }
+    };
+    
 
     const handleBuy = async () => {
         setIsLoading(true);
@@ -143,7 +182,6 @@ const Cart = () => {
                 if (paymentResponse.data && paymentResponse.data.checkoutUrl) {
                     localStorage.setItem('pendingOrder', JSON.stringify(orderItems));
                     const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
-                    alert(pendingOrder)
                     window.location.href = paymentResponse.data.checkoutUrl;
                 } else {
                     throw new Error('Invalid response from payment link creation');
@@ -156,6 +194,8 @@ const Cart = () => {
             setIsLoading(false);
         }
     };
+
+
     useEffect(() => {
         const handlePaymentCompletion = async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -194,69 +234,33 @@ const Cart = () => {
     }, []);
     
     
-    
-
-    const handleQuantityChange = async (productId, delta) => {
-        const token = localStorage.getItem('token');
-        const updatedProducts = [...products];
-        const product = updatedProducts.find(item => item.product._id === productId);
-        const newQuantity = product.quantity + delta;
-    
-        if (newQuantity <= 0) {
-            updatedProducts.splice(updatedProducts.indexOf(product), 1);
-        } else {
-            product.quantity = newQuantity;
-        }
-    
-        setProducts(updatedProducts);
-    
-        try {
-            if (newQuantity <= 0) {
-                await axios.delete(`/api/v1/auth/cart/remove-from-cart/${productId}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-            } else {
-                await axios.put('/api/v1/auth/cart/update-cart', {
-                    productId,
-                    quantity: newQuantity,
-                    price: product.product.price
-                }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-            }
-            await updateTotalCartCount();
-        } catch (error) {
-            console.error('Error updating cart:', error.response ? error.response.data : error);
-        }
-    };
-
-    const totalPages = Math.ceil(products.length / itemsPerPage);
+    // const totalPages = Math.ceil(products.length / itemsPerPage);
     const displayedProducts = products.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
-    const handlePageChange = (delta) => {
-        setCurrentPage(prevPage => Math.max(0, Math.min(totalPages - 1, prevPage + delta)));
-    };
+    // const handlePageChange = (delta) => {
+    //     setCurrentPage(prevPage => Math.max(0, Math.min(totalPages - 1, prevPage + delta)));
+    // };
 
     useEffect(() => {
         calculateTotalCost();
         updateTotalItems();
     }, [products]);
 
-    useEffect(() => {
-        const fetchCart = async () => {
-            if (user) {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await axios.get('/api/v1/auth/cart/get-cart', {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    setProducts(response.data.cartItems);
-                } catch (error) {
-                    console.error('Error fetching cart data:', error);
-                }
+    const fetchCart = async () => {
+        if (user) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('/api/v1/auth/cart/get-cart', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setProducts(response.data.cartItems);
+            } catch (error) {
+                console.error('Error fetching cart data:', error);
             }
-        };
+        }
+    };
 
+    useEffect(() => {
         fetchCart();
     }, [user]);
 
@@ -278,9 +282,9 @@ const Cart = () => {
                                                         <td>{product.product.name}</td>
                                                         <td>Size: {product.size}</td>  {/* This line displays the selected size */}
                                                         <td className="cart_quantity-container">
-                                                            <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, -1)}>-</button>
+                                                            <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, -1, product.size)}>-</button>
                                                             <span className="cart_quantity">{product.quantity}</span>
-                                                            <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, 1)}>+</button>
+                                                            <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, 1, product.size)}>+</button>
                                                         </td>
                                                         <td>{formatPrice(product.product.price * product.quantity)}</td>
                                                     </tr>

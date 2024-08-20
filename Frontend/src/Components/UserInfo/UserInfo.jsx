@@ -42,12 +42,6 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser }) => {
     setUpdatedUser({ ...updatedUser, [name]: value });
   };
 
-  // const handleAddressChange = (city, district, ward, street, index) => {
-  //   const newAddresses = updatedUser.addresses.map((address, i) =>
-  //     i === index ? { city, district, ward, street } : address
-  //   );
-  //   setUpdatedUser({ ...updatedUser, addresses: newAddresses });
-  // };
 
   const handleDelete = (id) => setDeletingOrderId(id);
   const handleDeleteConfirm = () => {

@@ -62,6 +62,12 @@ export const userInputs = [
 ];
 export const productInputs = [
   {
+    id: 'productCode',
+    label: "Code",
+    type: "text",
+    placeholder: "Product Code",
+  },
+  {
     id: 'productName', // Unique ID
     label: "Name",
     type: "text",
