@@ -9,21 +9,6 @@ import Feedback from "./Review-contents"
 import Loader from "../Loader/Loading.jsx"
 
 const Reviews = () => {
-  const [review, setReview] = useState(null);
-
-  useEffect(() => {
-    const fetchReview = async () => {
-      try {
-        const response = await axios.get('/api/review/1');
-        setReview(response.data);
-      } catch (error) {
-        console.error('Error fetching review data', error);
-      }
-    };
-
-    fetchReview();
-  }, []);
-
   const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.

@@ -135,7 +135,7 @@ export const getReviewsAndAverageRating = async (req, res) => {
         const response = {
             reviews: reviews.map(review => ({
                 id: review._id,
-                name: review.userId.name,
+                name: review.userId ? review.userId.name : 'Anonymous',
                 rating: review.rating,
                 comment: review.comment,
                 createdAt: review.createdAt

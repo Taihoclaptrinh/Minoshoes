@@ -6,49 +6,67 @@ import Slider from "../Components/Slider/Slider.jsx";
 import Footer from "../Components/Footer/Footer.jsx";
 import Loader from "../Components/Loader/Loading.jsx";
 
+// Review Form component
+const ReviewForm = ({ onClose, onSubmit }) => {
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit({ rating, comment });
+    };
+
+    return (
+        <div className="review-form-popup">
+            <form onSubmit={handleSubmit}>
+                <h2>Leave a Review</h2>
+                <div className="rating-input">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                            key={star}
+                            className={star <= rating ? "star filled" : "star empty"}
+                            onClick={() => setRating(star)}
+                        >
+                            ★
+                        </span>
+                    ))}
+                </div>
+                <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Write your review here..."
+                    required
+                />
+                <div className="form-buttons">
+                    <button type="submit">Submit Review</button>
+                    <button type="button" onClick={onClose}>Cancel</button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
 const Product = () => {
     const [productData, setProductData] = useState(null);
+    const [reviews, setReviews] = useState([]);
     const [averageRating, setAverageRating] = useState(0);
     const [reviewCount, setReviewCount] = useState(0);
     const [selectedSize, setSelectedSize] = useState(null);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [cartCount, setCartCount] = useState(0); // State for cart count
+    const [cartCount, setCartCount] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [showReviewForm, setShowReviewForm] = useState(false);
 
     const reviewsPerPage = 5;
     const location = useLocation();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const query = new URLSearchParams(location.search);
-        const productName = query.get('name');
-        
-        if (productName) {
-            const fetchProductData = async () => {
-                try {
-                    const response = await axios.get(`/api/v1/auth/products/${encodeURIComponent(productName)}`);
-                    setProductData(response.data);
-                    window.scrollTo(0, 0);
-                    
-                    if (response.data.feedback && response.data.feedback.length > 0) {
-                        const totalRating = response.data.feedback.reduce((acc, review) => acc + review.rating, 0);
-                        const count = response.data.feedback.length;
-                        const average = (totalRating / count).toFixed(1);
-                        setAverageRating(average);
-                        setReviewCount(count);
-                    }
-                } catch (error) {
-                    console.error("Error fetching product data:", error);
-                }
-            };
-
-            fetchProductData();
-        }
+        fetchProductData();
     }, [location.search]);
 
     useEffect(() => {
-        // Fetch and set initial cart count on component mount
         const fetchCartCount = async () => {
             const token = localStorage.getItem('token');
             if (token) {
@@ -58,13 +76,12 @@ const Product = () => {
                             'Authorization': `Bearer ${token}`
                         }
                     });
-                    setCartCount(response.data.totalQuantity); // Assuming response contains cart count
+                    setCartCount(response.data.totalQuantity);
                 } catch (error) {
                     console.error('Error fetching cart count:', error);
                 }
             }
         };
-
         fetchCartCount();
     }, []);
 
@@ -74,12 +91,12 @@ const Product = () => {
             navigate('/login');
             return;
         }
-    
+
         if (!selectedSize) {
             alert('Please select a size before adding to cart.');
             return;
         }
-    
+
         try {
             const response = await axios.post('/api/v1/auth/cart/add-to-cart', {
                 productId: product._id,
@@ -91,7 +108,7 @@ const Product = () => {
                     'Authorization': `Bearer ${token}`
                 }
             });
-    
+
             if (response.status === 200) {
                 alert('Product added to cart successfully!');
                 const newCartCount = response.data.totalQuantity;
@@ -120,7 +137,61 @@ const Product = () => {
         );
     };
 
-    
+    const handleLeaveReview = () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        setShowReviewForm(true);
+    };
+
+    const handleSubmitReview = async (reviewData) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.post('/api/v1/auth/reviews', {
+                productId: productData._id,
+                userId: localStorage.getItem('userId'),
+                rating: reviewData.rating,
+                comment: reviewData.comment
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 201) {
+                alert('Review submitted successfully!');
+                setShowReviewForm(false);
+                fetchProductData();
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+            alert('Failed to submit review. Please try again.');
+        }
+    };
+
+    const fetchProductData = async () => {
+        const query = new URLSearchParams(location.search);
+        const productName = query.get('name');
+
+        if (productName) {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/v1/auth/products/${encodeURIComponent(productName)}`);
+                setProductData(response.data);
+                window.scrollTo(0, 0);
+
+                // Fetch reviews and average rating
+                const reviewsResponse = await axios.get(`http://localhost:5000/api/v1/auth/reviews/product/:${response.data._id}`);
+                setReviews(reviewsResponse.data.reviews);
+                setAverageRating(reviewsResponse.data.averageRating);
+                setReviewCount(reviewsResponse.data.reviewCount);
+            } catch (error) {
+                console.error("Error fetching product data:", error);
+            }
+        }
+    };
+
     const handleSizeClick = (size) => {
         setSelectedSize(size);
     };
@@ -148,19 +219,15 @@ const Product = () => {
     };
 
     if (!productData) {
-        return <div style={{  display: "flex", justifyContent: "center", alignItems: "center", height:"100vh"  }}>
-                <Loader />
-                </div>;
+        return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+            <Loader />
+        </div>;
     }
 
     const indexOfLastReview = currentPage * reviewsPerPage;
     const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-    const currentReviews = productData.feedback && productData.feedback.length > 0
-        ? productData.feedback.slice((currentPage - 1) * reviewsPerPage, currentPage * reviewsPerPage)
-        : [];
-    const totalPages = productData.feedback
-        ? Math.ceil(productData.feedback.length / reviewsPerPage)
-        : 0;
+    const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
+    const totalPages = Math.ceil(reviews.length / reviewsPerPage);
 
     return (
         <div className="product-page">
@@ -191,19 +258,19 @@ const Product = () => {
                     </div>
                     <div className="info-section">
                         <div className="text-group">
-                            <p style={{fontSize: "1.8rem"}}>{productData.category}</p>
+                            <p style={{ fontSize: "1.8rem" }}>{productData.category}</p>
                             <h1>{productData.name}</h1>
                             <h2>{productData.price.toLocaleString('vi-VN')} VND</h2>
                         </div>
-                
-                        <h2 style={{marginTop: "3rem"}}>Main colours</h2>
+
+                        <h2 style={{ marginTop: "3rem" }}>Main colours</h2>
                         <div className="button-grid">
                             {productData.color && productData.color.length > 0 ? (
                                 productData.color.map((color, index) => (
                                     <div key={index} className="color-box">
                                         {color}
-                                        <div 
-                                            className="color-circle" 
+                                        <div
+                                            className="color-circle"
                                             style={{ backgroundColor: color.toLowerCase() }} // Chuyển màu thành định dạng chữ thường để sử dụng trong style
                                         ></div>
                                     </div>
@@ -218,7 +285,7 @@ const Product = () => {
                         <div className="button-grid">
                             {productData.sizes && productData.sizes.length > 0 ? (
                                 productData.sizes.map((size, index) => (
-                                    <button 
+                                    <button
                                         key={index}
                                         className={selectedSize === size ? "selected" : ""}
                                         onClick={() => handleSizeClick(size)}
@@ -234,9 +301,9 @@ const Product = () => {
                         <div className="adding-button-container">
                             <button onClick={() => onAddtoCartHandler(productData)} className="add-to-bag">Add to cart</button>
                         </div>
-                    </div>    
+                    </div>
                 </div>
-                
+
                 <div className="related-product">
                     <h1>Related Products:</h1>
                     <div className="related-product-slider">
@@ -255,19 +322,49 @@ const Product = () => {
                             </div>
                         </div>
                         <div id="reviews">
-                        {currentReviews.length > 0 ? (
-                            currentReviews.map((review, index) => (
-                                <div key={index} className="review show">
-                                    <h3>{review.name}</h3>
-                                    <div className="stars">{renderStars(review.rating)}</div>
-                                    <p>{review.comment}</p>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No reviews available</p>
+                            {currentReviews.length > 0 ? (
+                                currentReviews.map((review, index) => (
+                                    <div key={index} className="review show">
+                                        <h3>{review.name}</h3>
+                                        <div className="stars">{renderStars(review.rating)}</div>
+                                        <p>{review.comment}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No reviews available</p>
+                            )}
+                        </div>
+
+                        <div className="leave-review-button-container">
+                            <button onClick={handleLeaveReview} className="leave-review-button">Leave a Review</button>
+                        </div>
+
+                        {showReviewForm && (
+                            <div className="review-form-overlay">
+                                <ReviewForm
+                                    onClose={() => setShowReviewForm(false)}
+                                    onSubmit={handleSubmitReview}
+                                />
+                            </div>
                         )}
-                    </div>
-                    {totalPages > 1 && (
+
+                        {totalPages > 1 && (
+                            <div className="review-pagination">
+                                <span
+                                    className={`arrow ${currentPage === 1 ? "disabled" : ""}`}
+                                    onClick={() => handlePageChange("prev")}
+                                >
+                                    &lt;
+                                </span>
+                                <span className="page-number">{currentPage}</span>
+                                <span
+                                    className={`arrow ${currentPage === totalPages ? "disabled" : ""}`}
+                                    onClick={() => handlePageChange("next")}
+                                >
+                                    &gt;
+                                </span>
+                            </div>
+                        )}
                         <div className="review-pagination">
                             <span
                                 className={`arrow ${currentPage === 1 ? "disabled" : ""}`}
@@ -283,26 +380,10 @@ const Product = () => {
                                 &gt;
                             </span>
                         </div>
-                    )}
-                        <div className="review-pagination">
-                            <span
-                                className={`arrow ${currentPage === 1 ? "disabled" : ""}`}
-                                onClick={() => handlePageChange("prev")}
-                            >
-                                &lt;
-                            </span>
-                            <span className="page-number">{currentPage}</span>
-                            <span
-                                className={`arrow ${currentPage === totalPages ? "disabled" : ""}`}
-                                onClick={() => handlePageChange("next")}
-                            >
-                                &gt;
-                            </span>
-                        </div>
                     </div>
-                </div>   
+                </div>
                 <Footer />
-            </div>                
+            </div>
         </div>
     );
 };

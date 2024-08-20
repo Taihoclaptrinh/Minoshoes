@@ -22,7 +22,7 @@ export const paymentResultSchema = new mongoose.Schema({
 }, { _id: false });
 
 export const orderSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     orderItems: [orderItemSchema],
     shippingAddress: shippingAddressSchema,
     paymentMethod: { type: String, required: true },
