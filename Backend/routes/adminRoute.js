@@ -1,10 +1,12 @@
 import express from 'express';
-import { deleteProductById, 
-    getProductById, getAllProducts , 
-    getUserById, getAllUsers, 
+import {
+    deleteProductById,
+    getProductById, getAllProducts,
+    getUserById, getAllUsers,
     countAllUsers, countAllOrders,
     getAllOrders, getOrderById,
-    deleteOrderById  } from '../controller/adminController.js'; // Ensure this path is correct
+    deleteOrderById
+} from '../controller/adminController.js'; // Ensure this path is correct
 
 const router = express.Router();
 

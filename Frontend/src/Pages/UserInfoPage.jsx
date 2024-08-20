@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import UserInfo from '../Components/UserInfo/UserInfo';
 import { useNavigate } from "react-router-dom";
-import { UserContext } from '../UserContext';
+import { UserContext } from '../UserContext'; // Điều chỉnh import theo cấu trúc file của bạn
 import './CSS/UserInfoPage.css';
 import axios from 'axios';
 
@@ -10,9 +10,9 @@ const UserInfoPage = () => {
   const { user, updateUser, logout } = useContext(UserContext);
   const [localUser, setLocalUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]); // Trạng thái để lưu trữ đơn hàng
   const [error, setError] = useState(null);
-  const [reloadOrders, setReloadOrders] = useState(false);
+  const [reloadOrders, setReloadOrders] = useState(false); // Trạng thái để trigger reload đơn hàng
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,7 +46,6 @@ const UserInfoPage = () => {
     }
   }, [user]);
 
-
   const handleUpdateUser = async (updatedUser) => {
     if (!updatedUser._id) {
       console.error('No user ID found');
@@ -68,18 +67,51 @@ const UserInfoPage = () => {
       console.error('Error updating user data:', error.response?.data || error.message);
     }
   };
-  
+
   const handleLogout = () => {
     logout();
-    navigate('/login'); 
+    navigate('/login');
   };
 
+  const handleCancelOrder = async (cancelDetails) => {
+    try {
+      setLoading(true);
+      const orderId = cancelDetails.orderId;
+      const token = localStorage.getItem('token');
+
+      const response = await axios.put(`/api/v1/orders/${orderId}/status`, {
+        status: 'Cancelled',
+        ...cancelDetails
+      }, { headers: { Authorization: `Bearer ${token}` } });
+
+      if (response.status === 200) {
+        // Update the local orders state
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order._id === orderId
+              ? { ...order, status: 'Cancelled' }
+              : order
+          )
+        );
+        setReloadOrders(true); // Trigger a reload of orders
+      } else {
+        throw new Error(response.data.message || 'Failed to cancel order');
+      }
+    } catch (error) {
+      console.error('Error cancelling order:', error.response?.data || error.message);
+      setError('Failed to cancel order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Hàm transform dữ liệu đơn hàng
   const transformOrderData = (orders) => {
     return orders.map((order) => ({
       id: order._id,
       productName: order.orderItems.map(item => item.name).join(', '),
-      quantity: order.orderItems.map(item => item.quantity).join(', '), 
-      price: order.orderItems.map(item => item.price).join(', '),       
+      quantity: order.orderItems.map(item => item.quantity).join(', '),
+      price: order.orderItems.map(item => item.price).join(', '),
       shippingAddress: order.shippingAddress.address,
       name: order.shippingAddress.fullName,
       phone: order.shippingAddress.phoneNumber,
@@ -92,6 +124,7 @@ const UserInfoPage = () => {
     }));
   };
 
+  // Cấu trúc cột của bảng hiển thị đơn hàng
   const orderColumns = [
     { field: "productName", headerName: "Product Name", width: 200 },
     { field: "quantity", headerName: "Quantity", width: 100 },
@@ -106,7 +139,7 @@ const UserInfoPage = () => {
     { field: "createAt", headerName: "Created At", width: 200 },
     { field: "updateAt", headerName: "Updated At", width: 200 },
   ];
-  
+
   const renderSection = () => {
     if (loading) {
       return <div>Loading...</div>;
@@ -131,6 +164,7 @@ const UserInfoPage = () => {
             type="orders"
             orders={transformOrderData(orders)}
             orderColumns={orderColumns}
+            onCancelOrder={handleCancelOrder}
           />
         );
       default:

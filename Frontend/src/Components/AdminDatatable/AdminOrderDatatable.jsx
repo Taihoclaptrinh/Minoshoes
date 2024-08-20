@@ -23,7 +23,7 @@ const AdminOrderDatatable = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('/api/v1/admin/orders'); 
+        const response = await axios.get('/api/v1/admin/orders');
         const orders = response.data.orders.map(order => ({
           id: order._id,
           userId: order.user._id,

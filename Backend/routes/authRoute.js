@@ -5,9 +5,9 @@ import {
     loginController,
     sendResetCodeController,
     resetPasswordController,
-    testController
+    testController,
+    validateCredentials
 } from "../controller/authController.js";
-// import { createUser, showAllUsers, readUsers, deleteUser, findUser } from '../controller/userController.js';
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js';
 
 //router object
@@ -31,11 +31,7 @@ router.post('/send-reset-code', sendResetCodeController);
 // Reset Password || method POST
 router.post('/reset-password', resetPasswordController);
 
-// CRUD User    
-// router.post('/create-user', createUser);
-// router.get('/show-all-users', showAllUsers);
-// router.get('/read-users', readUsers);
-// router.get('/find-user/:email', findUser); // Changed to email
-// router.delete('/delete-user/:id', deleteUser);
+// Validate Credentials || method POST
+router.post('/validateCredentials', validateCredentials);
 
 export default router;

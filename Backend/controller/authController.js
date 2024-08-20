@@ -3,7 +3,8 @@ import { comparePassword, hashPassword } from './../helpers/authHelper.js';
 import JWT from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-dotenv.config(); 
+import bcrypt from 'bcrypt';
+dotenv.config();
 const EMAIL_USERNAME = process.env.EMAIL_USERNAME;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 
@@ -92,7 +93,7 @@ export const registerController = async (req, res) => {
     if (!verificationCode || verificationCode !== providedCode) {
       return res.status(400).send({ message: 'Invalid verification code' });
     }
-    
+
     if (!name || !email || !password || !address) {
       return res.status(400).send({ message: 'All fields are required' });
     }
@@ -388,3 +389,33 @@ export const sendResetCodeController = async (req, res) => {
     });
   }
 };
+
+export const validateCredentials = async (req, res) => {
+  try {
+    const { correct_email, email, password } = req.body;
+
+    // Check if the email is correct
+    if (email !== correct_email) {
+      return res.status(400).json({ isValid: false, message: 'Invalid email' });
+    }
+
+    // Find the user by email
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ isValid: false, message: 'User not found' });
+    }
+
+    // Compare the plain text password from the request with the stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (isPasswordValid) {
+      res.json({ isValid: true, message: 'Credentials are valid' });
+    } else {
+      res.status(400).json({ isValid: false, message: 'Invalid credentials' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ isValid: false, message: 'Server error' });
+  }
+}

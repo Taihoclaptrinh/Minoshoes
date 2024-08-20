@@ -5,7 +5,7 @@ import Product from '../models/productModel.js'; // Import the Product model
 export const createOrder = async (req, res) => {
     try {
         const { orderItems, shippingAddress, paymentMethod, shippingPrice, totalPrice } = req.body;
-        const userId = req.user._id; 
+        const userId = req.user._id;
 
         // Create the order
         const order = new Order({
@@ -74,7 +74,6 @@ export const getOrdersByUserId = async (req, res) => {
     }
 };
 
-
 // Get all orders for a user
 export const getUserOrders = async (req, res) => {
     try {
@@ -99,7 +98,7 @@ export const getUserOrders = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
     try {
         const { status } = req.body;
-        const order = await Order.findById(req.params.id);
+        const order = await Order.findById(req.body.orderId);
 
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
@@ -141,7 +140,7 @@ export const updateOrderAddress = async (req, res) => {
 
         // Update address in incomplete orders
         const updatedOrders = await Order.updateMany(
-            { user: userId, status: { $ne: 'Delivered', $ne: 'Shipping'} },  // Only update incomplete orders
+            { user: userId, status: { $ne: 'Delivered', $ne: 'Shipping' } },  // Only update incomplete orders
             { $set: { 'shippingAddress.address': newAddress } }
         );
 

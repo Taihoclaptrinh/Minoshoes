@@ -1,5 +1,5 @@
 import User from '../models/userModel.js'; // Import User model
-import {Order} from '../models/orderModel.js'; // Import Order model
+import { Order } from '../models/orderModel.js'; // Import Order model
 import Product from '../models/productModel.js'; // Import Product model
 
 // Function to count all users
@@ -149,17 +149,11 @@ export const deleteProductById = async (req, res) => {
 
 export const getAllOrders = async (req, res) => {
     try {
-        const orders = await Order.find().populate('user', 'name email'); // Lấy tất cả đơn hàng và populate thông tin người dùng
-        res.status(200).json({
-            success: true,
-            orders // Trả về dữ liệu đơn hàng
-        });
+        const orders = await Order.find().populate('user', 'email');
+        res.json({ orders });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Đã xảy ra lỗi khi lấy danh sách đơn hàng',
-            error: error.message // Trả về thông báo lỗi nếu có
-        });
+        console.error("Error fetching orders:", error);
+        res.status(500).json({ error: "Internal server error", details: error.message });
     }
 };
 
@@ -188,7 +182,7 @@ export const getOrderById = async (req, res) => {
     }
 };
 
-export const deleteOrderById = async (req, res) =>{
+export const deleteOrderById = async (req, res) => {
     try {
         const { orderId } = req.params; // Extract productId from request parameters
         const order = await Order.findByIdAndDelete(orderId); // Find and delete product by ID

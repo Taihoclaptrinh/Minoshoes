@@ -17,7 +17,7 @@ import {
   findUser,
   showAllUsers,
 } from './Backend/controller/authController.js';
-import payosRoutes from './Backend/routes/payosRoute.js'; 
+import payosRoutes from './Backend/routes/payosRoute.js';
 import authRoutes from './Backend/routes/authRoute.js';
 import productRoute from './Backend/routes/productRoute.js';
 import cartRoute from './Backend/routes/cartRoute.js';
@@ -25,7 +25,7 @@ import uploadRoute from './Backend/routes/uploadRoute.js';
 import userRoute from './Backend/routes/userRoute.js'
 import orderRoute from './Backend/routes/orderRoute.js';
 import adminRoute from './Backend/routes/adminRoute.js';
-import reviewRoute from './Backend/routes/reviewRoute.js'
+import reviewRoute from './Backend/routes/reviewRoute.js';
 
 dotenv.config();
 const app = express();
@@ -38,7 +38,7 @@ connectDB();
 
 // Middleware setup
 app.use(cors());
-app.use(express.json());  
+app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/api/v1/payos', payosRoutes);
@@ -58,7 +58,7 @@ router.get('/show-all-users', showAllUsers);
 
 // Image upload route
 app.use('/api/v1/auth', uploadRoute);
-app.use('/api/v1/admin', adminRoute)
+app.use('/api/v1/admin', adminRoute);
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/orders', orderRoute);
