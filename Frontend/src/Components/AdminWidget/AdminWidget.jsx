@@ -5,7 +5,7 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import { Link } from "react-router-dom"; // Import Link
-import axios from "axios"; // Import axios for API calls
+import { get, post, put, del } from '../../config/api';
 
 const AdminWidget = ({ type }) => {
   const [data, setData] = useState(null);
@@ -15,9 +15,9 @@ const AdminWidget = ({ type }) => {
       try {
         let response;
         if (type === "user") {
-          response = await axios.get('/api/v1/admin/count-user');
+          response = await get('/api/v1/admin/count-user');
         } else if (type === "order") {
-          response = await axios.get('/api/v1/admin/count-order');
+          response = await get('/api/v1/admin/count-order');
         }
 
         if (response && response.data.success) {

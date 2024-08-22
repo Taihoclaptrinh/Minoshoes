@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 // import { productColumns } from "../../datatablesource.js"; // Adjust the path as needed
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { get, post, put, del } from '../../config/api';
 import Swal from 'sweetalert2';
 
 const AdminProductDatatable = () => {
@@ -40,7 +40,7 @@ const AdminProductDatatable = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('/api/v1/admin/products'); // Adjust the API endpoint as necessary
+        const response = await get('/api/v1/admin/products'); // Adjust the API endpoint as necessary
         const products = response.data.products.map(product => ({
           id: product._id,
           name: product.name,
@@ -75,7 +75,7 @@ const AdminProductDatatable = () => {
   
     if (result.isConfirmed) {
       try {
-        await axios.delete(`/api/v1/admin/products/${id}`); // Gửi yêu cầu xóa đến API
+        await del(`/api/v1/admin/products/${id}`); // Gửi yêu cầu xóa đến API
         setData(data.filter((item) => item.id !== id)); // Xóa sản phẩm khỏi bảng trên web
         Swal.fire(
           'Deleted!',

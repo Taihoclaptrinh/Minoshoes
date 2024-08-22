@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import "./CSS/LoginLogup.css";
 import AddressSelector from "../Components/Address/Address.jsx"
-import axios from 'axios';
+import { get, post, put, del } from '../config/api';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.js'; // Ensure correct path
 
@@ -31,7 +31,7 @@ const LoginLogup = () => {
         setSuccess('');
 
         try {
-            const response = await axios.post('/api/v1/auth/check-email', { email });
+            const response = await post('/api/v1/auth/check-email', { email });
             if (response.data.userExists) {
                 setShowPassword(true);
                 setShowSignIn(false);
@@ -66,7 +66,7 @@ const LoginLogup = () => {
 
         try {
             // Gửi yêu cầu đăng ký đến API
-            const response = await axios.post('/api/v1/auth/register', {
+            const response = await post('/api/v1/auth/register', {
                 name,
                 email,
                 password,
@@ -102,13 +102,13 @@ const LoginLogup = () => {
         }
     
         try {
-            const response = await axios.post('/api/v1/auth/login', { email, password });
+            const response = await post('/api/v1/auth/login', { email, password });
             if (response.data.success) {
                 const token = response.data.token;
                 localStorage.setItem('token', token);
     
                 // Fetch full user data based on ID
-                const userResponse = await axios.get(`/api/v1/auth/users/${response.data.user._id}`, {
+                const userResponse = await get(`/api/v1/auth/users/${response.data.user._id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
     
@@ -134,7 +134,7 @@ const LoginLogup = () => {
         }
     
         try {
-            const response = await axios.post('/api/v1/auth/send-reset-code', { email });
+            const response = await post('/api/v1/auth/send-reset-code', { email });
     
             if (response.data.success) {
                 const token = response.data.resetToken;
@@ -165,7 +165,7 @@ const LoginLogup = () => {
         }
     
         try {
-            const response = await axios.post('/api/v1/auth/reset-password', {
+            const response = await post('/api/v1/auth/reset-password', {
                 email,
                 resetCode: providedCode, 
                 newPassword: password,

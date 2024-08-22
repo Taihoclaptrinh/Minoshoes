@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { get, post, put, del } from '../../config/api';
 import Carousel from 'react-multi-carousel';
 import { useNavigate } from 'react-router-dom';
 import 'react-multi-carousel/lib/styles.css';
@@ -38,7 +38,7 @@ const ProductSlider = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('/api/v1/auth/products'); 
+        const response = await get('/api/v1/auth/products'); 
         setProducts(response.data);
         setLoading(false);
       } catch (error) {

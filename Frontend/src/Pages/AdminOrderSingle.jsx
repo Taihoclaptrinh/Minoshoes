@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from 'axios';
+import { get, post, put, del } from '../config/api';
 import "./CSS/AdminOrderSingle.css";
 
 const AdminOrderSingle = () => {
@@ -14,7 +14,7 @@ const AdminOrderSingle = () => {
   useEffect(() => {
     const fetchOrderData = async () => {
       try {
-        const response = await axios.get(`/api/v1/admin/orders/${orderId}`);
+        const response = await get(`/api/v1/admin/orders/${orderId}`);
         const order = response.data.order;
         setOrderData({
           id: order._id || "N/A",

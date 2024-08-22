@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./CSS/AdminSingle.css";
 import AdminChart from "../Components/AdminChart/AdminChart.jsx";
 import { useParams } from "react-router-dom";
-import axios from 'axios';
+import { get, post, put, del } from '../config/api';
 
 const AdminUserSingle = () => {
   const { userId } = useParams();
@@ -13,7 +13,7 @@ const AdminUserSingle = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`/api/v1/admin/get-user/${userId}`);
+        const response = await get(`/api/v1/admin/get-user/${userId}`);
         const user = response.data.user; // Đảm bảo lấy dữ liệu từ user
         setFormData({
           id: user._id || "N/A",

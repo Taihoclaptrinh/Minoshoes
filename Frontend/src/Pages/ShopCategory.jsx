@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import { get, post, put, del } from '../config/api';
 import './CSS/ProductCategory.css';
 import Footer from '../Components/Footer/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -38,7 +38,7 @@ const ProductCategory = () => {
       try {
         const searchQuery = new URLSearchParams(location.search).get('query');
         const colorQuery = selectedColors.length > 0 ? `&color=${selectedColors.join(',')}` : '';
-        const response = await axios.get(`/api/v1/auth/products${searchQuery ? `/search?query=${encodeURIComponent(searchQuery)}${colorQuery}` : colorQuery}`);
+        const response = await get(`/api/v1/auth/products${searchQuery ? `/search?query=${encodeURIComponent(searchQuery)}${colorQuery}` : colorQuery}`);
         const products = response.data;
         setProductData(products);
         setTotalPages(Math.ceil(products.length / productsPerPage));
@@ -55,7 +55,7 @@ const ProductCategory = () => {
   const fetchProductsByColor = useCallback(async (colors) => {
     setIsFiltering(true);
     try {
-      const response = await axios.get(`/api/v1/auth/products/color`, {
+      const response = await get(`/api/v1/auth/products/color`, {
         params: { color: colors }
       });
       setProductData(response.data);
@@ -118,7 +118,7 @@ const ProductCategory = () => {
     setLoading(true);
 
     try {
-      const response = await axios.get(`/api/v1/auth/products/color`, {
+      const response = await get(`/api/v1/auth/products/color`, {
         params: { color: updatedColors }
       });
       setProductData(response.data);

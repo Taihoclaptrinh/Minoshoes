@@ -32,7 +32,6 @@ import LoginLogup from "./Pages/LoginLogup";
 import Product from "./Pages/Product";
 import UserInfo from "./Pages/UserInfoPage";
 
-
 // Admin App Component
 const AdminApp = () => (
   <div className="AdminApp">

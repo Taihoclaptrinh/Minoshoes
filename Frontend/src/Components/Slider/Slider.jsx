@@ -4,7 +4,7 @@ import "react-multi-carousel/lib/styles.css";
 import Product from "./Product";
 import Loader from "../Loader/Loading";
 import "./Slider.css"
-import axios from "axios";
+import { get, post, put, del } from '../../config/api';
 
 const Slider = () => {
   const [productData, setProductData] = useState([]);
@@ -13,7 +13,7 @@ const Slider = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/products");
+        const response = await get("/api/v1/auth/products");
         setProductData(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);

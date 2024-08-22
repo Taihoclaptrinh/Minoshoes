@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import "./Navbar.css";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from '../../UserContext.js'; // Đảm bảo đường dẫn chính xác
-import axios from 'axios'; // Import axios for API calls
+import { get, post, put, del } from '../../config/api';
 
 const Navbar = () => {
     const [menu, setMenu] = useState("shop");
@@ -62,7 +62,7 @@ const Navbar = () => {
             try {
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const response = await axios.get('/api/v1/auth/cart/count', {
+                    const response = await get('/api/v1/auth/cart/count', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -121,7 +121,7 @@ const Navbar = () => {
         }
 
         try {
-            const response = await axios.post('/api/v1/auth/cart/update', {
+            const response = await post('/api/v1/auth/cart/update', {
                 action: action
             }, {
                 headers: {

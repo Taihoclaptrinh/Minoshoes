@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./CSS/AdminProductSingle.css";
 // import AdminChart from "../Components/AdminChart/AdminChart.jsx";
 import { useParams } from "react-router-dom";
-import axios from 'axios';
+import { get, post, put, del } from '../config/api';
 
 const AdminProductSingle = () => {
   const { productId } = useParams(); // Get the productId from the URL parameters
@@ -13,7 +13,7 @@ const AdminProductSingle = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`/api/v1/admin/products/${productId}`);
+        const response = await get(`/api/v1/admin/products/${productId}`);
         const product = response.data.product;
         setFormData({
           id: product._id || "N/A",

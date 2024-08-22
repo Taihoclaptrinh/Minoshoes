@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import { get, post, put, del } from '../config/api';
 import "./CSS/Cart.css";
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.js';
@@ -32,7 +32,7 @@ const Cart = () => {
     const updateTotalCartCount = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.get('/api/v1/auth/cart/count', {
+            const response = await get('/api/v1/auth/cart/count', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.data && typeof response.data.totalQuantity === 'number') {
@@ -64,7 +64,7 @@ const Cart = () => {
     const clearCart = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.delete('/api/v1/auth/cart/clear', {
+            const response = await del('/api/v1/auth/cart/clear', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             console.log('Clear cart response:', response.data);
@@ -96,7 +96,7 @@ const Cart = () => {
             const newQuantity = product.quantity + delta;
             if (newQuantity == 0) {
                 // Remove item from cart
-                await axios.delete('/api/v1/auth/cart/remove-from-cart', {
+                await del('/api/v1/auth/cart/remove-from-cart', {
                     headers: { Authorization: `Bearer ${token}` },
                     data: {
                         productId,
@@ -110,7 +110,7 @@ const Cart = () => {
                 product.quantity = newQuantity;
     
                 // Update cart in backend
-                await axios.put('/api/v1/auth/cart/update-cart', {
+                await put('/api/v1/auth/cart/update-cart', {
                     productId,
                     quantity: newQuantity,
                     price: product.product.price,
@@ -158,7 +158,7 @@ const Cart = () => {
     
             if (paymentMethod === 'COD') {
                 // Create the order immediately for COD
-                const response = await axios.post('/api/v1/orders/create-order', orderItems, {
+                const response = await post('/api/v1/orders/create-order', orderItems, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
     
@@ -173,7 +173,7 @@ const Cart = () => {
                     throw new Error('Failed to create order');
                 }
             } else if (paymentMethod === 'E-Banking') {
-                const paymentResponse = await axios.post('/api/v1/payos/create-payment-link', {
+                const paymentResponse = await post('/api/v1/payos/create-payment-link', {
                     amount: totalCost,
                     description: `Payment for ${totalItems} items`,
                 }, {
@@ -207,7 +207,7 @@ const Cart = () => {
                 if (pendingOrder) {
                     try {
                         const token = localStorage.getItem('token');
-                        const response = await axios.post('/api/v1/orders/create-order', pendingOrder, {
+                        const response = await post('/api/v1/orders/create-order', pendingOrder, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
     
@@ -250,7 +250,7 @@ const Cart = () => {
         if (user) {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('/api/v1/auth/cart/get-cart', {
+                const response = await get('/api/v1/auth/cart/get-cart', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setProducts(response.data.cartItems);

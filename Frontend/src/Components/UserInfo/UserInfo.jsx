@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Delete as CancelIcon } from '@mui/icons-material';
 import './UserInfo.css';
 import Swal from 'sweetalert2';
+import { post } from '../../config/fetchConfig'
 // import AddressSelector from '../Address/Address'; // Import the AddressSelector component
 
 const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrder }) => {
@@ -109,21 +110,21 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
 
   const validateCredentials = async (correct_email, email, password) => {
     try {
-      const response = await fetch('/api/v1/auth/validateCredentials', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ correct_email, email, password }),
-        credentials: 'include', // This ensures the session cookie is sent with the request
+      const data = await post('/api/v1/auth/validateCredentials', { 
+        correct_email, 
+        email, 
+        password 
+      }, {
+        credentials: 'include', // Đảm bảo session cookie được gửi kèm
       });
-      const data = await response.json();
+      
       return data.isValid;
     } catch (error) {
       console.error('Error validating credentials:', error);
       return false;
     }
   };
+  
 
   const renderDetails = () => (
     <>

@@ -2,9 +2,8 @@ import "./AdminDatatable.css";
 import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Swal from 'sweetalert2';
-
+import { get, post, put, del } from '../../config/api';
 const AdminOrderDatatable = () => {
   const [data, setData] = useState([]);
 
@@ -23,7 +22,7 @@ const AdminOrderDatatable = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('/api/v1/admin/orders');
+        const response = await get('/api/v1/admin/orders');
         const orders = response.data.orders.map(order => ({
           id: order._id,
           userId: order.user._id,
@@ -58,7 +57,7 @@ const AdminOrderDatatable = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`/api/v1/admin/orders/${id}`);
+        await del(`/api/v1/admin/orders/${id}`);
         setData(data.filter((item) => item.id !== id));
         Swal.fire('Deleted!', 'The order has been deleted.', 'success');
       } catch (error) {

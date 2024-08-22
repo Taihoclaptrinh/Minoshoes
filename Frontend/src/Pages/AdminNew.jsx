@@ -1,6 +1,6 @@
 import "./CSS/AdminNew.css";
 import { useState } from "react";
-import axios from "axios"; // Import axios for API calls
+import { get, post, put, del } from '../config/api'; // Đảm bảo đúng đường dẫn đến file api.js
 
 const AdminNew = ({ inputs, title, formType }) => {
   const [formData, setFormData] = useState(
@@ -43,7 +43,7 @@ const AdminNew = ({ inputs, title, formType }) => {
         });
         
         // Upload images and get image URLs
-        const uploadResponse = await axios.post('/api/v1/auth/upload', fileData);
+        const uploadResponse = await post('/api/v1/auth/upload', fileData);
         const { imageUrls } = uploadResponse.data;
 
         // Prepare product data
@@ -65,7 +65,7 @@ const AdminNew = ({ inputs, title, formType }) => {
         alert(`Product Data: ${JSON.stringify(productData, null, 2)}`);
 
         // Send product data to the API to create a new product
-        const response = await axios.post('/api/v1/auth/products', productData);
+        const response = await post('/api/v1/auth/products', productData);
         console.log('Product created successfully:', response.data);
       } else {
         alert("Please upload at least one image.");

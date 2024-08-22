@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 // import { userColumns } from "../../datatablesource.js"; // Adjust the path as needed
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from 'axios'; // Import axios for API calls
+import { get, post, put, del } from '../../config/api';
 
 const AdminUserDatatable = () => {
   const [data, setData] = useState([]); // Initialize state with an empty array
@@ -21,7 +21,7 @@ const AdminUserDatatable = () => {
     // Fetch user data from API when the component mounts
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('/api/v1/admin/get-user'); // Adjust the API endpoint as needed
+        const response = await get('/api/v1/admin/get-user'); // Adjust the API endpoint as needed
         const users = response.data.users; // Adjust based on your API response structure
 
         // Transform data to match DataGrid format

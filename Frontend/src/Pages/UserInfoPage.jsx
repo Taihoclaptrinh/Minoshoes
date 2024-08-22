@@ -3,7 +3,7 @@ import UserInfo from '../Components/UserInfo/UserInfo';
 import { useNavigate } from "react-router-dom";
 import { UserContext } from '../UserContext'; // Điều chỉnh import theo cấu trúc file của bạn
 import './CSS/UserInfoPage.css';
-import axios from 'axios';
+import { get, post, put, del } from '../config/api';
 
 const UserInfoPage = () => {
   const [activeSection, setActiveSection] = useState('details');
@@ -18,7 +18,7 @@ const UserInfoPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`/api/v1/auth/users/${user._id}`);
+        const response = await get(`/api/v1/auth/users/${user._id}`);
         setLocalUser(response.data);
       } catch (error) {
         console.error('Error fetching user data:', error.response?.data || error.message);
@@ -30,7 +30,7 @@ const UserInfoPage = () => {
 
     const fetchUserOrders = async () => {
       try {
-        const response = await axios.get(`/api/v1/orders/user-orders/${user._id}`);
+        const response = await get(`/api/v1/orders/user-orders/${user._id}`);
         setOrders(response.data);
       } catch (error) {
         console.error('Error fetching user orders:', error.response?.data || error.message);
@@ -53,12 +53,12 @@ const UserInfoPage = () => {
       return;
     }
     try {
-      await axios.put(`/api/v1/auth/users/${updatedUser._id}`, updatedUser);
+      await put(`/api/v1/auth/users/${updatedUser._id}`, updatedUser);
       updateUser(updatedUser);
       setLocalUser(updatedUser);
 
       if (updatedUser.address) {
-        await axios.put(`/api/v1/orders/update-address/${updatedUser._id}`, {
+        await put(`/api/v1/orders/update-address/${updatedUser._id}`, {
           newAddress: updatedUser.address
         });
         setReloadOrders(true);
@@ -79,7 +79,7 @@ const UserInfoPage = () => {
       const orderId = cancelDetails.orderId;
       const token = localStorage.getItem('token');
 
-      const response = await axios.put(`/api/v1/orders/${orderId}/status`, {
+      const response = await put(`/api/v1/orders/${orderId}/status`, {
         status: 'Cancelled',
         ...cancelDetails
       }, { headers: { Authorization: `Bearer ${token}` } });

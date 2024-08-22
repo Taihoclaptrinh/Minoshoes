@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { get, post, put, del } from '../../config/api';
 import "./Address.css";
 
 const AddressSelector = ({ onAddressChange }) => {
@@ -14,7 +14,7 @@ const AddressSelector = ({ onAddressChange }) => {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const response = await axios.get('https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json');
+        const response = await get('https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json');
         setCities(response.data);
       } catch (error) {
         console.error('Error fetching cities:', error);

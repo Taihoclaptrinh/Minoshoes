@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./CSS/Product.css";
-import axios from "axios";
+import { get, post, put, del } from '../config/api';
 import { useLocation, useNavigate } from "react-router-dom";
 import Slider from "../Components/Slider/Slider.jsx";
 import Footer from "../Components/Footer/Footer.jsx";
@@ -71,7 +71,7 @@ const Product = () => {
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    const response = await axios.get('/api/v1/auth/cart/count', {
+                    const response = await get('/api/v1/auth/cart/count', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -98,7 +98,7 @@ const Product = () => {
         }
 
         try {
-            const response = await axios.post('/api/v1/auth/cart/add-to-cart', {
+            const response = await post('/api/v1/auth/cart/add-to-cart', {
                 productId: product._id,
                 quantity: 1,
                 price: product.price,
@@ -149,7 +149,7 @@ const Product = () => {
     const handleSubmitReview = async (reviewData) => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.post('/api/v1/auth/reviews', {
+            const response = await post('/api/v1/auth/reviews', {
                 productId: productData._id,
                 userId: localStorage.getItem('userId'),
                 rating: reviewData.rating,
@@ -177,12 +177,12 @@ const Product = () => {
 
         if (productName) {
             try {
-                const response = await axios.get(`http://localhost:5000/api/v1/auth/products/${encodeURIComponent(productName)}`);
+                const response = await get(`/api/v1/auth/products/${encodeURIComponent(productName)}`);
                 setProductData(response.data);
                 window.scrollTo(0, 0);
 
                 // Fetch reviews and average rating
-                const reviewsResponse = await axios.get(`http://localhost:5000/api/v1/auth/reviews/product/:${response.data._id}`);
+                const reviewsResponse = await get(`/api/v1/auth/reviews/product/:${response.data._id}`);
                 setReviews(reviewsResponse.data.reviews);
                 setAverageRating(reviewsResponse.data.averageRating);
                 setReviewCount(reviewsResponse.data.reviewCount);
