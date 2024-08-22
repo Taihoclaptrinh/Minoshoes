@@ -41,11 +41,10 @@ const AdminNew = ({ inputs, title, formType }) => {
         Array.from(formData.productImages).forEach((file) => {
           fileData.append('images', file); // Ensure the key matches the backend expectation
         });
-        
         // Upload images and get image URLs
         const uploadResponse = await post('/api/v1/auth/upload', fileData);
         const { imageUrls } = uploadResponse.data;
-
+        
         // Prepare product data
         const productData = {
           code: formData.productCode,
@@ -61,7 +60,6 @@ const AdminNew = ({ inputs, title, formType }) => {
           createdAt: formData.productCreateAt,
           updatedAt: formData.productUpdateAt,
         };
-        console.log(productData)
         alert(`Product Data: ${JSON.stringify(productData, null, 2)}`);
 
         // Send product data to the API to create a new product

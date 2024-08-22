@@ -51,7 +51,6 @@
 .dropdown-container {
     position: absolute;
     height: 5rem;
-    background-color: red;
 }
 .nav-item.show .dropdown-container {
     display: block;

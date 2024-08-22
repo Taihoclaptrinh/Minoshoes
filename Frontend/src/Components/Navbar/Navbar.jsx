@@ -36,6 +36,14 @@ const Navbar = () => {
         }
     };
 
+    const handleBrandClick = (brandName) => {
+        navigate(`/search?query=${encodeURIComponent(brandName)}`);
+    };
+    const handleCategoryClick = (category) => {
+        navigate(`/search?query=${encodeURIComponent(category)}`);
+    };
+    
+
     const handleClickOutside = (event) => {
         if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
             setSearchVisible(false);
@@ -152,24 +160,9 @@ const Navbar = () => {
                         <div className="dropdown-container">
                             <div class="dropdown">
                                 <a className="title" href="#">Shoes</a>
-                                <a href="#">Running</a>
-                                <a href="#">Casual</a>
-                                <a href="#">Lifestyle</a>
-                                <a className="title" href="#">Shop by Size</a>
-                                <div className="size-options1">
-                                    <a href="#">9.5</a>
-                                    <a href="#">10</a>
-                                    <a href="#">10.5</a>
-                                    <a href="#">11</a>
-                                    <a href="#">7.5</a>
-                                    <a href="#">8</a>
-                                    <a href="#">8.5</a>
-                                    <a href="#">9</a>
-                                    <a href="#">5.5</a>
-                                    <a href="#">6</a>
-                                    <a href="#">6.5</a>
-                                    <a href="#">7</a>
-                                </div>
+                                <a href="#" onClick={() => handleCategoryClick('Running')}>Running</a>
+                                <a href="#" onClick={() => handleCategoryClick('Casual')}>Casual</a>
+                                <a href="#" onClick={() => handleCategoryClick('Lifestyle')}>Lifestyle</a>
                             </div>  
                         </div>
                     </li>
@@ -177,32 +170,26 @@ const Navbar = () => {
                         <div className="dropdown-container">
                             <div class="dropdown">
                                 <a className="title" href="#">Shoes</a>
-                                <a href="#">Running</a>
-                                <a href="#">Casual</a>
-                                <a href="#">Lifestyle</a>
-                                <a className="title size" href="#">Shop by Size</a>
-                                <div className="size-options2">
-                                    <a href="#">4.5</a>
-                                    <a href="#">5</a>
-                                    <a href="#">3.5</a>
-                                    <a href="#">4</a>
-                                </div>          
+                                <a href="#" onClick={() => handleCategoryClick('Running')}>Running</a>
+                                <a href="#" onClick={() => handleCategoryClick('Casual')}>Casual</a>
+                                <a href="#" onClick={() => handleCategoryClick('Lifestyle')}>Lifestyle</a>          
                             </div>
                         </div>    
                             
                     </li>
-                    <li class="nav-item" onClick={() => { setMenu("brands") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='brands'>BRANDS</Link>{menu === "brands"}
+                    <li className="nav-item" onClick={() => { setMenu("brands") }}>
+                        <Link style={{ textDecoration: 'none', color: 'black' }} to='brands'>BRANDS</Link>
+                        {menu === "brands"}
                         <div className="dropdown-container">
-                            <div class="dropdown">
-                                <a className="title" href="#">Shop By Brand</a>
-                                <a href="#">Adidas</a>
-                                <a href="#">Nike</a>
-                                <a href="#">Asics</a>
-                                <a href="#">Vans</a>
-                                <a href="#">Puma</a>
+                            <div className="dropdown">
+                                <a className="title" href="/new-arrivals" >Shop By Brand</a>
+                                <a href="#" onClick={() => handleBrandClick('Adidas')}>Adidas</a>
+                                <a href="#" onClick={() => handleBrandClick('Nike')}>Nike</a>
+                                <a href="#" onClick={() => handleBrandClick('Asics')}>Asics</a>
+                                <a href="#" onClick={() => handleBrandClick('Vans')}>Vans</a>
+                                <a href="#" onClick={() => handleBrandClick('Puma')}>Puma</a>
                             </div>
-                        </div>   
-
+                        </div>
                     </li>
                     <li onClick={() => { setMenu("new-arrivals") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='new-arrivals'>NEW ARRIVALS</Link>{menu === "new-arrivals"}</li>
                     <li onClick={() => { setMenu("sale") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='sale'>SALE</Link>{menu === "sale"}</li>
