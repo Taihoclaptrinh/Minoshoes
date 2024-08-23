@@ -77,6 +77,16 @@ const AdminUserSingle = () => {
       <div className="singleContainer">
         <div className="top">
           <div className="left">
+            <div className="buttonContainer">
+              <button className="editButton" onClick={toggleEditMode}>
+                {isEditing ? "Cancel" : "Edit"}
+              </button>
+              {isEditing && (
+                <button className="saveButton" onClick={saveChanges}>
+                  Save
+                </button>
+              )}
+            </div>
             <h1 className="title">User Information</h1>
             <div className="item">
               <div className="imagePreviewContainer">
@@ -99,34 +109,31 @@ const AdminUserSingle = () => {
               </div>
               <div className="details">
                 <h1 className="itemTitle">{formData.name}</h1>
-                <div className="detailItem">
-                  <span className="itemKey">ID:</span>
-                  <span className="itemValue">{formData.id}</span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Email:</span>
-                  <span className="itemValue">{formData.email}</span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Phone:</span>
-                  <span className="itemValue">{formData.phone}</span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Address:</span>
-                  <span className="itemValue">{formData.address}</span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Total Spent:</span>
-                  <span className="itemValue">{formData.totalSpent}</span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Role:</span>
-                  <span className="itemValue">{formData.role}</span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Created At:</span>
-                  <span className="itemValue">{formData.createAt}</span>
-                </div>
+                <form>
+                  {Object.keys(formData).map((key) => (
+                    key !== 'images' && (
+                      <div key={key} className="detailItem">
+                        <label className="itemKey" htmlFor={key}>
+                          {key.charAt(0).toUpperCase() + key.slice(1)}:
+                        </label>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            id={key}
+                            name={key}
+                            value={formData[key] || ""}
+                            onChange={handleInputChange}
+                            className="itemValue"
+                          />
+                        ) : (
+                          <span className="itemValue">
+                            {formData[key] || "N/A"}
+                          </span>
+                        )}
+                      </div>
+                    )
+                  ))}
+                </form>
               </div>
             </div>
           </div>

@@ -1,5 +1,7 @@
 import "./AdminNavbar.css";
-import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
+import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import { Link } from "react-router-dom";
 
 const AdminNavbar = () => {
@@ -14,9 +16,13 @@ const AdminNavbar = () => {
         </div> 
         <div className="items">
           <div className="item">
-            <Link to="/" style={{ textDecoration: "none" }}>
-              <ChangeCircleIcon className="icon" />
-            </Link>
+            <NotificationsNoneOutlinedIcon className="icon" />
+          </div>
+          <div className="item">
+            <ChatBubbleOutlineOutlinedIcon className="icon" />
+          </div>
+          <div className="item">
+            <ListOutlinedIcon className="icon" />
           </div>
         </div>
       </div>

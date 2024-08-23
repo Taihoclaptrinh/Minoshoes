@@ -41,6 +41,12 @@
     height: auto;
 }
 
+.nav-menu li a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold; /* Thêm thuộc tính font-weight: bold để in đậm */
+}
+
 .nav-menu li:hover {
     transform: scale(0.9);
 }
@@ -51,7 +57,6 @@
 .dropdown-container {
     position: absolute;
     height: 5rem;
-    background-color: red;
 }
 .nav-item.show .dropdown-container {
     display: block;

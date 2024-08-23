@@ -17,9 +17,11 @@ import AdminHome from "./Pages/AdminHome";
 import AdminUserList from "./Pages/AdminUserList";
 import AdminProductList from "./Pages/AdminProductList";
 import AdminOrderList from "./Pages/AdminOrderList";
+import AdminCouponList from "./Pages/AdminCouponList";
 import AdminUserSingle from "./Pages/AdminUserSingle";
-import AdminProductSingle from "./Pages/AdminProductSingle";  
-import AdminOrderSingle from "./Pages/AdminOrderSingle";  
+import AdminProductSingle from "./Pages/AdminProductSingle";
+import AdminOrderSingle from "./Pages/AdminOrderSingle";
+import AdminCouponSingle from "./Pages/AdminCouponSingle";
 
 import AdminNew from "./Pages/AdminNew";
 
@@ -31,6 +33,9 @@ import Cart from "./Pages/Cart";
 import LoginLogup from "./Pages/LoginLogup";
 import Product from "./Pages/Product";
 import UserInfo from "./Pages/UserInfoPage";
+
+// Botchat Component
+import Botchat from "./Components/Botchat/Botchat";
 
 // Admin App Component
 const AdminApp = () => (
@@ -83,6 +88,7 @@ const ShopApp = () => (
       <Route path="/userinfo" element={<UserInfo />} />
       <Route path="/search" element={<SearchResults />} />
     </Routes>
+    <Botchat />
   </div>
 );
 

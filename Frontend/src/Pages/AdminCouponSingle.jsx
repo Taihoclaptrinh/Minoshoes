@@ -1,21 +1,53 @@
 import React, { useState, useEffect } from "react";
-import "./CSS/AdminSingle.css";
+import "./CSS/AdminCouponSingle.css";
 import { useParams } from "react-router-dom";
-import { couponRows } from "../datatablesource.js";
+import { get, put } from '../config/api';
 
 const AdminCouponSingle = () => {
   const { couponId } = useParams();
-
-  const initialData = couponRows.find((coupon) => coupon.id.toString() === couponId.toString());
-
+  const [formData, setFormData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(initialData);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-    }
-  }, [initialData]);
+    const fetchCouponData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await get(`/api/v1/admin/coupons/${couponId}`);
+        console.log("API Response:", response); // Log the full response
+
+        if (!response || !response.data) {
+          throw new Error("No data received from API");
+        }
+
+        const coupon = response.data.coupon || response.data;
+        console.log("Coupon data:", coupon); // Log the coupon data
+
+        if (!coupon || typeof coupon !== 'object') {
+          throw new Error("Invalid coupon data structure");
+        }
+
+        setFormData({
+          id: coupon._id || coupon.id || "N/A",
+          code: coupon.code || "N/A",
+          discountValue: coupon.discountValue || "N/A",
+          startDate: coupon.startDate ? new Date(coupon.startDate).toLocaleDateString() : "Invalid Date",
+          endDate: coupon.endDate ? new Date(coupon.endDate).toLocaleDateString() : "Invalid Date",
+          usageCount: coupon.usageCount || "N/A",
+          usageLimit: coupon.usageLimit || "N/A",
+        });
+      } catch (error) {
+        console.error("Error fetching coupon data:", error);
+        setError(error.message || "Failed to fetch coupon data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCouponData();
+  }, [couponId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,87 +61,59 @@ const AdminCouponSingle = () => {
     setIsEditing(!isEditing);
   };
 
-  const saveChanges = () => {
-    toggleEditMode();
-    console.log("Updated data:", formData);
-    // Update the backend here
+  const saveChanges = async () => {
+    try {
+      const response = await put(`/api/v1/admin/coupons/${couponId}`, formData);
+      console.log("Update response:", response);
+      toggleEditMode();
+    } catch (error) {
+      console.error("Error saving changes:", error);
+      setError("Failed to save changes. Please try again.");
+    }
   };
 
-  if (!formData) return <div>Data not found</div>;
-
-  const couponInputs = [
-    { id: 'coupon', label: "Coupon", type: "text", placeholder: "Coupon Code" },
-    {
-      id: 'type',
-      label: "Type",
-      type: "select",
-      options: ["Freeship", "Discount price"],
-    },
-    { id: 'discount_value', label: "Discount Value", type: "number", placeholder: "0", min: 0 },
-    { id: 'minimum_purchase_amount', label: "Minimum Purchase Amount", type: "number", placeholder: "0", min: 0 },
-    { id: 'description', label: "Description", type: "text", placeholder: "Coupon Description" },
-    { id: 'createAt', label: "Created At", type: "date", disabled: true },
-    { id: 'expiredAt', label: "Expired Date", type: "date" },
-  ];
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!formData) return <div>No coupon data available</div>;
 
   return (
-    <div className="AdminSingle">
-      <div className="singleContainer">
+    <div className="admin-coupon-single">
+      <div className="single-container">
         <div className="top">
           <div className="left">
-            <div className="buttonContainer">
-              <button className="editButton" onClick={toggleEditMode}>
+            <div className="button-container">
+              <button className="edit-button" onClick={toggleEditMode}>
                 {isEditing ? "Cancel" : "Edit"}
               </button>
               {isEditing && (
-                <button className="saveButton" onClick={saveChanges}>
+                <button className="save-button" onClick={saveChanges}>
                   Save
                 </button>
               )}
             </div>
             <h1 className="title">Coupon Information</h1>
-            <div className="item">
-              <div className="details">
-                <h1 className="itemTitle">{formData.coupon || "Details"}</h1>
-                <form>
-                  {couponInputs.map((input) => (
-                    <div key={input.id} className="detailItem">
-                      <label className="itemKey">{input.label}:</label>
-                      {isEditing ? (
-                        input.type === "select" ? (
-                          <select
-                            id={input.id}
-                            name={input.id}
-                            value={formData[input.id] || ""}
-                            onChange={handleInputChange}
-                            disabled={input.disabled}
-                          >
-                            {input.options.map((option) => (
-                              <option key={option} value={option}>
-                                {option}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <input
-                            type={input.type}
-                            id={input.id}
-                            name={input.id}
-                            value={formData[input.id] || ""}
-                            placeholder={input.placeholder || ""}
-                            onChange={handleInputChange}
-                            disabled={input.disabled}
-                          />
-                        )
-                      ) : (
-                        <span className="itemValue">
-                          {formData[input.id] || "N/A"}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </form>
-              </div>
+            <div className="details">
+              <form>
+                {Object.entries(formData).map(([key, value]) => (
+                  <div key={key} className="detail-item">
+                    <label className="item-key" htmlFor={key}>
+                      {key.charAt(0).toUpperCase() + key.slice(1)}:
+                    </label>
+                    {isEditing ? (
+                      <input
+                        type={['discountValue', 'usageCount', 'usageLimit'].includes(key) ? 'number' : 'text'}
+                        id={key}
+                        name={key}
+                        value={value}
+                        onChange={handleInputChange}
+                        className="item-value"
+                      />
+                    ) : (
+                      <span className="item-value">{value}</span>
+                    )}
+                  </div>
+                ))}
+              </form>
             </div>
           </div>
         </div>

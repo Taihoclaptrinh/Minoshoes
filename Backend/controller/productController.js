@@ -78,17 +78,14 @@ export const searchProducts = async (req, res) => {
         if (!query) {
             return res.status(400).json({ message: 'Query parameter is required' });
         }
-        
+
         const products = await Product.find({
             $or: [
                 { name: { $regex: query, $options: 'i' } },
-                { code: query }, 
-                { code: { $regex: query, $options: 'i' } } 
+                { code: { $regex: query, $options: 'i' } },
+                { category: { $regex: query, $options: 'i' } }
             ]
         });
-        
-        console.log('Search query:', query);
-        console.log('Found products:', products);
 
         res.json(products);
     } catch (error) {
@@ -96,6 +93,7 @@ export const searchProducts = async (req, res) => {
         res.status(500).json({ message: 'Server error while fetching products', error: error.message });
     }
 };
+
 export const getProducts = async (req, res) => {
     try {
         const products = await Product.find();
@@ -118,7 +116,7 @@ export const checkout = async (req, res) => {
         // Cập nhật số lượng tồn kho cho mỗi sản phẩm trong giỏ hàng
         for (let item of cart.cartItems) {
             const product = item.product; // Kiểm tra nếu trường đúng là `product`
-            
+
             if (!product) {
                 throw new Error(`Product is missing for item ${item._id}`);
             }
@@ -152,7 +150,7 @@ export const checkout = async (req, res) => {
 };
 export const searchProductsByColor = async (req, res) => {
     // Get the color query parameter; it can be an array if multiple values are provided
-    const { color } = req.query; 
+    const { color } = req.query;
 
     try {
         // If color is not provided or is an empty string, return an error
