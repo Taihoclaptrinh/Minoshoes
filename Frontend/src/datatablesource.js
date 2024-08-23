@@ -54,6 +54,7 @@ export const orderRows = [
       { productId: 1, quantity: 2, price: 200 },
       { productId: 2, quantity: 1, price: 100 },
     ],
+    totalAmount: 400,
     shippingAddress: '123 Main St, Anytown, USA',
     paymentMethod: 'Credit Card',
     paymentStatus: 'Paid',
@@ -68,6 +69,7 @@ export const orderRows = [
       { productId: 3, quantity: 1, price: 150 },
       { productId: 4, quantity: 3, price: 50 },
     ],
+    totalAmount: 300,
     shippingAddress: '456 Elm St, Othertown, USA',
     paymentMethod: 'PayPal',
     paymentStatus: 'Pending',
@@ -94,6 +96,7 @@ export const orderColumns = [
       </div>
     ),
   },
+  { field: "totalAmount", headerName: "Total Amount", width: 200 },
   { field: "shippingAddress", headerName: "Shipping Address", width: 200 },
   { field: "paymentMethod", headerName: "Payment Method", width: 150 },
   { field: "paymentStatus", headerName: "Payment Status", width: 150 },
@@ -155,4 +158,47 @@ export const userColumns = [
   { field: "updateAt", headerName: "Updated At", width: 150 },
 ];
 
+export const couponRows = [
+  {
+    id: 1,
+    coupon: "FREESHIP2024",
+    type: "Freeship",
+    discount_value: null, // Not applicable for Freeship
+    minimum_purchase_amount: null, // Not applicable for Freeship
+    description: "Free shipping on all orders",
+    createAt: "2024-08-01",
+    expiredAt: "2024-12-31",
+  },
+  {
+    id: 2,
+    coupon: "DISCOUNT50",
+    type: "Discount price",
+    discount_value: 50, // 50 currency units off
+    minimum_purchase_amount: 200, // Minimum purchase of 200 currency units to apply
+    description: "Get 50 off on orders above 200",
+    createAt: "2024-08-01",
+    expiredAt: "2024-12-31",
+  },
+  // More coupon data...
+];
 
+export const couponColumns = [
+  { field: "id", headerName: "ID", width: 90 },
+  { field: "coupon", headerName: "Coupon", width: 150 },
+  { field: "type", headerName: "Type", width: 150 },
+  {
+    field: "discount_value",
+    headerName: "Discount Value",
+    width: 150,
+    renderCell: (params) => (params.value ? `${params.value} currency units` : "N/A"),
+  },
+  {
+    field: "minimum_purchase_amount",
+    headerName: "Minimum Purchase Amount",
+    width: 200,
+    renderCell: (params) => (params.value ? `${params.value} currency units` : "N/A"),
+  },
+  { field: "description", headerName: "Description", width: 250 },
+  { field: "createAt", headerName: "Created Date", width: 150 },
+  { field: "expiredAt", headerName: "Expired Date", width: 150 },
+];

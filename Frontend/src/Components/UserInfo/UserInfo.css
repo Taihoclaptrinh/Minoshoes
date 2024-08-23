@@ -57,6 +57,26 @@
   box-sizing: border-box;
 }
 
+.details-content select {
+  width: 100%;
+  padding: 10px; /* Đảm bảo padding đủ để tránh chồng chéo */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 10px; /* Thêm margin dưới mỗi input để tạo khoảng cách */
+  box-sizing: border-box;
+}
+
+.details-content AddressSelector {
+  width: 100%;
+  padding: 10px; /* Đảm bảo padding đủ để tránh chồng chéo */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 10px; /* Thêm margin dưới mỗi input để tạo khoảng cách */
+  box-sizing: border-box;
+}
+
 .details-content input:focus {
   border-color: teal;
   outline: none;

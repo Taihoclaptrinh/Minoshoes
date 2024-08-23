@@ -17,12 +17,9 @@ import AdminHome from "./Pages/AdminHome";
 import AdminUserList from "./Pages/AdminUserList";
 import AdminProductList from "./Pages/AdminProductList";
 import AdminOrderList from "./Pages/AdminOrderList";
-import AdminCouponList from "./Pages/AdminCouponList";
 import AdminUserSingle from "./Pages/AdminUserSingle";
-import AdminProductSingle from "./Pages/AdminProductSingle";
-import AdminOrderSingle from "./Pages/AdminOrderSingle";
-import AdminCouponSingle from "./Pages/AdminCouponSingle";
-
+import AdminProductSingle from "./Pages/AdminProductSingle";  
+import AdminOrderSingle from "./Pages/AdminOrderSingle";  
 
 import AdminNew from "./Pages/AdminNew";
 

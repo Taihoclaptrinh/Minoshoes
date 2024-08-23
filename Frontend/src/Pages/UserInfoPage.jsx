@@ -3,6 +3,7 @@ import UserInfo from '../Components/UserInfo/UserInfo';
 import { useNavigate } from "react-router-dom";
 import { UserContext } from '../UserContext'; // Điều chỉnh import theo cấu trúc file của bạn
 import './CSS/UserInfoPage.css';
+import axios from 'axios';
 import { get, post, put, del } from '../config/api';
 
 const UserInfoPage = () => {
@@ -18,33 +19,58 @@ const UserInfoPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await get(`/api/v1/auth/users/${user._id}`);
+        setLoading(true);
+        const response = await axios.get(`/api/v1/auth/users/${user._id}`);
         setLocalUser(response.data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error.response?.data || error.message);
         setError('Failed to fetch user data. Please try again.');
-      } finally {
         setLoading(false);
       }
     };
-
+    
     const fetchUserOrders = async () => {
       try {
-        const response = await get(`/api/v1/orders/user-orders/${user._id}`);
+        setLoading(true);
+        const response = await axios.get(`/api/v1/orders/user-orders/${user._id}`);
         setOrders(response.data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching user orders:', error.response?.data || error.message);
         setError('Failed to fetch user orders. Please try again.');
+        setLoading(false);
       }
     };
 
     if (user?._id) {
       fetchUserData();
-      fetchUserOrders();
+      fetchUserOrders(); // Lấy danh sách đơn hàng khi có user ID
     } else {
-      setLoading(false);
+      setLoading(false); // Dừng loading nếu không có user ID
     }
   }, [user]);
+
+  // Fetch orders when reloadOrders state changes
+  useEffect(() => {
+    if (reloadOrders) {
+      const fetchUserOrders = async () => {
+        try {
+          setLoading(true);
+          const response = await axios.get(`/api/v1/orders/user-orders/${localUser._id}`);
+          setOrders(response.data);
+          setLoading(false);
+          setReloadOrders(false); // Reset reloadOrders state
+        } catch (error) {
+          console.error('Error fetching user orders:', error.response?.data || error.message);
+          setError('Failed to fetch user orders. Please try again.');
+          setLoading(false);
+        }
+      };
+      
+      fetchUserOrders();
+    }
+  }, [reloadOrders, localUser]); // Reload orders when reloadOrders or localUser changes
 
   const handleUpdateUser = async (updatedUser) => {
     if (!updatedUser._id) {
@@ -53,56 +79,28 @@ const UserInfoPage = () => {
       return;
     }
     try {
-      await put(`/api/v1/auth/users/${updatedUser._id}`, updatedUser);
+      // Cập nhật thông tin người dùng
+      await axios.put(`/api/v1/auth/users/${updatedUser._id}`, updatedUser);
       updateUser(updatedUser);
       setLocalUser(updatedUser);
 
+      // Cập nhật địa chỉ trong các đơn hàng chưa hoàn thành
       if (updatedUser.address) {
-        await put(`/api/v1/orders/update-address/${updatedUser._id}`, {
+        await axios.put(`/api/v1/orders/update-address/${updatedUser._id}`, {
           newAddress: updatedUser.address
         });
-        setReloadOrders(true);
+        setReloadOrders(true); // Trigger reload of orders
       }
+      
     } catch (error) {
       console.error('Error updating user data:', error.response?.data || error.message);
+      setError('Failed to update user data. Please try again.');
     }
   };
-
+  
   const handleLogout = () => {
     logout();
-    navigate('/login');
-  };
-
-  const handleCancelOrder = async (cancelDetails) => {
-    try {
-      setLoading(true);
-      const orderId = cancelDetails.orderId;
-      const token = localStorage.getItem('token');
-
-      const response = await put(`/api/v1/orders/${orderId}/status`, {
-        status: 'Cancelled',
-        ...cancelDetails
-      }, { headers: { Authorization: `Bearer ${token}` } });
-
-      if (response.status === 200) {
-        // Update the local orders state
-        setOrders(prevOrders =>
-          prevOrders.map(order =>
-            order._id === orderId
-              ? { ...order, status: 'Cancelled' }
-              : order
-          )
-        );
-        setReloadOrders(true); // Trigger a reload of orders
-      } else {
-        throw new Error(response.data.message || 'Failed to cancel order');
-      }
-    } catch (error) {
-      console.error('Error cancelling order:', error.response?.data || error.message);
-      setError('Failed to cancel order. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    navigate('/login'); 
   };
 
   // Hàm transform dữ liệu đơn hàng
@@ -110,11 +108,11 @@ const UserInfoPage = () => {
     return orders.map((order) => ({
       id: order._id,
       productName: order.orderItems.map(item => item.name).join(', '),
-      quantity: order.orderItems.map(item => item.quantity).join(', '),
-      price: order.orderItems.map(item => item.price).join(', '),
-      shippingAddress: order.shippingAddress.address,
-      name: order.shippingAddress.fullName,
-      phone: order.shippingAddress.phoneNumber,
+      quantity: order.orderItems.map(item => item.quantity).join(', '), 
+      price: order.orderItems.map(item => item.price).join(', '),       
+      shippingAddress: `${order.shippingAddress.address}`,
+      name: `${order.shippingAddress.fullName}`,
+      phone: `${order.shippingAddress.phoneNumber}`,
       paymentMethod: order.paymentMethod,
       shippingPrice: order.shippingPrice,
       totalPrice: order.totalPrice,
@@ -131,7 +129,7 @@ const UserInfoPage = () => {
     { field: "price", headerName: "Price", width: 100 },
     { field: "shippingAddress", headerName: "Shipping Address", width: 300 },
     { field: "name", headerName: "Name", width: 150 },
-    { field: "phone", headerName: "Phone", width: 150 },
+    { field: "phone", headerName: "Phone", width: 150},
     { field: "paymentMethod", headerName: "Payment Method", width: 150 },
     { field: "shippingPrice", headerName: "Shipping Price", width: 150 },
     { field: "totalPrice", headerName: "Total Price", width: 150 },
@@ -139,7 +137,7 @@ const UserInfoPage = () => {
     { field: "createAt", headerName: "Created At", width: 200 },
     { field: "updateAt", headerName: "Updated At", width: 200 },
   ];
-
+  
   const renderSection = () => {
     if (loading) {
       return <div>Loading...</div>;
@@ -156,15 +154,12 @@ const UserInfoPage = () => {
     switch (activeSection) {
       case 'details':
         return <UserInfo.Section type="details" user={localUser} onUpdateUser={handleUpdateUser} />;
-      case 'address':
-        return <UserInfo.Section type="address" user={localUser} onUpdateUser={handleUpdateUser} />;
       case 'orders':
         return (
           <UserInfo.Section
             type="orders"
             orders={transformOrderData(orders)}
             orderColumns={orderColumns}
-            onCancelOrder={handleCancelOrder}
           />
         );
       default:
@@ -180,7 +175,6 @@ const UserInfoPage = () => {
         <div className="sidebar">
           <ul>
             <li onClick={() => setActiveSection('details')}>Details</li>
-            <li onClick={() => setActiveSection('address')}>Address</li>
             <li onClick={() => setActiveSection('orders')}>Your Orders</li>
             <li onClick={handleLogout}>Log Out</li>
           </ul>

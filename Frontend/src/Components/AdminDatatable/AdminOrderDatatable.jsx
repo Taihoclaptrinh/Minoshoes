@@ -92,9 +92,6 @@ const AdminOrderDatatable = () => {
     <div className="AdminDatatable">
       <div className="datatableTitle">
         Orders
-        <Link to="/admin/orders/new" className="link">
-          Add New
-        </Link>
       </div>
       <DataGrid
         className="datagrid"

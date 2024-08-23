@@ -195,6 +195,7 @@ const Navbar = () => {
 
                     </li>
                     <li class="nav-item" onClick={() => { setMenu("brands") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='brands'>BRANDS</Link>{menu === "brands"}
+                    <li class="nav-item" onClick={() => { setMenu("brands") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='brands'>BRANDS</Link>{menu === "brands"}
                         <div className="dropdown-container">
                             <div class="dropdown">
                                 <a className="title" href="#">Shop By Brand</a>
@@ -203,8 +204,16 @@ const Navbar = () => {
                                 <a href="#">Asics</a>
                                 <a href="#">Vans</a>
                                 <a href="#">Puma</a>
+                            <div class="dropdown">
+                                <a className="title" href="#">Shop By Brand</a>
+                                <a href="#">Adidas</a>
+                                <a href="#">Nike</a>
+                                <a href="#">Asics</a>
+                                <a href="#">Vans</a>
+                                <a href="#">Puma</a>
                             </div>
-                        </div>
+                        </div>   
+
                     </li>
                     <li onClick={() => { setMenu("new-arrivals") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='new-arrivals'>NEW ARRIVALS</Link>{menu === "new-arrivals"}</li>
                     <li onClick={() => { setMenu("sale") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='sale'>SALE</Link>{menu === "sale"}</li>

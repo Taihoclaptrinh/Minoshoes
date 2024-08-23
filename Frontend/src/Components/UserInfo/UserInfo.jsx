@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Delete as CancelIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 import './UserInfo.css';
+import AddressSelector from '../Address/Address'; // Import the AddressSelector component
 import Swal from 'sweetalert2';
 import { post } from '../../config/fetchConfig'
 // import AddressSelector from '../Address/Address'; // Import the AddressSelector component
@@ -47,12 +48,12 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
     setUpdatedUser({ ...updatedUser, [name]: value });
   };
 
-  // const handleAddressChange = (city, district, ward, street, index) => {
-  //   const newAddresses = updatedUser.addresses.map((address, i) =>
-  //     i === index ? { city, district, ward, street } : address
-  //   );
-  //   setUpdatedUser({ ...updatedUser, addresses: newAddresses });
-  // };
+  const handleAddressChange = (city, district, ward, street, index) => {
+    const newAddresses = updatedUser.addresses.map((address, i) =>
+      i === index ? { city, district, ward, street } : address
+    );
+    setUpdatedUser({ ...updatedUser, addresses: newAddresses });
+  };
 
   const handleCancel = async (orderId, status) => {
     if (status !== 'Pending') {
@@ -126,117 +127,131 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
   };
   
 
-  const renderDetails = () => (
-    <>
-      <div className="details-header">
-        <h2>DETAILS</h2>
-      </div>
-      <div className="details-content">
-        <div className="avatar">
-          <img
-            src="https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/people.jpg"
-            alt="Avatar"
-          />
+  const renderDetails = () => {
+    const address = updatedUser.address || {};
+    const dob = updatedUser.dob ? updatedUser.dob.split('T')[0] : '';
+    return (
+      <>
+        <div className="details-header">
+          <h2>DETAILS</h2>
         </div>
-        {isEditing ? (
-          <form>
-            <label>
-              Name:
-              <input
-                type="text"
-                name="name"
-                value={updatedUser.name}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Email:
-              <input
-                type="email"
-                name="email"
-                value={updatedUser.email}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Phone Number:
-              <input
-                type="text"
-                name="phone"
-                value={updatedUser.phone}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Address:
-              <input
-                type="text"
-                name="address"
-                value={updatedUser.address}
-                onChange={handleChange}
-              />
-            </label>
-            <button type="button" onClick={handleSave} className="save">
-              Save
-            </button>
-          </form>
-        ) : (
-          <>
-            <p>
-              <strong>Name:</strong> {user.name}
-            </p>
-            <p>
-              <strong>Email:</strong> {user.email}
-            </p>
-            <p>
-              <strong>Phone Number:</strong> {user.phone}
-            </p>
-            <p>
-              <strong>Address:</strong> {user.address}
-            </p>
-            <button onClick={handleEdit} className="edit">
-              Edit
-            </button>
-          </>
-        )}
-      </div>
-    </>
-  );
-
-  const renderAddress = () => (
-    <>
-      <div className="details-header">
-        <h2>ADDRESS</h2>
-      </div>
-      <div className="details-content">
-        {isEditing ? (
-          <form>
-            <label>
-              Address:
-              <input
-                type="text"
-                name="address"
-                value={updatedUser.address}
-                onChange={handleChange}
-              />
-            </label>
-            <button type="button" onClick={handleSave} className="save">
-              Save
-            </button>
-          </form>
-        ) : (
-          <>
-            <p>
-              <strong>Address:</strong> {user.address}
-            </p>
-            <button onClick={handleEdit} className="edit">
-              Edit
-            </button>
-          </>
-        )}
-      </div>
-    </>
-  );
+        <div className="details-content">
+          <div className="avatar">
+            <img
+              src="https://th.bing.com/th/id/OIP.XjtD-t15oASjdfRvYim11wHaEX?rs=1&pid=ImgDetMain"
+              alt="Avatar"
+            />
+          </div>
+          {isEditing ? (
+            <form>
+              <label>
+                Full Name:
+                <input
+                  type="text"
+                  name="fullName"
+                  value={updatedUser.fullName}
+                  onChange={handleChange}
+                />
+              </label>
+              <label className="Gender_label">
+                Gender:
+                <select
+                  name="gender"
+                  value={updatedUser.gender}
+                  onChange={handleChange}
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </label>
+              <br /><br />
+              <label>
+                Date of Birth:
+                <input
+                  type="date"
+                  name="dob"
+                  value={dob}  // Use the safely handled dob value
+                  onChange={(e) =>
+                    setUpdatedUser({ ...updatedUser, dob: e.target.value })
+                  }
+                />
+              </label>
+              <label>
+                Email:
+                <input
+                  type="email"
+                  name="email"
+                  value={updatedUser.email}
+                  onChange={handleChange}
+                />
+              </label>
+              <label>
+                Phone Number:
+                <input
+                  type="text"
+                  name="phone"
+                  value={updatedUser.phone}
+                  onChange={handleChange}
+                />
+              </label>
+              <div className="address-section">
+                <label>Address:</label>
+                <AddressSelector
+                  onChange={(city, district, ward) =>
+                    handleAddressChange(city, district, ward, updatedUser.address.street || '')
+                  }
+                  initialAddress={address} // Pass initial address data
+                />
+                <label>
+                  Street:
+                  <input
+                    type="text"
+                    value={address.street || ''} // Default to empty string if street is undefined
+                    onChange={(e) =>
+                      handleAddressChange(
+                        address.city,
+                        address.district,
+                        address.ward,
+                        e.target.value
+                      )
+                    }
+                  />
+                </label>
+              </div>
+              <button type="button" onClick={handleSave} className="save">
+                Save
+              </button>
+            </form>
+          ) : (
+            <>
+              <p>
+                <strong>Full name:</strong> {user.fullName}
+              </p>
+              <p>
+                <strong>Date of birth:</strong> {dob ? new Date(dob).toLocaleDateString() : 'Not provided'}
+              </p>
+              <p>
+                <strong>Gender:</strong> {user.gender}
+              </p>
+              <p>
+                <strong>Email address:</strong> {user.email}
+              </p>
+              <p>
+                <strong>Phone Number:</strong> {user.phone}
+              </p>
+              <p>
+                <strong>Address:</strong> 
+                {`${address.street || ''}, ${address.ward || ''}, ${address.district || ''}, ${address.city || ''}`}
+              </p>
+              <button onClick={handleEdit} className="edit">
+                Edit
+              </button>
+            </>
+          )}
+        </div>
+      </>
+    );
+  };
 
   const renderOrders = () => (
     <>
@@ -250,13 +265,13 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
           columns={[
             ...orderColumns,
             {
-              field: 'cancel',
-              headerName: 'Cancel',
+              field: 'delete',
+              headerName: 'Delete',
               width: 150,
               renderCell: (params) => (
-                <CancelIcon
-                  onClick={() => handleCancel(params.row.id, params.row.status)}
-                  className="cancel-icon"
+                <DeleteIcon
+                  onClick={() => handleCancel(params.row.id)}
+                  className="delete-icon"
                   style={{ cursor: 'pointer', color: '#e57373' }}
                 />
               ),
@@ -267,64 +282,36 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
           autoHeight
         />
         {cancellingOrderId !== null && (
-          <div className="cancel-form">
-            <h3>Cancel Order</h3>
-            <form onSubmit={(e) => { e.preventDefault(); handleCancelConfirm(); }}>
+          <div className="delete-form">
+            <h3>Delete Order</h3>
+            <form>
               <label>
-                Email:
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </label>
-              <label>
-                Password:
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </label>
-              <label>
-                Reason for Cancellation:
+                Reason for Deletion:
                 <input
                   type="text"
                   value={cancelReason}
                   onChange={(e) => setCancelReason(e.target.value)}
-                  required
                 />
               </label>
               <label>
                 Payment Method:
-                <select
+                <input
+                  type="text"
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                >
-                  <option value="COD">COD</option>
-                  <option value="E-Banking">E-Banking</option>
-                </select>
+                />
               </label>
-              {paymentMethod === 'E-Banking' && (
-                <label>
-                  Bank Account:
-                  <input
-                    type="text"
-                    value={bankAccount}
-                    onChange={(e) => setBankAccount(e.target.value)}
-                    required
-                  />
-                </label>
-              )}
-              <button type="submit" className="confirm-cancel">
+              <button
+                type="button"
+                onClick={handleCancelConfirm}
+                className="confirm-delete"
+              >
                 Confirm
               </button>
               <button
                 type="button"
                 onClick={() => setCancellingOrderId(null)}
-                className="cancel-cancel"
+                className="cancel-delete"
               >
                 Cancel
               </button>
@@ -339,8 +326,6 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
     switch (type) {
       case 'details':
         return renderDetails();
-      case 'address':
-        return renderAddress();
       case 'orders':
         return renderOrders();
       default:

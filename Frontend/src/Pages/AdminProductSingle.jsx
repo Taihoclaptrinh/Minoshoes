@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./CSS/AdminProductSingle.css";
+import "./CSS/AdminSingle.css";
 // import AdminChart from "../Components/AdminChart/AdminChart.jsx";
 import { useParams } from "react-router-dom";
 import { get, post, put, del } from '../config/api';
@@ -71,78 +71,102 @@ const AdminProductSingle = () => {
     // Update the backend here
   };
 
+  const productInputs = [
+    { id: 'name', label: "Product Name", type: "text", placeholder: "Enter product name" },
+    { id: 'description', label: "Description", type: "text", placeholder: "Enter description" },
+    { id: 'price', label: "Price", type: "number", placeholder: "Enter price" },
+    { id: 'brand', label: "Brand", type: "select", options: ["adidas", "puma", "asics", "nike", "vans"] },
+    { id: 'category', label: "Category", type: "select", options: ["lifestyle", "casual", "running shoes"] },
+    { id: 'stocks', label: "Stock", type: "text", placeholder: "Enter stock quantity" },
+  ];
+
   if (!formData) return <div>Data not found</div>;
 
   return (
-    <div className="admin-product-single">
-      <div className="single-container">
+    <div className="AdminSingle">
+      <div className="singleContainer">
         <div className="top">
           <div className="left">
-            <div className="button-container">
-              <button className="edit-button" onClick={toggleEditMode}>
+            <div className="buttonContainer">
+              <button className="editButton" onClick={toggleEditMode}>
                 {isEditing ? "Cancel" : "Edit"}
               </button>
               {isEditing && (
-                <button className="save-button" onClick={saveChanges}>
+                <button className="saveButton" onClick={saveChanges}>
                   Save
                 </button>
               )}
             </div>
             <h1 className="title">Product Information</h1>
             <div className="item">
-              <div className="image-preview-container">
+              <div className="imagePreviewContainer">
                 {previewImages.length > 0 ? (
                   previewImages.map((image, index) => (
                     <img
                       key={index}
                       src={image}
                       alt={`Preview ${index}`}
-                      className="item-img"
                     />
                   ))
                 ) : (
                   <img
                     src="https://via.placeholder.com/150"
                     alt="No Preview"
-                    className="item-img"
                   />
                 )}
               </div>
               <div className="details">
-                <h1 className="item-title">{formData.name}</h1>
+                <h1 className="itemTitle">{formData.name || "Product Details"}</h1>
                 <form>
-                  {Object.keys(formData).map((key) => (
-                    key !== 'images' && (
-                      <div key={key} className="detail-item">
-                        <label className="item-key" htmlFor={key}>
-                          {key.charAt(0).toUpperCase() + key.slice(1)}:
-                        </label>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            id={key}
-                            name={key}
-                            value={formData[key] || ""}
+                  {productInputs.map((input) => (
+                    <div key={input.id} className="detailItem">
+                      <label className="itemKey">{input.label}:</label>
+                      {isEditing ? (
+                        input.type === "select" ? (
+                          <select
+                            id={input.id}
+                            name={input.id}
+                            value={formData[input.id] || ""}
                             onChange={handleInputChange}
-                            className="item-value"
-                          />
+                          >
+                            {input.options.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
                         ) : (
-                          <span className="item-value">
-                            {formData[key] || "N/A"}
-                          </span>
-                        )}
-                      </div>
-                    )
+                          <input
+                            type={input.type}
+                            name={input.id}
+                            value={formData[input.id] || ""}
+                            placeholder={input.placeholder}
+                            onChange={handleInputChange}
+                          />
+                        )
+                      ) : (
+                        <span className="itemValue">{formData[input.id] || "N/A"}</span>
+                      )}
+                    </div>
                   ))}
+                  {isEditing && (
+                    <div className="detailItem">
+                      <label className="itemKey">Image:</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleInputChange}
+                        multiple={true}
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
           </div>
+          {/* You can uncomment this section if you want to include the AdminChart */}
           {/* <div className="right">
-            <AdminChart
-              aspect={3 / 1}
-              title="Product Details"
-            />
+            <AdminChart aspect={3 / 1} title="Product Details" />
           </div> */}
         </div>
       </div>
