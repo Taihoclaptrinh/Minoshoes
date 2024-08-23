@@ -1,11 +1,37 @@
 import { Order } from '../models/orderModel.js'; // Import the Order model
 import Product from '../models/productModel.js'; // Import the Product model
+import Coupon from '../models/couponModel.js'; // Import the Coupon model
 
 // Create a new order
 export const createOrder = async (req, res) => {
     try {
-        const { orderItems, shippingAddress, paymentMethod, shippingPrice, totalPrice } = req.body;
+        const { orderItems, shippingAddress, paymentMethod, shippingPrice, totalPrice, couponCode } = req.body;
         const userId = req.user._id;
+
+        // Validate and apply coupon if provided
+        let discount = 0;
+        if (couponCode) {
+            const coupon = await Coupon.findOne({ code: couponCode });
+
+            if (!coupon) {
+                return res.status(404).json({ message: 'Coupon not found' });
+            }
+
+            if (coupon.startDate > Date.now() || coupon.endDate < Date.now()) {
+                return res.status(400).json({ message: 'Coupon is expired' });
+            }
+
+            if (coupon.usageCount >= coupon.usageLimit) {
+                return res.status(400).json({ message: 'Coupon usage limit reached' });
+            }
+
+            discount = coupon.discountValue;
+            coupon.usageCount += 1;
+            await coupon.save();
+        }
+
+        // Calculate final total price
+        const finalTotalPrice = totalPrice - discount;
 
         // Create the order
         const order = new Order({
@@ -14,7 +40,8 @@ export const createOrder = async (req, res) => {
             shippingAddress,
             paymentMethod,
             shippingPrice,
-            totalPrice,
+            totalPrice: finalTotalPrice,
+            couponCode
         });
 
         // Save the order

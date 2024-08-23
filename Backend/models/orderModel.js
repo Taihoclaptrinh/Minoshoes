@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import User from './userModel.js';
+import Coupon from './couponModel.js';
 
 export const orderItemSchema = new mongoose.Schema({
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
@@ -31,6 +32,7 @@ export const orderSchema = new mongoose.Schema({
     totalPrice: { type: Number, required: true, default: 0.0 },
     status: { type: String, required: true, default: 'Pending' },
     deliveredAt: { type: Date },
+    coupon: { type: mongoose.Schema.Types.ObjectId, ref: 'Coupon' }
 }, { timestamps: true });
 
 export const Order = mongoose.model('Order', orderSchema, 'orders');

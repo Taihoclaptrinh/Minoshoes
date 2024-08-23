@@ -1,7 +1,7 @@
 import React from 'react';
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { productInputs, userInputs, orderInputs } from "./formSource";
+import { productInputs, userInputs, orderInputs, couponInputs } from "./formSource";
 import PaymentSuccess from './PaymentSuccess';
 
 import SearchResults from './Pages/SearchResult';
@@ -17,12 +17,9 @@ import AdminHome from "./Pages/AdminHome";
 import AdminUserList from "./Pages/AdminUserList";
 import AdminProductList from "./Pages/AdminProductList";
 import AdminOrderList from "./Pages/AdminOrderList";
-import AdminCouponList from './Pages/AdminCouponList';
 import AdminUserSingle from "./Pages/AdminUserSingle";
 import AdminProductSingle from "./Pages/AdminProductSingle";  
 import AdminOrderSingle from "./Pages/AdminOrderSingle";  
-import AdminCouponSingle from "./Pages/AdminCouponSingle";  
- 
 
 import AdminNew from "./Pages/AdminNew";
 
@@ -84,7 +81,7 @@ const ShopApp = () => (
       <Route path="/login" element={<LoginLogup />} />
       <Route path="/product" element={<Product />} />
       <Route path="/userinfo" element={<UserInfo />} />
-      <Route path="/search" element={<SearchResults />} /> 
+      <Route path="/search" element={<SearchResults />} />
     </Routes>
   </div>
 );
@@ -93,15 +90,15 @@ const ShopApp = () => (
 function App() {
   return (
     <UserProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/admin/*" element={<AdminApp />} />
-        <Route path="/*" element={<ShopApp />} />
-        <Route path="/agreement-service/privacy-policy" element={<PrivacyPolicy />} /> 
-        <Route path="/agreement-service/term-of-service" element={<TermOfService />} /> 
-        <Route path="/agreement-service/cookies-setting" element={<CookiesSetting />} /> 
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/admin/*" element={<AdminApp />} />
+          <Route path="/*" element={<ShopApp />} />
+          <Route path="/agreement-service/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/agreement-service/term-of-service" element={<TermOfService />} />
+          <Route path="/agreement-service/cookies-setting" element={<CookiesSetting />} />
+        </Routes>
+      </BrowserRouter>
     </UserProvider>
 
   );

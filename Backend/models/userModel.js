@@ -31,6 +31,14 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    wishlist: [
+        {
+            product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
+            name: { type: String, required: true },
+            price: { type: Number, required: true, min: 1 },
+            images: { type: [String], required: true }
+        },
+    ],
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema, "users");
