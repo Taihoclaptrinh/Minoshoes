@@ -16,4 +16,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build-stage /app/build /usr/share/nginx/html
 
+COPY fullchain.pem /etc/nginx/ssl/fullchain.pem
+COPY privkey.pem /etc/nginx/ssl/privkey.pem
+
 CMD ["nginx", "-g", "daemon off;"]
