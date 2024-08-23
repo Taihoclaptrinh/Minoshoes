@@ -3,7 +3,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import StoreIcon from "@mui/icons-material/Store";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import DiscountIcon from '@mui/icons-material/Discount';
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { Link } from "react-router-dom";
@@ -15,7 +15,7 @@ const AdminSidebar = () => {
         <ul>
           <p className="title">MAIN</p>
           <li>
-              <DashboardIcon className="icon" />
+            <DashboardIcon className="icon" />
             <Link to="/admin" style={{ textDecoration: "none" }}>
               <span>Dashboard</span>
             </Link>
@@ -34,20 +34,21 @@ const AdminSidebar = () => {
             </li>
           </Link>
           <Link to="/admin/orders" style={{ textDecoration: "none" }}>
-          <li>
-            <CreditCardIcon className="icon" />
-            <span>Orders</span>
-          </li>
+            <li>
+              <CreditCardIcon className="icon" />
+              <span>Orders</span>
+            </li>
+          </Link>
+          <Link to="/admin/coupons" style={{ textDecoration: "none" }}>
+            <li>
+              <DiscountIcon className="icon" />
+              <span>Coupons</span>
+            </li>
           </Link>
           <p className="title">USEFUL</p>
           <li>
             <NotificationsNoneIcon className="icon" />
             <span>Notifications</span>
-          </li>
-          <p className="title">SERVICE</p>
-          <li>
-            <SettingsApplicationsIcon className="icon" />
-            <span>Settings</span>
           </li>
           <li>
             <ExitToAppIcon className="icon" />

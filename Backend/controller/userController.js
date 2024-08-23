@@ -105,3 +105,37 @@ export const getSummary = async (req, res) => {
         res.status(500).json({ message: 'Error fetching summary', error });
     }
 };
+
+// Add Product to Wishlist
+export const addProductToWishlist = async (req, res) => {
+    try {
+        const { productId, price, size, images } = req.body;  // Get product details from the request body
+        const userId = req.user._id;  // Get user ID from the authenticated user
+
+        // Find the user by ID
+        let user = await User.findById(userId);
+
+        // Check if the product is already in the wishlist
+        const productExists = user.wishlist.some(item => item.product.toString() === productId);
+
+        if (productExists) {
+            return res.status(400).send({ message: 'Product already in wishlist' });
+        }
+
+        // Add the new product to the wishlist
+        user.wishlist.push({
+            product: productId,
+            price,
+            size,
+            images
+        });
+
+        // Save the updated user document
+        await user.save();
+
+        res.status(200).send(user.wishlist); // Respond with the updated wishlist
+    } catch (error) {
+        console.error('Error adding to wishlist:', error);
+        res.status(500).send({ message: 'Error adding to wishlist', error });
+    }
+};

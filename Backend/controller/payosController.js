@@ -22,6 +22,6 @@ export const createPaymentLink = async (req, res) => {
     res.json({ checkoutUrl: paymentLink.checkoutUrl });
   } catch (error) {
     console.error('Error creating payment link:', error);
-    res.status(500).send('Lỗi khi tạo liên kết thanh toán');
+    res.status(500).send('Failed to create payment link');
   }
 };

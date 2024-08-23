@@ -26,6 +26,7 @@ import userRoute from "./Backend/routes/userRoute.js";
 import orderRoute from "./Backend/routes/orderRoute.js";
 import adminRoute from "./Backend/routes/adminRoute.js";
 import reviewRoute from "./Backend/routes/reviewRoute.js";
+import botchatRoute from "./Backend/routes/botchat.js";
 
 dotenv.config();
 const app = express();
@@ -67,6 +68,7 @@ app.use("/api/v1/orders", orderRoute);
 app.use("/api/v1/auth/products", productRoute);
 app.use("/api/v1/auth/cart", cartRoute);
 app.use("/api/v1/auth/reviews", reviewRoute);
+app.use("/api/v1/botchat", botchatRoute);
 
 // Serve frontend
 const __dirname = path.resolve();

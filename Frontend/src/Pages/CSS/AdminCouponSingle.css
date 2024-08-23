@@ -1,0 +1,74 @@
+.admin-coupon-single {
+  padding: 20px;
+}
+
+.single-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table-container table {
+  width: 95%;
+  border-collapse: collapse;
+}
+
+.table-container th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center; /* Center content in table cells */
+}
+
+.table-container th {
+  background-color: #f2f2f2;
+}
+.top {
+  display: flex;
+  flex-direction: column;
+}
+
+.left {
+  flex: 1;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  justify-content: center;
+  display: flex;
+  color: #292828;
+}
+
+.item {
+  margin-bottom: 20px;
+}
+
+.details {
+  padding: 10px;
+  color: #292828;
+}
+
+.detail-item {
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  width: 95%;
+}
+
+.detail-item label {
+  display: flex;
+}
+.detail-item .item-key {
+  font-weight: bold;
+  font-size: 20px;
+  width: 15%;
+  display: flex;
+}
+
+.detail-item .item-value {
+  margin-left: 10px;
+  font-weight: 400;
+  width: 94%;
+}

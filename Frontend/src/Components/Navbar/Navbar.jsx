@@ -18,7 +18,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const searchBarRef = useRef(null);
     const location = useLocation(); // Access current location
-;
+    ;
 
     const handleLogout = () => {
         if (logout) {
@@ -35,14 +35,6 @@ const Navbar = () => {
             setSearchVisible(!searchVisible);
         }
     };
-
-    const handleBrandClick = (brandName) => {
-        navigate(`/search?query=${encodeURIComponent(brandName)}`);
-    };
-    const handleCategoryClick = (category) => {
-        navigate(`/search?query=${encodeURIComponent(category)}`);
-    };
-    
 
     const handleClickOutside = (event) => {
         if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
@@ -90,20 +82,20 @@ const Navbar = () => {
         };
         if (user) {
             fetchCartCount();
-        
+
             // Thêm event listener để cập nhật cartCount
             const handleCartCountUpdate = (event) => {
-              setCartCount(event.detail);
+                setCartCount(event.detail);
             };
             window.addEventListener('cartCountUpdated', handleCartCountUpdate);
-        
+
             return () => {
-              window.removeEventListener('cartCountUpdated', handleCartCountUpdate);
+                window.removeEventListener('cartCountUpdated', handleCartCountUpdate);
             };
-          } else {
+        } else {
             setCartCount(0);
-          }
-        }, [user, location.pathname]);
+        }
+    }, [user, location.pathname]);
 
     useEffect(() => {
         console.log("Current cart count:", cartCount);
@@ -148,6 +140,11 @@ const Navbar = () => {
         }
     };
 
+    const getLastName = (name) => {
+        const names = name.trim().split(' ');
+        return names[names.length - 1];
+    };
+
     return (
         <div className="navbar">
             <div className="nav-content">
@@ -159,35 +156,53 @@ const Navbar = () => {
                     <li class="nav-item" onClick={() => { setMenu("men") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='men'>MEN</Link>{menu === "men"}
                         <div className="dropdown-container">
                             <div class="dropdown">
-                                <a className="title" href="#">Shoes</a>
-                                <a href="#" onClick={() => handleCategoryClick('Running')}>Running</a>
-                                <a href="#" onClick={() => handleCategoryClick('Casual')}>Casual</a>
-                                <a href="#" onClick={() => handleCategoryClick('Lifestyle')}>Lifestyle</a>
-                            </div>  
+                                <a href="#">Running</a>
+                                <a href="#">Casual</a>
+                                <a href="#">Lifestyle</a>
+                                <a className="title" href="#">Shop by Size</a>
+                                <div className="size-options1">
+                                    <a href="#">9.5</a>
+                                    <a href="#">10</a>
+                                    <a href="#">10.5</a>
+                                    <a href="#">11</a>
+                                    <a href="#">7.5</a>
+                                    <a href="#">8</a>
+                                    <a href="#">8.5</a>
+                                    <a href="#">9</a>
+                                    <a href="#">5.5</a>
+                                    <a href="#">6</a>
+                                    <a href="#">6.5</a>
+                                    <a href="#">7</a>
+                                </div>
+                            </div>
                         </div>
                     </li>
                     <li class="nav-item" onClick={() => { setMenu("women") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='women'>WOMEN</Link>{menu === "women"}
                         <div className="dropdown-container">
                             <div class="dropdown">
-                                <a className="title" href="#">Shoes</a>
-                                <a href="#" onClick={() => handleCategoryClick('Running')}>Running</a>
-                                <a href="#" onClick={() => handleCategoryClick('Casual')}>Casual</a>
-                                <a href="#" onClick={() => handleCategoryClick('Lifestyle')}>Lifestyle</a>          
+                                <a href="#">Running</a>
+                                <a href="#">Casual</a>
+                                <a href="#">Lifestyle</a>
+                                <a className="title size" href="#">Shop by Size</a>
+                                <div className="size-options2">
+                                    <a href="#">4.5</a>
+                                    <a href="#">5</a>
+                                    <a href="#">3.5</a>
+                                    <a href="#">4</a>
+                                </div>
                             </div>
-                        </div>    
-                            
+                        </div>
+
                     </li>
-                    <li className="nav-item" onClick={() => { setMenu("brands") }}>
-                        <Link style={{ textDecoration: 'none', color: 'black' }} to='brands'>BRANDS</Link>
-                        {menu === "brands"}
+                    <li class="nav-item" onClick={() => { setMenu("brands") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='brands'>BRANDS</Link>{menu === "brands"}
                         <div className="dropdown-container">
-                            <div className="dropdown">
-                                <a className="title" href="/new-arrivals" >Shop By Brand</a>
-                                <a href="#" onClick={() => handleBrandClick('Adidas')}>Adidas</a>
-                                <a href="#" onClick={() => handleBrandClick('Nike')}>Nike</a>
-                                <a href="#" onClick={() => handleBrandClick('Asics')}>Asics</a>
-                                <a href="#" onClick={() => handleBrandClick('Vans')}>Vans</a>
-                                <a href="#" onClick={() => handleBrandClick('Puma')}>Puma</a>
+                            <div class="dropdown">
+                                <a className="title" href="#">Shop By Brand</a>
+                                <a href="#">Adidas</a>
+                                <a href="#">Nike</a>
+                                <a href="#">Asics</a>
+                                <a href="#">Vans</a>
+                                <a href="#">Puma</a>
                             </div>
                         </div>
                     </li>
@@ -205,47 +220,47 @@ const Navbar = () => {
                     </div>
                     <Link to='cart'><img src={shopping_cart} alt="" style={{ width: "30px", height: "30px" }} /></Link>
                     <div className="nav-cart-count">{cartCount !== undefined ? cartCount : 0}</div>                    {user ? (
-                    <div className="nav-item user-greeting">
-                        <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
-                        <span>hi, {user.name}</span>
-                        <div style={{marginTop:"-3rem"}} className="dropdown-container">
-                            <div class="dropdown">
-                                <a href="/userinfo">User Info</a>
-                                {user && user.role === 1 && ( 
-                                    <a href="/admin/">Admin dashboard</a>
-                                )}
-                                <a onClick={handleLogout}>Log out</a>
+                        <div className="nav-item user-greeting">
+                            <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
+                            <span>hi, {getLastName(user.name)}</span>
+                            <div style={{ marginTop: "-3rem" }} className="dropdown-container">
+                                <div class="dropdown">
+                                    <a href="/userinfo">User Info</a>
+                                    {user && user.role === 1 && (
+                                        <a href="/admin/">Admin</a>
+                                    )}
+                                    <a onClick={handleLogout}>Log out</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ) : (
-                    <Link to='login'>
-                        <img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} />
-                    </Link>
-                )}
+                    ) : (
+                        <Link to='login'>
+                            <img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} />
+                        </Link>
+                    )}
                 </div>
             </div>
             {searchVisible && (
-            <div className="search-phare" ref={searchBarRef}>
-                <form onSubmit={handleSearchSubmit} className={`search-bar ${searchVisible ? "" : "hidden"}`}>
-                    <input
-                        type="text"
-                        placeholder="Search by name or code..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </form>
-                <div type="submit" className="search-icon-after-layout">
-                    <img src={search_icon} 
-                        alt="Search Icon" 
-                        onClick={handleSearchIconClick}
-                    />
+                <div className="search-phare" ref={searchBarRef}>
+                    <form onSubmit={handleSearchSubmit} className={`search-bar ${searchVisible ? "" : "hidden"}`}>
+                        <input
+                            type="text"
+                            placeholder="Search by name or code..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </form>
+                    <div type="submit" className="search-icon-after-layout">
+                        <img src={search_icon}
+                            alt="Search Icon"
+                            onClick={handleSearchIconClick}
+                        />
+                    </div>
                 </div>
-            </div>
-        )}
-                <div className="nav-cart-count">0</div>
-                
-            </div>
+            )}
+            <div className="nav-cart-count">0</div>
+
+        </div>
     );
 };
 

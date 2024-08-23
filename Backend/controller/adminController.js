@@ -1,6 +1,7 @@
 import User from '../models/userModel.js'; // Import User model
 import { Order } from '../models/orderModel.js'; // Import Order model
 import Product from '../models/productModel.js'; // Import Product model
+import Coupon from '../models/couponModel.js'; // Import Coupon model
 
 // Function to count all users
 export const countAllUsers = async (req, res) => {
@@ -165,7 +166,7 @@ export const getOrderById = async (req, res) => {
         if (!order) {
             return res.status(404).json({
                 success: false,
-                message: 'Không tìm thấy đơn hàng',
+                message: 'Order not found',
             });
         }
 
@@ -176,7 +177,7 @@ export const getOrderById = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Đã xảy ra lỗi khi lấy đơn hàng',
+            message: 'Error occurred while retrieving order',
             error: error.message // Trả về thông báo lỗi nếu có
         });
     }
@@ -206,3 +207,91 @@ export const deleteOrderById = async (req, res) => {
         });
     }
 };
+
+export const createCoupon = async (req, res) => {
+    try {
+        const { code, discountValue, startDate, endDate } = req.body;
+        const coupon = new Coupon({
+            code,
+            discountValue,
+            startDate,
+            endDate,
+            usageCount: 0,
+            usageLimit,
+        });
+
+        const createdCoupon = await coupon.save();
+
+        res.status(201).json(createdCoupon);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to create coupon', error: error.message });
+    }
+};
+
+// Function to get all coupons
+export const getAllCoupons = async (req, res) => {
+    try {
+        const coupons = await Coupon.find();
+
+        res.status(200).json(coupons);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve coupons', error: error.message });
+    }
+};
+
+// Function to get a single coupon by ID
+export const getCouponById = async (req, res) => {
+    try {
+        const { couponId } = req.params;
+        const coupon = await Coupon.findById(couponId);
+
+        if (!coupon) {
+            return res.status(404).json({ message: 'Coupon not found' });
+        }
+
+        res.status(200).json(coupon);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve coupon', error: error.message });
+    }
+};
+
+// Function to update a coupon
+export const updateCoupon = async (req, res) => {
+    try {
+        const { code, discountValue, startDate, endDate, usageLimit } = req.body;
+        const coupon = await Coupon.findById(req.body.couponId);
+
+        if (!coupon) {
+            return res.status(404).json({ message: 'Coupon not found' });
+        }
+
+        coupon.code = code;
+        coupon.discountValue = discountValue;
+        coupon.startDate = startDate;
+        coupon.endDate = endDate;
+        coupon.usageLimit = usageLimit;
+
+        const updatedCoupon = await coupon.save();
+        res.status(200).json(updatedCoupon);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Failed to update coupon', error: error.message });
+    }
+}
+
+// Function to delete a coupon
+export const deleteCoupon = async (req, res) => {
+    try {
+        const { couponId } = req.params;
+        const coupon = await Coupon.findById(couponId);
+
+        if (!coupon) {
+            return res.status(404).json({ message: 'Coupon not found' });
+        }
+
+        await coupon.remove();
+        res.status(200).json({ message: 'Coupon deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to delete coupon', error: error.message });
+    }
+}

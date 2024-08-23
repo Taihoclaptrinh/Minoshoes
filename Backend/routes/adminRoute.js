@@ -5,7 +5,9 @@ import {
     getUserById, getAllUsers,
     countAllUsers, countAllOrders,
     getAllOrders, getOrderById,
-    deleteOrderById
+    deleteOrderById, createCoupon,
+    getAllCoupons, getCouponById,
+    updateCoupon, deleteCoupon
 } from '../controller/adminController.js'; // Ensure this path is correct
 
 const router = express.Router();
@@ -21,4 +23,12 @@ router.get('/orders', getAllOrders);
 router.get('/orders/:orderId', getOrderById);
 router.delete('/orders/:orderId', deleteOrderById)
 router.get('/get-user', getAllUsers);
+
+// Route related to coupons
+router.post('/coupons', createCoupon);
+router.get('/coupons', getAllCoupons);
+router.get('/coupons/:couponId', getCouponById);
+router.put('/coupons/:couponId', updateCoupon);
+router.delete('/coupons/:couponId', deleteCoupon);
+
 export default router;

@@ -183,3 +183,42 @@ export const orderInputs = [
     type: "date",
   },
 ];
+export const couponInputs = [
+  {
+    id: 'couponCode',
+    label: "Code",
+    type: "text",
+    placeholder: "Enter coupon code",
+  },
+  {
+    id: 'couponDiscountValue',
+    label: "Discount Value",
+    type: "number",
+    placeholder: "Enter discount value",
+    min: 0, // Ensure non-negative values
+  },
+  {
+    id: 'couponStartDate',
+    label: "Start Date",
+    type: "date",
+  },
+  {
+    id: 'couponEndDate',
+    label: "End Date",
+    type: "date",
+  },
+  {
+    id: 'couponUsageCount',
+    label: "Usage Count",
+    type: "number",
+    placeholder: "Enter usage count",
+    min: 0, // Ensure non-negative values
+  },
+  {
+    id: 'couponUsageLimit',
+    label: "Usage Limit",
+    type: "number",
+    placeholder: "Enter usage limit",
+    min: 0, // Ensure non-negative values
+  },
+];
