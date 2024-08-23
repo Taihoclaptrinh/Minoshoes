@@ -3,9 +3,8 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import StoreIcon from "@mui/icons-material/Store";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import DiscountIcon from '@mui/icons-material/Discount';
 import { Link } from "react-router-dom";
 
 const AdminSidebar = () => {
@@ -39,16 +38,13 @@ const AdminSidebar = () => {
             <span>Orders</span>
           </li>
           </Link>
-          <p className="title">USEFUL</p>
+          <Link to="/admin/coupons" style={{ textDecoration: "none" }}>
           <li>
-            <NotificationsNoneIcon className="icon" />
-            <span>Notifications</span>
+            <DiscountIcon className="icon" />
+            <span>Coupons</span>
           </li>
+          </Link>
           <p className="title">SERVICE</p>
-          <li>
-            <SettingsApplicationsIcon className="icon" />
-            <span>Settings</span>
-          </li>
           <li>
             <ExitToAppIcon className="icon" />
             <span>Logout</span>

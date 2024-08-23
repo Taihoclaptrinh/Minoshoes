@@ -79,22 +79,23 @@ export const searchProducts = async (req, res) => {
             return res.status(400).json({ message: 'Query parameter is required' });
         }
         
-        // Tìm kiếm sản phẩm theo tên, mã, hoặc danh mục
         const products = await Product.find({
             $or: [
                 { name: { $regex: query, $options: 'i' } },
-                { code: { $regex: query, $options: 'i' } },
-                { category: { $regex: query, $options: 'i' } } 
+                { code: query }, 
+                { code: { $regex: query, $options: 'i' } } 
             ]
         });
         
+        console.log('Search query:', query);
+        console.log('Found products:', products);
+
         res.json(products);
     } catch (error) {
         console.error('Error searching products:', error);
         res.status(500).json({ message: 'Server error while fetching products', error: error.message });
     }
 };
-
 export const getProducts = async (req, res) => {
     try {
         const products = await Product.find();

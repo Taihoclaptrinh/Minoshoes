@@ -17,9 +17,12 @@ import AdminHome from "./Pages/AdminHome";
 import AdminUserList from "./Pages/AdminUserList";
 import AdminProductList from "./Pages/AdminProductList";
 import AdminOrderList from "./Pages/AdminOrderList";
+import AdminCouponList from './Pages/AdminCouponList';
 import AdminUserSingle from "./Pages/AdminUserSingle";
 import AdminProductSingle from "./Pages/AdminProductSingle";  
 import AdminOrderSingle from "./Pages/AdminOrderSingle";  
+import AdminCouponSingle from "./Pages/AdminCouponSingle";  
+ 
 
 import AdminNew from "./Pages/AdminNew";
 
@@ -44,17 +47,21 @@ const AdminApp = () => (
           <Route path="users">
             <Route index element={<AdminUserList />} />
             <Route path=":userId" element={<AdminUserSingle />} />
-            <Route path="new" element={<AdminNew inputs={userInputs} title="Add New User" formType="user" />} />
+            <Route path="new" element={<AdminNew title="Add New User" formType="user" />} />
           </Route>
           <Route path="products">
             <Route index element={<AdminProductList />} />
-            <Route path=":productId" element={<AdminProductSingle />} />  
-            <Route path="new" element={<AdminNew inputs={productInputs} title="Add New Product" formType="product" />} />
+            <Route path=":productId" element={<AdminProductSingle />} />  {/* Correctly render AdminProductSingle */}
+            <Route path="new" element={<AdminNew title="Add New Product" formType="product" />} />
           </Route>
           <Route path="orders">
             <Route index element={<AdminOrderList />} />
-            <Route path=":orderId" element={<AdminOrderSingle />} />  
-            <Route path="new" element={<AdminNew inputs={orderInputs} title="Add New Order" formType="order" />} />
+            <Route path=":orderId" element={<AdminOrderSingle />} />  {/* Assuming AdminUserSingle handles orders too */}
+          </Route>
+          <Route path="coupons">
+            <Route index element={<AdminCouponList />} />
+            <Route path=":couponId" element={<AdminCouponSingle />} />
+            <Route path="new" element={<AdminNew title="Add New Coupon" formType="coupon" />} />
           </Route>
         </Routes>
       </div>

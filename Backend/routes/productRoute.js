@@ -2,7 +2,7 @@ import express from 'express';
 import { searchProductsByColor, checkout, createProduct,
         getProductByName, updateProduct,
         deleteProduct, getRelatedProducts, 
-        searchProducts, getProducts, } from '../controller/productController.js';
+        searchProducts, getProducts } from '../controller/productController.js';
 
 const router = express.Router();
 

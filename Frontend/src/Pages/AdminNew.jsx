@@ -2,13 +2,28 @@ import "./CSS/AdminNew.css";
 import { useState } from "react";
 import { get, post, put, del } from '../config/api'; // Đảm bảo đúng đường dẫn đến file api.js
 
-const AdminNew = ({ inputs, title, formType }) => {
-  const [formData, setFormData] = useState(
-    inputs.reduce((acc, input) => ({
-      ...acc,
-      [input.id]: input.value || (input.type === "file" ? [] : ""),
-    }), {})
-  );
+const AdminNew = ({ title, formType }) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    productName: "",
+    productDescription: "",
+    productPrice: "",
+    productBrand: "adidas", // default value
+    productCategory: "lifestyle", // default value
+    productSizes: "",
+    productColor: "",
+    productStocks: "",
+    productImages: [],
+    productCreateAt: new Date().toISOString().split("T")[0],
+    productUpdateAt: new Date().toISOString().split("T")[0],
+    coupon: "",
+    couponType: "Freeship", // default value
+    discountValue: "",
+    minimumPurchaseAmount: "",
+    couponDescription: "",
+    couponCreateAt: new Date().toISOString().split("T")[0],
+    couponExpiredAt: new Date().toISOString().split("T")[0],
+  });
 
   const [previewImages, setPreviewImages] = useState([]);
 
@@ -41,10 +56,11 @@ const AdminNew = ({ inputs, title, formType }) => {
         Array.from(formData.productImages).forEach((file) => {
           fileData.append('images', file); // Ensure the key matches the backend expectation
         });
+        
         // Upload images and get image URLs
         const uploadResponse = await post('/api/v1/auth/upload', fileData);
         const { imageUrls } = uploadResponse.data;
-        
+
         // Prepare product data
         const productData = {
           code: formData.productCode,
@@ -60,6 +76,7 @@ const AdminNew = ({ inputs, title, formType }) => {
           createdAt: formData.productCreateAt,
           updatedAt: formData.productUpdateAt,
         };
+        console.log(productData)
         alert(`Product Data: ${JSON.stringify(productData, null, 2)}`);
 
         // Send product data to the API to create a new product
@@ -80,51 +97,275 @@ const AdminNew = ({ inputs, title, formType }) => {
           <h1>{title}</h1>
         </div>
         <div className="bottom">
-          <div className="left">
-            {(formType === "product" || formType === "user") && previewImages.length > 0 ? (
-              <div className="imagePreviewContainer">
-                {previewImages.map((image, index) => (
+          {formType === "product" && (
+            <div className="left">
+              {previewImages.length > 0 ? (
+                <div className="imagePreviewContainer">
+                  {previewImages.map((image, index) => (
+                    <img
+                      key={index}
+                      src={image}
+                      alt={`Preview ${index}`}
+                      className="imagePreview"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="imagePreviewContainer">
                   <img
-                    key={index}
-                    src={image}
-                    alt={`Preview ${index}`}
+                    src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
+                    alt="No Preview"
                     className="imagePreview"
                   />
-                ))}
-              </div>
-            ) : (
-              <div className="imagePreviewContainer">
-                <img
-                  src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
-                  alt="No Preview"
-                  className="imagePreview"
-                />
-              </div>
-            )}
-          </div>
+                </div>
+              )}
+            </div>
+          )}
           <div className="right">
             <form onSubmit={handleSubmit}>
-              {inputs.map((input) => (
-                <div className="formInput" key={input.id}>
-                  <label>{input.label}</label>
-                  {input.type === "file" ? (
-                    <input
-                      type={input.type}
-                      placeholder={input.placeholder}
-                      onChange={(e) => handleFileChange(e, input.id)}
-                      multiple={input.multiple}
-                    />
-                  ) : (
-                    <input
-                      type={input.type}
-                      placeholder={input.placeholder}
-                      value={formData[input.id]}
-                      onChange={(e) => handleInputChange(input.id, e.target.value)}
-                    />
-                  )}
+              {formType === "user" && (
+                <div className="formInput">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    placeholder="john.doe@example.com"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                  />
                 </div>
-              ))}
-              <button type="submit">Submit</button>
+              )}
+
+              {formType === "product" && (
+                <>
+                  <div className="formInput">
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      placeholder="Product Name"
+                      value={formData.productName}
+                      onChange={(e) =>
+                        handleInputChange("productName", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Description</label>
+                    <input
+                      type="text"
+                      placeholder="Description of the product"
+                      value={formData.productDescription}
+                      onChange={(e) =>
+                        handleInputChange("productDescription", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Price</label>
+                    <input
+                      type="number"
+                      placeholder="100"
+                      min="0"
+                      value={formData.productPrice}
+                      onChange={(e) =>
+                        handleInputChange("productPrice", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Brand</label>
+                    <select
+                      value={formData.productBrand}
+                      onChange={(e) =>
+                        handleInputChange("productBrand", e.target.value)
+                      }
+                    >
+                      <option value="adidas">adidas</option>
+                      <option value="puma">puma</option>
+                      <option value="asics">asics</option>
+                      <option value="nike">nike</option>
+                      <option value="vans">vans</option>
+                    </select>
+                  </div>
+
+                  <div className="formInput">
+                    <label>Category</label>
+                    <select
+                      value={formData.productCategory}
+                      onChange={(e) =>
+                        handleInputChange("productCategory", e.target.value)
+                      }
+                    >
+                      <option value="lifestyle">lifestyle</option>
+                      <option value="casual">casual</option>
+                      <option value="running shoes">running shoes</option>
+                    </select>
+                  </div>
+
+                  <div className="formInput">
+                    <label>Sizes</label>
+                    <input
+                      type="text"
+                      placeholder="S, M, L"
+                      value={formData.productSizes}
+                      onChange={(e) =>
+                        handleInputChange("productSizes", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Colors</label>
+                    <input
+                      type="text"
+                      placeholder="Red, Blue"
+                      value={formData.productColor}
+                      onChange={(e) =>
+                        handleInputChange("productColor", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Stocks</label>
+                    <input
+                      type="text"
+                      placeholder="10, 20, 15"
+                      value={formData.productStocks}
+                      onChange={(e) =>
+                        handleInputChange("productStocks", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Images</label>
+                    <input
+                      type="file"
+                      multiple
+                      onChange={(e) => handleFileChange(e, "productImages")}
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Created At</label>
+                    <input
+                      type="date"
+                      value={formData.productCreateAt}
+                      disabled
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Updated At</label>
+                    <input
+                      type="date"
+                      value={formData.productUpdateAt}
+                      disabled
+                    />
+                  </div>
+                </>
+              )}
+
+              {formType === "coupon" && (
+                <>
+                  <div className="formInput">
+                    <label>Coupon</label>
+                    <input
+                      type="text"
+                      placeholder="Enter coupon code"
+                      value={formData.coupon}
+                      onChange={(e) =>
+                        handleInputChange("coupon", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Type</label>
+                    <select
+                      value={formData.couponType}
+                      onChange={(e) =>
+                        handleInputChange("couponType", e.target.value)
+                      }
+                    >
+                      <option value="Freeship">Freeship</option>
+                      <option value="Discount price">Discount price</option>
+                    </select>
+                  </div>
+
+                  {formData.couponType === "Discount price" && (
+                    <>
+                      <div className="formInput">
+                        <label>Discount Value</label>
+                        <input
+                          type="number"
+                          placeholder="50"
+                          min="0"
+                          value={formData.discountValue}
+                          onChange={(e) =>
+                            handleInputChange("discountValue", e.target.value)
+                          }
+                        />
+                      </div>
+
+                      <div className="formInput">
+                        <label>Minimum Purchase Amount</label>
+                        <input
+                          type="number"
+                          placeholder="200"
+                          min="0"
+                          value={formData.minimumPurchaseAmount}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "minimumPurchaseAmount",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  <div className="formInput">
+                    <label>Description</label>
+                    <input
+                      type="text"
+                      placeholder="Enter description"
+                      value={formData.couponDescription}
+                      onChange={(e) =>
+                        handleInputChange("couponDescription", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Created At</label>
+                    <input
+                      type="date"
+                      value={formData.couponCreateAt}
+                      disabled
+                    />
+                  </div>
+
+                  <div className="formInput">
+                    <label>Expired At</label>
+                    <input
+                      type="date"
+                      value={formData.couponExpiredAt}
+                      onChange={(e) =>
+                        handleInputChange("couponExpiredAt", e.target.value)
+                      }
+                    />
+                  </div>
+                </>
+              )}
+
+              <div className="formSubmit">
+                <button type="submit">Submit</button>
+              </div>
             </form>
           </div>
         </div>

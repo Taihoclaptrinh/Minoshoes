@@ -3,7 +3,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 1%;
+  padding-top: 0%;
   font-family: 'Nunito', sans-serif;
   margin: 0;
 }
@@ -28,6 +29,8 @@
 .AdminSingle .singleContainer .top .left,
 .AdminSingle .singleContainer .top .right {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
 
@@ -83,12 +86,13 @@
 }
 
 .AdminSingle .singleContainer .top .left .item .imagePreviewContainer {
+  max-width: 150px;
   flex-shrink: 0;
 }
 
-.AdminSingle .singleContainer .top .left .item .itemImg {
-  width: 150px;
-  height: 150px;
+.AdminSingle .singleContainer .top .left .item .imagePreviewContainer img {
+  width: 130px;
+  height: 130px;
   border-radius: 10px;
   object-fit: cover;
   border: 2px solid #e9ecef;
@@ -100,6 +104,7 @@
   gap: 10px;
   flex: 1;
   min-width: 0;
+  max-width: 90%;
 }
 
 .AdminSingle .singleContainer .top .left .item .details .itemTitle {
@@ -111,8 +116,9 @@
 .AdminSingle .singleContainer .top .left .item .details .detailItem {
   display: flex;
   flex-wrap: nowrap;
-  gap: 10px;
+  gap: 20px;
   align-items: center;
+  width: 100%;
   max-width: 100%;
   overflow: hidden;
 }
@@ -120,7 +126,7 @@
 .AdminSingle .singleContainer .top .left .item .details .detailItem .itemKey {
   font-weight: bold;
   color: #777;
-  width: 100px;
+  width: 30%;
   flex-shrink: 0;
 }
 
@@ -129,36 +135,58 @@
   font-size: 15px;
   flex: 1;
   min-width: 0;
+  margin: 10px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  width: 48%;
+  gap: 5px;
+  font-size: 15px;
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AdminSingle .singleContainer .top .left .item .details .detailItem input,
+.AdminSingle .singleContainer .top .left .item .details .detailItem select {
+  color: #000000;
+  font-size: 15px;
+  font-weight: 100;
+  flex: 1;
+  min-width: 0;
   margin: 10px 0;
   padding: 2px;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   width: 48%;
-  display: flex;
   gap: 5px;
+  font-size: 15px;
   position: relative;
-}
-
-.AdminSingle .singleContainer .top .left .item .details .detailItem .itemValue input {
-  width: 100%;
-  max-width: 100%;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  box-sizing: border-box;
   overflow: hidden;
   text-overflow: ellipsis;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background-color: #fff;
 }
 
-.AdminSingle .singleContainer .top .left .item .details .detailItem .itemValue input:focus {
+/* Styling based on the status */
+.AdminSingle .singleContainer .top .left .item .details .detailItem select option[value='Pending'] {
+  background-color: rgb(165, 237, 255);
+}
+.AdminSingle .singleContainer .top .left .item .details .detailItem select option[value='Shipped'] {
+  background-color: #ffd599;
+}
+.AdminSingle .singleContainer .top .left .item .details .detailItem select option[value='Cancelled'] {
+  background-color: #ff9393;
+}
+.AdminSingle .singleContainer .top .left .item .details .detailItem select option[value='Delivered'] {
+  background-color: #a8f6a8;
+}
+
+.AdminSingle .singleContainer .top .left .item .details .detailItem input:focus {
   z-index: 1;
-  width: auto;
-  min-width: 100%;
-  max-width: none;
 }
 
 .AdminSingle .singleContainer .top .right .chartContainer {
@@ -167,4 +195,37 @@
   background-color: #f9f9f9;
   border-radius: 10px;
   padding: 20px;
+}
+
+.AdminSingle .singleContainer .top .left .item .details .detailItem #shippingAddressContainer {
+  background-color: #f0f0f0; /* Gray background */
+  border-radius: 10px; /* Rounded corners */
+  padding: 10px; /* Padding inside the container */
+  overflow: auto; /* Auto overflow handling */
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+}
+
+.AdminSingle .singleContainer .top .left .item .details .detailItem #shippingAddressContainer .shippingAddressInfo {
+  margin-bottom: 10px; /* Space between each address line */
+}
+
+.AdminSingle .singleContainer .top .left .item .details .detailItem table {
+  width: 100%;
+  border-collapse: collapse; /* Ensures no space between table cells */
+  overflow: auto; /* Auto overflow handling for table */
+  table-layout: fixed; /* Fixes table layout */
+}
+
+.AdminSingle .singleContainer .top .left .item .details .detailItem th,
+.AdminSingle .singleContainer .top .left .item .details .detailItem td {
+  text-align: center;
+  padding: 10px; /* Space inside cells */
+  border: 1px solid #ddd; /* Border around cells */
+  color: black;
+}
+
+.AdminSingle .singleContainer .top .left .item .details .detailItem td {
+  word-break: break-word; /* Break long words to prevent overflow */
 }
