@@ -4,11 +4,11 @@ import "./Brand_Section.css"
 export default function Brand_Section() {
   const images = [
     "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/adidas.jpg",
-    "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/nike.jpg",
-    "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/asics.jpg",
     "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/vans.jpg",
     "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/puma.jpg",
-    ];
+    "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/asics.jpg",
+    "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/nike.jpg"  
+  ];
   return (
     <div className='Logo-container'>
       <h3>Discover top shoe brands trusted by millions worldwide </h3>

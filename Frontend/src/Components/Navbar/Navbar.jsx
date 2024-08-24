@@ -212,8 +212,8 @@ const Navbar = () => {
                         <div className="nav-item user-greeting">
                             <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
                             <span>hi, {getLastName(user.name)}</span>
-                            <div style={{ marginTop: "-3rem" }} className="dropdown-container">
-                                <div class="dropdown">
+                            <div style={{ marginTop: "-3rem"}} className="dropdown-container">
+                                <div class="user_dropdown">
                                     <a href="/userinfo">User Info</a>
                                     {user && user.role === 1 && (
                                         <a href="/admin/">Admin dashboard</a>

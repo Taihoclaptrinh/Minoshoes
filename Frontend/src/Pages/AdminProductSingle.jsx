@@ -88,9 +88,9 @@ const AdminProductSingle = () => {
                 </button>
               )}
             </div>
-            <h1 className="title">Product Information</h1>
-            <div className="item">
-              <div className="image-preview-container">
+            <h1 className="Product_single_title">Product Information</h1>
+            <div className="Product_single_item">
+              <div className="Product_single_image-preview-container">
                 {previewImages.length > 0 ? (
                   previewImages.map((image, index) => (
                     <img
@@ -108,30 +108,31 @@ const AdminProductSingle = () => {
                   />
                 )}
               </div>
-              <div className="details">
-                <h1 className="item-title">{formData.name}</h1>
+              <div className="Product_single_details">
+                <h1 className="Product_single_item-title">{formData.name}</h1>
                 <form>
                   {Object.keys(formData).map((key) => (
                     key !== 'images' && (
-                      <div key={key} className="detail-item">
-                        <label className="item-key" htmlFor={key}>
-                          {key.charAt(0).toUpperCase() + key.slice(1)}:
+                      <div key={key} className="Product_single_detail-item">
+                        <label htmlFor={key}>
+                          <span className="Product_single_item-key">{key.charAt(0).toUpperCase() + key.slice(1)}: </span>
+                          {isEditing ? (
+                              <input
+                                type="text"
+                                id={key}
+                                name={key}
+                                value={formData[key] || ""}
+                                onChange={handleInputChange}
+                                className="item-value"
+                              />
+                          ) : (
+                            <span className="Product_single_item-value">
+                              {formData[key] || "N/A"}
+                            </span>
+                          )}
                         </label>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            id={key}
-                            name={key}
-                            value={formData[key] || ""}
-                            onChange={handleInputChange}
-                            className="item-value"
-                          />
-                        ) : (
-                          <span className="item-value">
-                            {formData[key] || "N/A"}
-                          </span>
-                        )}
                       </div>
+                      
                     )
                   ))}
                 </form>

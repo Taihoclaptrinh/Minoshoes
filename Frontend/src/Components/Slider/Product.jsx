@@ -18,11 +18,8 @@ const Product = (props) => {
     <div className="product--card" onClick={() => handleProductClick(props.name)}>
       <img className="product--image" src={props.url} alt={props.name} />
       <h2 className="product--name">{props.name}</h2>      
-      <p className="price">{formatPrice(props.price)}</p>
+      <h2 className="price">{formatPrice(props.price)}</h2>
       <p className="description">{props.description}</p>
-      <p>
-        <button className="add-to-cart-button">Add to Cart</button>
-      </p>
     </div>
   );
 };

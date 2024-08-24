@@ -158,12 +158,13 @@ const ProductCategory = () => {
   const filterProducts = (products) => {
     return products.filter((product) => {
       const colorMatch = selectedColors.length === 0 || selectedColors.includes(product.color);
+      const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand);
       return (
         product.price >= priceRange[0] &&
         product.price <= priceRange[1] &&
         (selectedSizes.length === 0 || selectedSizes.includes(product.size)) &&
         colorMatch &&
-        (selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand)) &&
+        brandMatch &&
         (selectedGender.length === 0 || selectedGender.includes(product.gender))
       );
     });
@@ -208,7 +209,6 @@ const ProductCategory = () => {
   return (
     <div className="product-category">
       <header className="header">
-        <div className="breadcrumbs">Products / Category 1 / Category 2 / Category 3</div>
         <h1 className="title">Category</h1>
         <h2 className="subtitle">Products</h2>
       </header>
@@ -337,27 +337,15 @@ const ProductCategory = () => {
             <div className="brand-filter">
               <h3>Brands</h3>
               <div>
-                {['Adidas', 'Nike', 'New Balance', 'Vans', 'Converse'].map((brand) => (
-                  <div key={brand}>
-                    <div onClick={() => toggleBrand(brand)} style={{ cursor: 'pointer', display: 'flex' }}>
-                      <h5>{brand}</h5>
-                      <button className='subBrandButton' style={{ marginLeft: '8px' }}>{openBrands.includes(brand) ? '▲' : '▼'}</button>
-                    </div>
-                    {openBrands.includes(brand) && (
-                      <div>
-                        {getBrandOptions(brand).map((subBrand) => (
-                          <label key={subBrand}>
-                            <input
-                              type="checkbox"
-                              checked={selectedBrands.includes(subBrand)}
-                              onChange={() => handleBrandChange(subBrand)}
-                            />
-                            {subBrand}
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                {['Adidas', 'Nike', 'Asics', 'Vans', 'Puma'].map((brand) => (
+                  <label key={brand}>
+                    <input
+                      type="checkbox"
+                      checked={selectedBrands.includes(brand)}
+                      onChange={() => handleBrandChange(brand)}
+                    />
+                    {brand}
+                  </label>
                 ))}
               </div>
             </div>
@@ -382,17 +370,6 @@ const ProductCategory = () => {
       <Footer />
     </div>
   );
-};
-
-const getBrandOptions = (brand) => {
-  const brandOptions = {
-    'Adidas': ['Adidas subBrand 1', 'Adidas subBrand 2'],
-    'Nike': ['Nike subBrand 1', 'Nike subBrand 2'],
-    'New Balance': ['New Balance subBrand 1', 'New Balance subBrand 2'],
-    'Vans': ['Vans subBrand 1', 'Vans subBrand 2'],
-    'Converse': ['Converse subBrand 1', 'Converse subBrand 2'],
-  };
-  return brandOptions[brand] || [];
 };
 
 export default ProductCategory;

@@ -189,7 +189,8 @@
 .related-product {
   position: relative;
   width: 100%;
-  height: 36rem;
+  height: auto;
+  margin-bottom: 50px;
   color: #000;
   font-family: "Inria Sans";
   font-size: 1.25rem;
@@ -218,6 +219,7 @@
   border-radius: 20px;
   background: #F5F5F5;
   display: flex;
+  margin-bottom: 2rem;
 }
 .rating {
   display: flex;
@@ -226,6 +228,9 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+
+  display: flex;
+  justify-content: center;
 }
 
 /* Format average score */
@@ -302,6 +307,34 @@
 .review.show {
   display: block; /* Show the reviews with the class 'show' */
 }
+
+/* Leave the review button */
+.leave-review-button-container {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+.leave-review-button-container button{
+  padding: 0.5em 4em 0.5em 4em;
+  border-radius: 10px;
+  margin-bottom: 2em;
+  background-color: #cbcbcb;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.7);
+  border: 2px solid black;
+
+  color: #000;
+  font-family: "Inria Sans";
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.leave-review-button:hover {
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), -1px -1px 3px rgba(255, 255, 255, 0.7);
+  transform: translateY(2px);
+}
+
 /* Engroup 5 reviews and show 
    Increase review pages to see more */
 .review-pagination {
