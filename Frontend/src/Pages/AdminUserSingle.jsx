@@ -24,8 +24,10 @@ const AdminUserSingle = () => {
           totalSpent: user.totalSpent || "N/A",
           role: user.role || "N/A",
           createAt: new Date(user.createdAt).toLocaleString() || "Invalid Date",
+          images: ["https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/people.jpg"]
           // images: user.images || [] // Assuming images is an array
         });
+        setPreviewImages(["https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/people.jpg"]);
         // setPreviewImages(user.images || []);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -116,7 +118,7 @@ const AdminUserSingle = () => {
                         <label className="itemKey" htmlFor={key}>
                           {key.charAt(0).toUpperCase() + key.slice(1)}:
                         </label>
-                        {isEditing ? (
+                        {isEditing && !['id', 'totalSpent', 'role', 'createAt'].includes(key) ? (
                           <input
                             type="text"
                             id={key}
