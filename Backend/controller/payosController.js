@@ -9,15 +9,14 @@ const payos = new PayOS(
 export const createPaymentLink = async (req, res) => {
   try {
     const { amount, description } = req.body;
-    const orderCode = Math.floor(Math.random() * 9000000000000); // Sinh số ngẫu nhiên nhỏ hơn 9007199254740991
+    const orderCode = Math.floor(Math.random() * 9000000000000);
     const order = {
       amount,
       description,
       orderCode,
-      returnUrl: '/payment-success',
-      cancelUrl: '/'
+      returnUrl: process.env.URL,
+      cancelUrl: process.env.URL
     };
-
     const paymentLink = await payos.createPaymentLink(order);
     res.json({ checkoutUrl: paymentLink.checkoutUrl });
   } catch (error) {

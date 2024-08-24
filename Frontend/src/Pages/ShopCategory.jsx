@@ -162,11 +162,13 @@ const ProductCategory = () => {
     return products.filter((product) => {
       const colorMatch = selectedColors.length === 0 || selectedColors.includes(product.color);
       const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand);
+      const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand);
       return (
         product.price >= priceRange[0] &&
         product.price <= priceRange[1] &&
         (selectedSizes.length === 0 || selectedSizes.includes(product.size)) &&
         colorMatch &&
+        (selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand)) &&
         brandMatch &&
         (selectedGender.length === 0 || selectedGender.includes(product.gender))
       );
@@ -340,7 +342,7 @@ const ProductCategory = () => {
             <div className="brand-filter">
               <h3>Brands</h3>
               <div>
-                {['Adidas', 'Nike', 'Asics', 'Vans', 'Puma'].map((brand) => (
+              {['Adidas', 'Nike', 'Asics', 'Vans', 'Puma'].map((brand) => (
                   <label key={brand}>
                     <input
                       type="checkbox"
@@ -349,6 +351,7 @@ const ProductCategory = () => {
                     />
                     {brand}
                   </label>
+
                 ))}
               </div>
             </div>
