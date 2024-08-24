@@ -65,6 +65,9 @@ const AdminApp = () => (
             <Route path=":couponId" element={<AdminCouponSingle />} />
             <Route path="new" element={<AdminNew title="Add New Coupon" formType="coupon" />} />
           </Route>
+          <Route path="notification">
+
+          </Route>
         </Routes>
       </div>
     </div>

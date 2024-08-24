@@ -70,7 +70,9 @@ const AdminProductSingle = () => {
     console.log("Updated data:", formData);
     // Update the backend here
   };
-
+  const formatPrice = (price) => {
+    return price.toLocaleString('vi-VN') + " VND";
+  };
   if (!formData) return <div>Data not found</div>;
 
   return (

@@ -279,14 +279,14 @@ const Cart = () => {
                                                 <table id="cart_product-table">
                                                 {displayedProducts.map(product => (
                                                     <tr key={product.product._id}>
-                                                        <td>{product.product.name}</td>
-                                                        <td>Size: {product.size}</td>  {/* This line displays the selected size */}
+                                                        <td style={{width:"12rem"}}>{product.product.name}</td>
+                                                        <td style={{width:"4rem"}}>Size: {product.size}</td>
                                                         <td className="cart_quantity-container">
                                                             <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, -1, product.size)}>-</button>
                                                             <span className="cart_quantity">{product.quantity}</span>
                                                             <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, 1, product.size)}>+</button>
                                                         </td>
-                                                        <td>{formatPrice(product.product.price * product.quantity)}</td>
+                                                        <td style={{display:"flex",marginRight:"0"}}>{formatPrice(product.product.price * product.quantity)}</td>
                                                     </tr>
                                                 ))}
                                                 </table>

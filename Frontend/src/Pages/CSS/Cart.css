@@ -73,16 +73,24 @@
     height: 15rem;
     overflow-y: auto;
 }
-#cart_product-table {
+
+.cart_products-container table {
     width: 100%;
     margin-bottom: 20px;
-    border-collapse: collapse;
+    border-collapse: collapse; /* Kết hợp các viền nếu có */
+    border: none; /* Xóa viền của bảng */
 }
-
-#cart_product-table td {
-    padding: 1rem 1rem;
+.cart_products-container td {
+    padding: 1rem 0;
+    border: none; /* Xóa viền của các ô */
+}
+.cart_products-container tr {
+    max-height: 4rem;
+    display: flex;
+    align-items: center;
 }
 .cart_quantity-container {
+    width: 10rem;
     display: flex;
     align-items: center;
     justify-content: center;
