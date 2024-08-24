@@ -159,6 +159,7 @@ const ProductCategory = () => {
     return products.filter((product) => {
       const colorMatch = selectedColors.length === 0 || selectedColors.includes(product.color);
       const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand);
+      const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand);
       return (
         product.price >= priceRange[0] &&
         product.price <= priceRange[1] &&
@@ -372,17 +373,6 @@ const ProductCategory = () => {
       <Footer />
     </div>
   );
-};
-
-const getBrandOptions = (brand) => {
-  const brandOptions = {
-    'Adidas': ['Adidas subBrand 1', 'Adidas subBrand 2'],
-    'Nike': ['Nike subBrand 1', 'Nike subBrand 2'],
-    'New Balance': ['New Balance subBrand 1', 'New Balance subBrand 2'],
-    'Vans': ['Vans subBrand 1', 'Vans subBrand 2'],
-    'Converse': ['Converse subBrand 1', 'Converse subBrand 2'],
-  };
-  return brandOptions[brand] || [];
 };
 
 export default ProductCategory;

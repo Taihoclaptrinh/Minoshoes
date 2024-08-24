@@ -231,8 +231,7 @@ const Product = () => {
 
     return (
         <div className="product-page">
-            <div className="product-page-layout">
-                <p1>Product/ </p1>
+            <div className="product-page-layout" style={{marginTop:"2rem"}}>
                 <div className="main-container">
                     <div className="product-section">
                         <div className="product-image-list">

@@ -45,70 +45,70 @@ const AdminOrderSingle = () => {
           <div className="left">
             <h1 className="title">Order Information</h1>
             <div className="item">
-              <div className="details">
+              <div className="Order_Single_details">
                 <form>
-                  <div className="detail-item">
+                  <div className="Order_Single_detail-item">
                     <label >
-                      <span className="item-key">Order ID:</span>
-                      <span className="item-value">{orderData.id}</span>
+                      <span className="Order_Single_item-key">Order ID:</span>
+                      <span className="Order_Single_item-value">{orderData.id}</span>
                     </label>
                   </div>
-                  <div className="detail-item">
+                  <div className="Order_Single_detail-item">
                     <label >
-                      <span className="item-key">User ID: </span>
-                      <span className="item-value">{orderData.userId}</span>
+                      <span className="Order_Single_item-key">User ID: </span>
+                      <span className="Order_Single_item-value">{orderData.userId}</span>
                     </label>
                   </div>
-                  <div className="detail-item">
+                  <div className="Order_Single_detail-item">
                     <label >
-                      <span className="item-key">User Email:</span>
-                      <span className="item-value">{orderData.userEmail}</span>
+                      <span className="Order_Single_item-key">User Email:</span>
+                      <span className="Order_Single_item-value">{orderData.userEmail}</span>
                     </label>
                   </div>
-                  <div className="detail-item">
+                  <div className="Order_Single_detail-item">
                     <label >
-                      <span className="item-key">Payment Method:</span>
-                      <span className="item-value">{orderData.paymentMethod}</span>
+                      <span className="Order_Single_item-key">Payment Method:</span>
+                      <span className="Order_Single_item-value">{orderData.paymentMethod}</span>
                     </label>
                   </div>
-                  <div className="detail-item">
+                  <div className="Order_Single_detail-item">
                     <label>
-                      <span className="item-key">Total Price:</span>
-                      <span className="item-value">{formatPrice(orderData.totalPrice)}</span>
+                      <span className="Order_Single_item-key">Total Price:</span>
+                      <span className="Order_Single_item-value">{formatPrice(orderData.totalPrice)}</span>
                     </label>
                   </div>
-                  <div className="detail-item">
+                  <div className="Order_Single_detail-item">
                     <label>
-                      <span className="item-key">Status</span>
-                      <span className="item-value">{orderData.status}</span>
+                      <span className="Order_Single_item-key">Status</span>
+                      <span className="Order_Single_item-value">{orderData.status}</span>
                     </label>  
                   </div>
-                  <div className="detail-item">
+                  <div className="Order_Single_detail-item">
                     <label >
-                      <span className="item-key">Created At:</span>
-                      <span className="item-value">{orderData.createdAt}</span>
+                      <span className="Order_Single_item-key">Created At:</span>
+                      <span className="Order_Single_item-value">{orderData.createdAt}</span>
                     </label>
                   </div>
-                  <div className="detail-item">
+                  <div className="Order_Single_detail-item">
                     <label >
-                      <span className="item-key">Updated At:</span>
-                      <span className="item-value">{orderData.updatedAt}</span>
+                      <span className="Order_Single_item-key">Updated At:</span>
+                      <span className="Order_Single_item-value">{orderData.updatedAt}</span>
                     </label>
                   </div>
-                  <div className="detail-item">
+                  <div className="Order_Single_detail-item">
                     <label >
-                      <span className="item-key">Shipping Address:</span>
-                      <span className="item-value ">
+                      <span className="Order_Single_item-key">Shipping Address:</span>
+                      <span className="Order_Single_item-value ">
                         <ul>{orderData.shippingAddress.fullName}</ul>
                         <ul>{orderData.shippingAddress.address}</ul>
                         <ul>{orderData.shippingAddress.phoneNumber}</ul>
                       </span>
                     </label>
                   </div>
-                  <div className="detail-item">
-                    <div className="item-key">Order Items:</div>
-                    <div className="table-container" style={{justifyContent:"center", display:"flex"}}>
-                      <table className="item-value">
+                  <div className="Order_Single_detail-item">
+                    <div className="Order_Single_item-key">Order Items:</div>
+                    <div className="Order_Single_table-container" style={{justifyContent:"center", display:"flex"}}>
+                      <table className="Order_Single_item-value">
                         <thead>
                           <tr>
                             <th>Product</th>
