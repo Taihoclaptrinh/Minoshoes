@@ -14,15 +14,13 @@ const Cart = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [showPopup, setShowPopup] = useState(false);
     const [shippingFee, setShippingFee] = useState(0);
+    const [paymentMethod, setPaymentMethod] = useState('--');
 
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
-    const [paymentMethod, setPaymentMethod] = useState('--');
     const itemsPerPage = 4;
 
-    const formatPrice = (price) => {
-        return price.toLocaleString('vi-VN') + " VND";
-    };
+    const formatPrice = (price) => price.toLocaleString('vi-VN') + " VND";
 
     const updateTotalItems = () => {
         const total = products.reduce((acc, product) => acc + product.quantity, 0);
@@ -43,12 +41,14 @@ const Cart = () => {
             console.error('Error updating total cart count:', error);
         }
     };
+
     const calculateShippingFee = (address) => {
-        if (address && address.toLowerCase().includes('Hồ Chí Minh')) {
-            return 14000;
+        if (address && address.toLowerCase().includes('hồ chí minh')) {
+            return 0;
         }
-        return 1000;
+        return 0;
     };
+
     useEffect(() => {
         if (user && user.address) {
             const fee = calculateShippingFee(user.address);
@@ -78,7 +78,7 @@ const Cart = () => {
             return false;
         }
     };
-    
+
     const handleQuantityChange = async (productId, delta, size) => {
         try {
             const token = localStorage.getItem('token');
@@ -94,7 +94,7 @@ const Cart = () => {
                 return;
             }
             const newQuantity = product.quantity + delta;
-            if (newQuantity == 0) {
+            if (newQuantity === 0) {
                 // Remove item from cart
                 await del('/api/v1/auth/cart/remove-from-cart', {
                     headers: { Authorization: `Bearer ${token}` },
@@ -120,16 +120,64 @@ const Cart = () => {
                 });
             }
     
-            // Update state with the latest product list
             setProducts(updatedProducts);
     
-            // Update cart count or any other state related to cart
             await updateTotalCartCount();
     
         } catch (error) {
             console.error('Error handling quantity change:', error);
         }
     };
+
+    useEffect(() => {
+        const handlePaymentCompletion = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const orderCode = urlParams.get('orderCode');
+            const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
+            
+            if (status === 'PAID' && orderCode) {
+                const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
+    
+                if (pendingOrder) {
+                    try {
+                        pendingOrder.status = 'PAID'
+                        // Lưu trạng thái cập nhật vào localStorage
+                        localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
+    
+                        const token = localStorage.getItem('token');
+    
+                        // Tạo đơn hàng từ thông tin đã lưu trong localStorage
+                        const createOrderResponse = await post('/api/v1/orders/create-order', pendingOrder, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+    
+                        if (createOrderResponse.status === 201) {
+                            const cleared = await clearCart();
+                            if (cleared) {
+                                setShowPopup(true);
+                                localStorage.removeItem('pendingOrder');
+                                // navigate('/payment-success');
+                            } else {
+                                setError('Order created but failed to clear cart. Please refresh the page.');
+                            }
+                        } else {
+                            throw new Error('Failed to create order after successful payment');
+                        }
+                    } catch (error) {
+                        console.error('Error handling payment completion:', error);
+                        setError('Payment successful but failed to create order. Please contact support.');
+                    }
+                }
+            } else if (status === 'CANCELLED') {
+                console.log('Payment was cancelled');
+                // Xử lý khi thanh toán bị hủy, nếu cần
+            }
+        };
+    
+        handlePaymentCompletion();
+    }, []); // Empty dependency array to run only once when component mounts
+    
     
 
     const handleBuy = async () => {
@@ -153,9 +201,10 @@ const Cart = () => {
                 },
                 paymentMethod,
                 shippingPrice: shippingFee,
-                totalPrice: totalCost
+                totalPrice: totalCost,
+                status: ''
             };
-    
+
             if (paymentMethod === 'COD') {
                 // Create the order immediately for COD
                 const response = await post('/api/v1/orders/create-order', orderItems, {
@@ -165,7 +214,7 @@ const Cart = () => {
                 if (response.status === 201) {
                     const cleared = await clearCart(); // Wait for cart to clear
                     if (cleared) {
-                        setShowPopup(true); // Show success pop-up
+                        setShowPopup(true); 
                     } else {
                         setError('Order created but failed to clear cart. Please refresh the page.');
                     }
@@ -181,12 +230,11 @@ const Cart = () => {
                 });
                 if (paymentResponse.data && paymentResponse.data.checkoutUrl) {
                     localStorage.setItem('pendingOrder', JSON.stringify(orderItems));
-                    const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
                     window.location.href = paymentResponse.data.checkoutUrl;
                 } else {
                     throw new Error('Invalid response from payment link creation');
                 }
-            }
+            }            
         } catch (error) {
             console.error('Error processing payment:', error);
             setError('Unable to process payment. Please try again later.');
@@ -195,51 +243,7 @@ const Cart = () => {
         }
     };
 
-
-    useEffect(() => {
-        const handlePaymentCompletion = async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const status = urlParams.get('status');
-            const orderCode = urlParams.get('orderCode'); // Chỉnh sửa ở đây, lấy đúng tham số
-    
-            if (status === 'PAID' && orderCode) {
-                const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
-                if (pendingOrder) {
-                    try {
-                        const token = localStorage.getItem('token');
-                        const response = await post('/api/v1/orders/create-order', pendingOrder, {
-                            headers: { Authorization: `Bearer ${token}` }
-                        });
-    
-                        if (response.status === 201) {
-                            const cleared = await clearCart();
-                            if (cleared) {
-                                setShowPopup(true);
-                                localStorage.removeItem('pendingOrder');
-                            } else {
-                                setError('Order created but failed to clear cart. Please refresh the page.');
-                            }
-                        } else {
-                            throw new Error('Failed to create order after successful payment');
-                        }
-                    } catch (error) {
-                        console.error('Error creating order after payment:', error);
-                        setError('Payment successful but failed to create order. Please contact support.');
-                    }
-                }
-            }
-        };
-    
-        handlePaymentCompletion();
-    }, []);
-    
-    
-    // const totalPages = Math.ceil(products.length / itemsPerPage);
     const displayedProducts = products.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
-
-    // const handlePageChange = (delta) => {
-    //     setCurrentPage(prevPage => Math.max(0, Math.min(totalPages - 1, prevPage + delta)));
-    // };
 
     useEffect(() => {
         calculateTotalCost();
