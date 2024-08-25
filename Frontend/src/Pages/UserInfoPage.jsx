@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import UserInfo from '../Components/UserInfo/UserInfo';
 import { useNavigate } from "react-router-dom";
-import { UserContext } from '../UserContext'; // Điều chỉnh import theo cấu trúc file của bạn
+import { UserContext } from '../UserContext';
 import './CSS/UserInfoPage.css';
 import { get, post, put, del } from '../config/api';
 
@@ -11,8 +11,10 @@ const UserInfoPage = () => {
   const [localUser, setLocalUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]); // Trạng thái để lưu trữ đơn hàng
+  const [wishlist, setWishlist] = useState([]);
   const [error, setError] = useState(null);
   const [reloadOrders, setReloadOrders] = useState(false); // Trạng thái để trigger reload đơn hàng
+  const [reloadWishlist, setReloadWishlist] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +30,16 @@ const UserInfoPage = () => {
       }
     };
 
+    const fetchUserWishlist = async () => {
+      try {
+        const response = await get(`/api/v1/auth/users/${user._id}/wishlist`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+        setWishlist(response.data);
+      } catch (error) {
+        console.error('Error fetching user wishlist:', error.response?.data || error.message);
+        setError('Failed to fetch user wishlist. Please try again.');
+      }
+    };
+
     const fetchUserOrders = async () => {
       try {
         const response = await get(`/api/v1/orders/user-orders/${user._id}`);
@@ -40,11 +52,46 @@ const UserInfoPage = () => {
 
     if (user?._id) {
       fetchUserData();
+      fetchUserWishlist();
       fetchUserOrders();
     } else {
       setLoading(false);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (reloadOrders) {
+      setReloadOrders(false);
+      const fetchUserOrders = async () => {
+        try {
+          const response = await get(`/api/v1/orders/user-orders/${user._id}`);
+          setOrders(response.data);
+        } catch (error) {
+          console.error('Error fetching user orders:', error.response?.data || error.message);
+          setError('Failed to fetch user orders. Please try again.');
+        }
+      };
+
+      fetchUserOrders();
+    }
+  }, [reloadOrders]);
+
+  useEffect(() => {
+    if (reloadWishlist) {
+      setReloadWishlist(false);
+      const fetchUserWishlist = async () => {
+        try {
+          const response = await get(`/api/v1/auth/users/${user._id}/wishlist`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+          setWishlist(response.data);
+        } catch (error) {
+          console.error('Error fetching user wishlist:', error.response?.data || error.message);
+          setError('Failed to fetch user wishlist. Please try again.');
+        }
+      };
+
+      fetchUserWishlist();
+    }
+  }, [reloadWishlist]);
 
   const handleUpdateUser = async (updatedUser) => {
     if (!updatedUser._id) {
@@ -65,6 +112,29 @@ const UserInfoPage = () => {
       }
     } catch (error) {
       console.error('Error updating user data:', error.response?.data || error.message);
+    }
+  };
+
+  const handleDeleteWishlistItem = async (itemId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const wishlistItem = localUser.wishlist.find(item => item._id === itemId);
+      const { product: productId } = wishlistItem;
+
+      const response = await del(`/api/v1/auth/users/${user._id}/wishlist/${productId}`, { headers: { Authorization: `Bearer ${token}` } });
+
+      if (response.status === 200) {
+        setLocalUser(prevUser => ({
+          ...prevUser,
+          wishlist: prevUser.wishlist.filter(item => item._id !== itemId)
+        }));
+        setReloadWishlist(true);
+      } else {
+        throw new Error(response.data.message || 'Failed to delete item from wishlist');
+      }
+    } catch (error) {
+      console.error('Error deleting wishlist item:', error.response?.data || error.message);
+      setError('Failed to delete item from wishlist. Please try again.');
     }
   };
 
@@ -104,6 +174,22 @@ const UserInfoPage = () => {
       setLoading(false);
     }
   };
+
+  const transformWishlistData = (wishlist) => {
+    return wishlist.map((item) => ({
+      id: item._id,
+      name: item.name,
+      price: item.price,
+      images: item.images,
+    }));
+  };
+
+  const wishlistColumns = [
+    { field: "images", headerName: "Images", width: 400 },
+    { field: "name", headerName: "Product Name", width: 200 },
+    { field: "price", headerName: "Price", width: 100 },
+    { field: "status", headerName: "Status", width: 150 },
+  ];
 
   // Hàm transform dữ liệu đơn hàng
   const transformOrderData = (orders) => {
@@ -156,8 +242,15 @@ const UserInfoPage = () => {
     switch (activeSection) {
       case 'details':
         return <UserInfo.Section type="details" user={localUser} onUpdateUser={handleUpdateUser} />;
-      case 'address':
-        return <UserInfo.Section type="address" user={localUser} onUpdateUser={handleUpdateUser} />;
+      case 'wishlist':
+        return (
+          <UserInfo.Section
+            type="wishlist"
+            wishlist={transformWishlistData(wishlist)}
+            // onMoveToCart={handleMoveToCart}
+            onRemoveFromWishlist={handleDeleteWishlistItem}
+          />
+        );
       case 'orders':
         return (
           <UserInfo.Section
@@ -180,7 +273,7 @@ const UserInfoPage = () => {
         <div className="sidebar">
           <ul>
             <li onClick={() => setActiveSection('details')}>Details</li>
-            <li onClick={() => setActiveSection('address')}>Address</li>
+            <li onClick={() => setActiveSection('wishlist')}>Wishlist</li>
             <li onClick={() => setActiveSection('orders')}>Your Orders</li>
             <li onClick={handleLogout}>Log Out</li>
           </ul>

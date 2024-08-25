@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Delete as CancelIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, ShoppingCart as CartIcon } from '@mui/icons-material';
 import './UserInfo.css';
 import Swal from 'sweetalert2';
 import { post } from '../../config/fetchConfig'
 // import AddressSelector from '../Address/Address'; // Import the AddressSelector component
 
-const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrder }) => {
+const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrder, wishlist, onMoveToCart, onRemoveFromWishlist }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(user);
   const [cancellingOrderId, setCancellingOrderId] = useState(null);
@@ -65,6 +65,32 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
     setIsModalOpen(true); // Open the modal
   };
 
+  const updateProductStock = async (orderItems) => {
+    try {
+      for (const item of orderItems) {
+        const response = await fetch(`/api/v1/auth/products/${item.product}/update-stock`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({
+            quantity: item.quantity,
+            size: item.size,
+            operation: 'increase'
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to update stock for product ${item.product}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating product stock:', error);
+      throw error;
+    }
+  };
+
   const handleCancelConfirm = async () => {
     try {
       const localUser = JSON.parse(localStorage.getItem('user'));
@@ -90,6 +116,25 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
       });
 
       if (result.isConfirmed) {
+        // Get the order details
+        const orderResponse = await fetch(`/api/v1/orders/get-order/${cancellingOrderId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (orderResponse.status === 401) {
+          throw new Error('Unauthorized');
+        }
+
+        if (!orderResponse.ok) {
+          throw new Error('Failed to fetch order details');
+        }
+        const orderData = await orderResponse.json();
+
+        // Update the stock for each product in the order
+        await updateProductStock(orderData.orderItems);
+
         // Call the onCancelOrder function passed as prop
         await onCancelOrder({
           orderId: cancellingOrderId,
@@ -116,15 +161,14 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
 
   const validateCredentials = async (correct_email, email, password) => {
     try {
-      const data = await post('/api/v1/auth/validateCredentials', {
-        correct_email,
-        email,
-        password
-      }, {
-        credentials: 'include', // Đảm bảo session cookie được gửi kèm
-      });
+      const token = localStorage.getItem('token');
+      const response = await post(
+        '/api/v1/auth/validateCredentials',
+        { correct_email, email, password },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-      return data.isValid;
+      return response.isValid;
     } catch (error) {
       console.error('Error validating credentials:', error);
       return false;
@@ -209,37 +253,33 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
     </>
   );
 
-  const renderAddress = () => (
+  const renderWishlist = () => (
     <>
       <div className="details-header">
-        <h2>ADDRESS</h2>
+        <h2>YOUR WISHLIST</h2>
       </div>
-      <div className="details-content">
-        {isEditing ? (
-          <form>
-            <label>
-              Address:
-              <input
-                type="text"
-                name="address"
-                value={updatedUser.address}
-                onChange={handleChange}
+      <div className="wishlist-content">
+        {wishlist.map((item) => (
+          <div key={item.id} className="wishlist-item">
+            <img src={item.images[0]} alt={item.name} className="product-image-wishlist" />
+            <div className="product-info-wishlist">
+              <h3>{item.name}</h3>
+              <p>${item.price.toFixed(2)}</p>
+            </div>
+            <div className="product-actions">
+              <CartIcon
+                onClick={() => onMoveToCart(item.id)}
+                className="cart-icon"
+                style={{ cursor: 'pointer', color: '#4caf50' }}
               />
-            </label>
-            <button type="button" onClick={handleSave} className="save">
-              Save
-            </button>
-          </form>
-        ) : (
-          <>
-            <p>
-              <strong>Address:</strong> {user.address}
-            </p>
-            <button onClick={handleEdit} className="edit">
-              Edit
-            </button>
-          </>
-        )}
+              <DeleteIcon
+                onClick={() => onRemoveFromWishlist(item.id)}
+                className="delete-icon"
+                style={{ cursor: 'pointer', color: '#e57373' }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </>
   );
@@ -260,7 +300,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
               headerName: 'Cancel',
               width: 150,
               renderCell: (params) => (
-                <CancelIcon
+                <DeleteIcon
                   onClick={() => handleCancel(params.row.id, params.row.status)}
                   className="cancel-icon"
                   style={{ cursor: 'pointer', color: '#e57373' }}
@@ -325,10 +365,10 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
                   />
                 </label>
               )}
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="confirm-cancel"
-                // onClick={() => setIsModalOpen(false)}
+              // onClick={() => setIsModalOpen(false)}
               >
                 Confirm
               </button>
@@ -341,8 +381,8 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
               </button>
             </form>
           </div>
-        {/* )} */}
-        </Modal>  
+          {/* )} */}
+        </Modal>
       </div>
     </>
   );
@@ -351,8 +391,8 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
     switch (type) {
       case 'details':
         return renderDetails();
-      case 'address':
-        return renderAddress();
+      case 'wishlist':
+        return renderWishlist();
       case 'orders':
         return renderOrders();
       default:

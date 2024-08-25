@@ -32,6 +32,6 @@ router.post('/send-reset-code', sendResetCodeController);
 router.post('/reset-password', resetPasswordController);
 
 // Validate Credentials || method POST
-router.post('/validateCredentials', validateCredentials);
+router.post('/validateCredentials', requireSignIn, validateCredentials);
 
 export default router;
