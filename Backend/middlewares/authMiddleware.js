@@ -44,3 +44,21 @@ export const isAdmin = async (req, res, next) => {
     });
   }
 };
+
+export const checkLoggedIn = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (token) {
+    JWT.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return next(); // Token không hợp lệ, tiếp tục đến trang login
+      }
+      req.user = decoded;
+      return res.status(200).send({
+        success: true,
+        message: 'You are already logged in!',
+      });
+    });
+  } else {
+    return next(); // Không có token, tiếp tục đến trang login
+  }
+};

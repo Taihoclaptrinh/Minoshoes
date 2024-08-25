@@ -4,19 +4,8 @@ import morgan from "morgan";
 import connectDB from "./Backend/config/db.js";
 import cors from "cors";
 import path from "path";
-import {
-  checkEmailController,
-  registerController,
-  loginController,
-  sendResetCodeController,
-  resetPasswordController,
-  testController,
-  createUser,
-  readUsers,
-  deleteUser,
-  findUser,
-  showAllUsers,
-} from "./Backend/controller/authController.js";
+import JWT from 'jsonwebtoken'; 
+
 import payosRoutes from "./Backend/routes/payosRoute.js";
 import authRoutes from "./Backend/routes/authRoute.js";
 import productRoute from "./Backend/routes/productRoute.js";
@@ -45,26 +34,14 @@ app.use(morgan("dev"));
 app.use("/api/v1/payos", payosRoutes);
 
 // Auth routes with rate limiters
-router.post("/check-email", checkEmailController);
-router.post("/register", registerController);
-router.post("/login", loginController);
-router.post("/send-reset-code", sendResetCodeController);
-router.post("/reset-password", resetPasswordController);
-router.get("/test", testController);
-router.post("/create-user", createUser);
-router.get("/read-users", readUsers);
-router.delete("/delete-user/:id", deleteUser);
-router.get("/find-user", findUser);
-router.get("/show-all-users", showAllUsers);
+app.use("/api/v1/auth", authRoutes);
 
-// Image upload route
 app.use("/api/v1/auth", uploadRoute);
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/auth", userRoute);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/orders", orderRoute);
 
-// Other routes
 app.use("/api/v1/auth/products", productRoute);
 app.use("/api/v1/auth/cart", cartRoute);
 app.use("/api/v1/auth/reviews", reviewRoute);

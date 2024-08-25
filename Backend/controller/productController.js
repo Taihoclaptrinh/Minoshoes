@@ -96,12 +96,43 @@ export const searchProducts = async (req, res) => {
 
 export const getProducts = async (req, res) => {
     try {
-        const products = await Product.find();
+        const { size, brand, gender, minPrice, maxPrice } = req.query;
+        const filters = {};
+
+        // Add filters based on query parameters
+        if (size) {
+            filters.sizes = { $in: size.split(',') };
+        }
+
+        if (gender) {
+            if (gender === 'Women') {
+                filters.sizes = { $in: [1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5] }; // Sizes for women
+            } else if (gender === 'Men') {
+                filters.sizes = { $in: [5.5, 6.0, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10, 11, 12] }; // Sizes for men
+            }
+        }
+
+
+        if (brand) {
+            filters.brand = { $in: brand.split(',') };
+        }
+        if (minPrice || maxPrice) {
+            filters.price = {};
+            if (minPrice) filters.price.$gte = Number(minPrice);
+            if (maxPrice) filters.price.$lte = Number(maxPrice);
+        }
+
+        // Fetch products from the database with the applied filters
+        const products = await Product.find(filters);
+
         res.status(200).json(products);
     } catch (error) {
+        console.error('Server error while fetching products:', error);
         res.status(500).json({ message: "Server error while fetching products", error });
     }
 };
+
+
 export const checkout = async (req, res) => {
     try {
         const userId = req.user._id; // Đảm bảo req.user có _id

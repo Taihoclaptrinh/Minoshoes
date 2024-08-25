@@ -1,7 +1,7 @@
 import React from 'react';
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { productInputs, userInputs, orderInputs, couponInputs } from "./formSource";
+// import { productInputs, userInputs, orderInputs, couponInputs } from "./formSource";
 import PaymentSuccess from './PaymentSuccess';
 
 import SearchResults from './Pages/SearchResult';
