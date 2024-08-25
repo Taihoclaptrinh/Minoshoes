@@ -91,24 +91,37 @@ const Product = () => {
             navigate('/login');
             return;
         }
-
+    
         if (!selectedSize) {
             alert('Please select a size before adding to cart.');
             return;
         }
-
+    
+        // Kiểm tra số lượng tồn kho
+        const sizeIndex = product.sizes.indexOf(selectedSize);
+        if (sizeIndex === -1) {
+            alert('Selected size is not available for this product.');
+            return;
+        }
+    
+        const stockAvailable = product.stocks[sizeIndex];
+        if (stockAvailable <= 0) {
+            alert('Sorry, this product is out of stock for the selected size.');
+            return;
+        }
+    
         try {
             const response = await post('/api/v1/auth/cart/add-to-cart', {
                 productId: product._id,
                 quantity: 1,
                 price: product.price,
-                size: selectedSize  // Thêm size vào đây
+                size: selectedSize
             }, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-
+    
             if (response.status === 200) {
                 alert('Product added to cart successfully!');
                 const newCartCount = response.data.totalQuantity;

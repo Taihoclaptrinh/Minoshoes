@@ -93,7 +93,23 @@ const Cart = () => {
                 console.error('Product not found in cart');
                 return;
             }
+    
             const newQuantity = product.quantity + delta;
+    
+            // Kiểm tra số lượng trong kho
+            const sizeIndex = product.product.sizes.indexOf(size);
+            if (sizeIndex === -1) {
+                console.error('Size not found for product');
+                return;
+            }
+    
+            const stockAvailable = product.product.stocks[sizeIndex];
+    
+            if (delta > 0 && newQuantity > stockAvailable) {
+                alert(`Sorry, only ${stockAvailable} item(s) available for size ${size}`);
+                return;
+            }
+    
             if (newQuantity === 0) {
                 // Remove item from cart
                 await del('/api/v1/auth/cart/remove-from-cart', {
@@ -121,7 +137,6 @@ const Cart = () => {
             }
     
             setProducts(updatedProducts);
-    
             await updateTotalCartCount();
     
         } catch (error) {
