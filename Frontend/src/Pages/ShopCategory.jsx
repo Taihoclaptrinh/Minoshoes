@@ -102,7 +102,7 @@ const ProductCategory = () => {
   const handleSortChange = (sortOption) => {
     setSortedBy([sortOption]);
   };
-  
+
   const handleSizeChange = (size) => {
     setSelectedSizes((prevSelectedSizes) =>
       prevSelectedSizes.includes(size)
@@ -161,7 +161,6 @@ const ProductCategory = () => {
   const filterProducts = (products) => {
     return products.filter((product) => {
       const colorMatch = selectedColors.length === 0 || selectedColors.includes(product.color);
-      const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand);
       const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand);
       return (
         product.price >= priceRange[0] &&

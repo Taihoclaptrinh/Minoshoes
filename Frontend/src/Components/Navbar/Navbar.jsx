@@ -163,7 +163,7 @@ const Navbar = () => {
                     <li class="nav-item" onClick={() => { setMenu("men") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='men'>MEN</Link>{menu === "men"}
                         <div className="dropdown-container">
                             <div class="dropdown">
-                                <a className="title" href="#">Shoes</a>
+                                <a className="title" href="/new-arrivals">Shoes</a>
                                 <a href="#" onClick={() => handleCategoryClick('Running')}>Running</a>
                                 <a href="#" onClick={() => handleCategoryClick('Casual')}>Casual</a>
                                 <a href="#" onClick={() => handleCategoryClick('Lifestyle')}>Lifestyle</a>
@@ -173,7 +173,7 @@ const Navbar = () => {
                     <li class="nav-item" onClick={() => { setMenu("women") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='women'>WOMEN</Link>{menu === "women"}
                         <div className="dropdown-container">
                             <div class="dropdown">
-                                <a className="title" href="#">Shoes</a>
+                                <a className="title" href="/new-arrivals" >Shoes</a>
                                 <a href="#" onClick={() => handleCategoryClick('Running')}>Running</a>
                                 <a href="#" onClick={() => handleCategoryClick('Casual')}>Casual</a>
                                 <a href="#" onClick={() => handleCategoryClick('Lifestyle')}>Lifestyle</a>
@@ -216,7 +216,7 @@ const Navbar = () => {
                                 <div class="user_dropdown">
                                     <a href="/userinfo">User Info</a>
                                     {user && user.role === 1 && (
-                                        <a href="/admin/">Admin dashboard</a>
+                                        <a href="/admin/">Admin</a>
                                     )}
                                     <a onClick={handleLogout}>Log out</a>
                                 </div>

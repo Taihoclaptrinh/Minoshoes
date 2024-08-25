@@ -5,26 +5,19 @@ import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import { Link } from "react-router-dom";
 
 const AdminNavbar = () => {
-
+  const logo = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/logo.jpg";
   return (
     <div className="AdminNavbar">
       <div className="wrapper">
         <div className="search">
-          <Link to="/admin" style={{ textDecoration: "none" }}>
+          {/* <Link to="/admin" style={{ textDecoration: "none" }}>
             <Link to="/" className="logo">Minoshoes</Link>
-          </Link>
+          </Link> */}
+          <div className="nav-logo">
+            <Link to='/'><img src={logo} alt="" style={{ height: "80px" }} /></Link>
+          </div>
         </div> 
-        <div className="items">
-          <div className="item">
-            <NotificationsNoneOutlinedIcon className="icon" />
-          </div>
-          <div className="item">
-            <ChatBubbleOutlineOutlinedIcon className="icon" />
-          </div>
-          <div className="item">
-            <ListOutlinedIcon className="icon" />
-          </div>
-        </div>
+        
       </div>
     </div>
   );

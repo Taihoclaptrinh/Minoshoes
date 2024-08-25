@@ -19,7 +19,7 @@ const ReviewForm = ({ onClose, onSubmit }) => {
     return (
         <div className="review-form-popup">
             <form onSubmit={handleSubmit}>
-                <h2>Leave a Review</h2>
+                <h1 style={{marginBottom:"0rem", justifyContent:"center", display:"flex"}}>Leave a Review</h1>
                 <div className="rating-input">
                     {[1, 2, 3, 4, 5].map((star) => (
                         <span
@@ -38,7 +38,7 @@ const ReviewForm = ({ onClose, onSubmit }) => {
                     required
                 />
                 <div className="form-buttons">
-                    <button type="submit">Submit Review</button>
+                    <button type="submit">Submit</button>
                     <button type="button" onClick={onClose}>Cancel</button>
                 </div>
             </form>
