@@ -46,10 +46,12 @@ const AdminSidebar = () => {
             </li>
           </Link>
           <p className="title">USEFUL</p>
-          <li>
-            <NotificationsNoneIcon className="icon" />
-            <span>Notifications</span>
-          </li>
+          <Link to="/admin/notifications">
+            <li>
+              <NotificationsNoneIcon className="icon" />
+              <span>Notifications</span>
+            </li>
+          </Link>
           <li>
             <ExitToAppIcon className="icon" />
             <span>Logout</span>

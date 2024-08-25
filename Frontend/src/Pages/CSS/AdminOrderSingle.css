@@ -7,22 +7,22 @@
   flex-direction: column;
 }
 
-.table-container {
+.Order_Single_table-container {
   overflow-x: auto;
 }
 
-.table-container table {
+.Order_Single_table-container table {
   width: 95%;
   border-collapse: collapse;
 }
 
-.table-container th, td {
+.Order_Single_table-container th, td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center; /* Center content in table cells */
 }
 
-.table-container th {
+.Order_Single_table-container th {
   background-color: #f2f2f2;
 }
 .top {

@@ -73,14 +73,17 @@ useEffect(() => {
     setPriceRange([priceRange[0], value]);
   };
 
+  // const handleSortChange = (sortOption) => {
+  //   setSortedBy((prevSortedBy) =>
+  //     prevSortedBy.includes(sortOption)
+  //       ? prevSortedBy.filter((s) => s !== sortOption)
+  //       : [...prevSortedBy, sortOption]
+  //   );
+  // };
   const handleSortChange = (sortOption) => {
-    setSortedBy((prevSortedBy) =>
-      prevSortedBy.includes(sortOption)
-        ? prevSortedBy.filter((s) => s !== sortOption)
-        : [...prevSortedBy, sortOption]
-    );
+    setSortedBy([sortOption]);
   };
-
+  
   const handleSizeChange = (size) => {
     setSelectedSizes((prevSelectedSizes) =>
       prevSelectedSizes.includes(size)
@@ -189,7 +192,7 @@ useEffect(() => {
               {filteredAndSortedProducts.map((product) => (
                 <div key={product._id} className="product-item">
                   <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
-                    +
+                    ♥
                   </button>
                   <img 
                     src={product.images[0]} 

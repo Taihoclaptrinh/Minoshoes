@@ -80,13 +80,13 @@ body {
 
 .add-to-cart-btn {
     position: absolute;
-    background-color: #007bff;
-    color: white;
+    background-color: #c3cde6  ;
+    color: #be4aba  ;
     border: none;
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    font-size: 24px;
+    font-size: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -100,7 +100,8 @@ body {
 }
 
 .add-to-cart-btn:hover {
-    background-color: #0056b3;
+    font-size: 2.2rem;
+    background-color: #cbcbcb ;
 }
 
 .product-image {
