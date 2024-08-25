@@ -15,6 +15,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
   const [bankAccount, setBankAccount] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleEdit = () => setIsEditing(true);
   const handleSave = () => {
@@ -60,6 +61,8 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
       return;
     }
     setCancellingOrderId(orderId);
+
+    setIsModalOpen(true); // Open the modal
   };
 
   const handleCancelConfirm = async () => {
@@ -102,6 +105,9 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
         setBankAccount('');
         setPassword('');
       }
+
+      setIsModalOpen(false); // Close the modal after confirming cancellation
+
     } catch (error) {
       console.error('Error cancelling order:', error);
       Swal.fire('Error', 'An error occurred while cancelling the order.', 'error');
@@ -266,7 +272,8 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
           rowsPerPageOptions={[5, 10, 20]}
           autoHeight
         />
-        {cancellingOrderId !== null && (
+        {/* {cancellingOrderId !== null && ( */}
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <div className="cancel-form">
             <h3>Cancel Order</h3>
             <form onSubmit={(e) => { e.preventDefault(); handleCancelConfirm(); }}>
@@ -318,19 +325,24 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
                   />
                 </label>
               )}
-              <button type="submit" className="confirm-cancel">
+              <button 
+                type="submit" 
+                className="confirm-cancel"
+                // onClick={() => setIsModalOpen(false)}
+              >
                 Confirm
               </button>
               <button
                 type="button"
-                onClick={() => setCancellingOrderId(null)}
+                onClick={() => [setCancellingOrderId(null), setIsModalOpen(false)]}
                 className="cancel-cancel"
               >
                 Cancel
               </button>
             </form>
           </div>
-        )}
+        {/* )} */}
+        </Modal>  
       </div>
     </>
   );
@@ -349,6 +361,19 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
   };
 
   return <div className="user-info">{renderSection()}</div>;
+};
+
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="cancel_order-modal-overlay" onClick={onClose}>
+      <div className="cancel_order-modal-content" onClick={(e) => e.stopPropagation()}>
+        {/* <button className="close-button" onClick={onClose}>×</button> */}
+        {children}
+      </div>
+    </div>
+  );
 };
 
 UserInfo.Section = UserInfo;
