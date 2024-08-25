@@ -5,7 +5,8 @@ import {
   getUserOrders,
   getOrdersByUserId,
   updateOrderStatus,
-  deleteOrder
+  deleteOrder,
+  getOrdersById,
 } from '../controller/orderController.js';
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.get('/user-orders/:userId', getOrdersByUserId);
 router.get('/:id', requireSignIn, getUserOrders);
 router.put('/:orderId/status', requireSignIn, updateOrderStatus);
 router.delete('/:orderId', requireSignIn, isAdmin, deleteOrder);
+router.get('/get-order/:id', requireSignIn, getOrdersById);
 
 export default router;

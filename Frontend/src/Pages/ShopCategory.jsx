@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { UserContext } from '../UserContext';
 import { get, post, put, del } from '../config/api';
 import './CSS/ProductCategory.css';
 import Footer from '../Components/Footer/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Loader from "../Components/Loader/Loading.jsx";
+import Swal from 'sweetalert2';
 
 const ProductCategory = () => {
   const [productData, setProductData] = useState([]);
@@ -22,41 +24,42 @@ const ProductCategory = () => {
   const [filteredAndSortedProducts, setFilteredAndSortedProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isFiltering, setIsFiltering] = useState(false);
-  
+
   const location = useLocation();
   const navigate = useNavigate();
   const productsPerPage = 12;
   const [searchQuery, setSearchQuery] = useState('');
+  const { user } = useContext(UserContext);
 
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN') + " VND";
   };
-  
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
-        const response = await get(`/api/v1/auth/products`, {
-            params: {
-                size: selectedSizes.join(','),
-                brand: selectedBrands.join(','),
-                gender: selectedGender.length > 0 ? selectedGender[0] : undefined, // Chỉ gửi giá trị đầu tiên
-                minPrice: priceRange[0],
-                maxPrice: priceRange[1],
-            },
-        });
-        setProductData(response.data);
-        setTotalPages(Math.ceil(response.data.length / productsPerPage));
+      const response = await get(`/api/v1/auth/products`, {
+        params: {
+          size: selectedSizes.join(','),
+          brand: selectedBrands.join(','),
+          gender: selectedGender.length > 0 ? selectedGender[0] : undefined, // Chỉ gửi giá trị đầu tiên
+          minPrice: priceRange[0],
+          maxPrice: priceRange[1],
+        },
+      });
+      setProductData(response.data);
+      setTotalPages(Math.ceil(response.data.length / productsPerPage));
     } catch (error) {
-        console.error('Error fetching products:', error);
+      console.error('Error fetching products:', error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     fetchProducts();
-}, [selectedColors, selectedSizes, selectedBrands, selectedGender, priceRange, sortedBy, currentPage, searchQuery]);
-  
+  }, [selectedColors, selectedSizes, selectedBrands, selectedGender, priceRange, sortedBy, currentPage, searchQuery]);
+
 
   useEffect(() => {
     const filtered = filterProducts(productData);
@@ -90,7 +93,7 @@ useEffect(() => {
         ? prevSelectedSizes.filter((s) => s !== size)
         : [...prevSelectedSizes, size]
     );
-  }; 
+  };
   const handleBrandChange = (brand) => {
     setSelectedBrands((prevSelectedBrands) =>
       prevSelectedBrands.includes(brand)
@@ -120,18 +123,18 @@ useEffect(() => {
       const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand);
       const sizeMatch = selectedSizes.length === 0 || selectedSizes.some(size => product.sizes.includes(size));
       const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
-  
+
       let genderSizeMatch = true;
-        if (selectedGender.includes('Women')) {
-            genderSizeMatch = product.sizes.some(size => parseFloat(size) <= 5);
-        } else if (selectedGender.includes('Men')) {
-            genderSizeMatch = product.sizes.some(size => parseFloat(size) > 5);
-        }
-        return priceMatch && sizeMatch && brandMatch && genderSizeMatch;
+      if (selectedGender.includes('Women')) {
+        genderSizeMatch = product.sizes.some(size => parseFloat(size) <= 5);
+      } else if (selectedGender.includes('Men')) {
+        genderSizeMatch = product.sizes.some(size => parseFloat(size) > 5);
+      }
+      return priceMatch && sizeMatch && brandMatch && genderSizeMatch;
 
     })
   };
-  
+
 
   const sortProducts = (products) => {
     return sortedBy.reduce((sortedProducts, sortOption) => {
@@ -142,14 +145,14 @@ useEffect(() => {
           return sortedProducts.sort((a, b) => b.price - a.price);
         case 'Newest':
           return sortedProducts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        case 'Best Seller': 
+        case 'Best Seller':
           return sortedProducts.sort((a, b) => b.sales - a.sales);
         default:
           return sortedProducts;
       }
     }, [...products]);
   };
-  
+
   const handlePageChange = (direction) => {
     setCurrentPage((prevPage) => {
       if (direction === 'up' && prevPage < totalPages) {
@@ -165,8 +168,38 @@ useEffect(() => {
     navigate(`/product?name=${encodeURIComponent(productName)}`);
   };
 
-  const handleAddToCart = (product) => {
-    console.log("Added to cart:", product.name);
+  const handleAddToWishlist = async (product) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        Swal.fire('Error', 'Please login to add items to your wishlist', 'error');
+        return;
+      }
+
+      const response = await post(
+        `/api/v1/auth/users/${user._id}/wishlist/${product._id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      if (response.status === 200) {
+        Swal.fire('Success', 'Product added to wishlist', 'success');
+      } else {
+        throw new Error(response.data.message || 'Failed to add product to wishlist');
+      }
+    } catch (error) {
+      console.error('Error adding product to wishlist:', error.response?.data || error.message);
+      if (error.response?.status === 401) {
+        Swal.fire('Error', 'Your session has expired. Please login again.', 'error');
+        // Optionally, you can redirect to the login page or clear the token
+        // localStorage.removeItem('token');
+        // navigate('/login');
+      } else {
+        Swal.fire('Error', 'Failed to add product to wishlist. Please try again.', 'error');
+      }
+    }
   };
 
   return (
@@ -183,7 +216,7 @@ useEffect(() => {
             </div>
           ) : searchCompleted && filteredAndSortedProducts.length === 0 ? (
             <div className="no-results">
-              <p style={{color:"red", fontSize:"1.5rem"}}>
+              <p style={{ color: "red", fontSize: "1.5rem" }}>
                 Sorry, we don't have the product you are looking for :_(
               </p>
             </div>
@@ -191,22 +224,24 @@ useEffect(() => {
             <div className="products-grid">
               {filteredAndSortedProducts.map((product) => (
                 <div key={product._id} className="product-item">
-                  <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
-                    ♥
+                  <button className="add-to-wishlist-btn" onClick={() => handleAddToWishlist(product)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="heart-icon">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
                   </button>
-                  <img 
-                    src={product.images[0]} 
+                  <img
+                    src={product.images[0]}
                     alt={product.name}
                     onClick={() => handleProductClick(product.name)}
-                    className="product-image" 
+                    className="product-image"
                   />
-                  <div 
+                  <div
                     className="product-name"
                     onClick={() => handleProductClick(product.name)}
                   >
                     {product.name}
                   </div>
-                  <div 
+                  <div
                     className="product-price"
                     onClick={() => handleProductClick(product.name)}
                   >
@@ -285,7 +320,7 @@ useEffect(() => {
             <div className="brand-filter">
               <h3>Brands</h3>
               <div>
-              {['Adidas', 'Nike', 'Asics', 'Vans', 'Puma'].map((brand) => (
+                {['Adidas', 'Nike', 'Asics', 'Vans', 'Puma'].map((brand) => (
                   <label key={brand}>
                     <input
                       type="checkbox"

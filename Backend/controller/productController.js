@@ -210,3 +210,39 @@ export const searchProductsByColor = async (req, res) => {
         res.status(500).json({ message: 'Server error while searching products by color', error: error.message });
     }
 };
+
+// Cập nhật số lượng tồn kho của sản phẩm
+export const updateProductStock = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { quantity, size, operation } = req.body;
+
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const sizeIndex = product.sizes.indexOf(size);
+        if (sizeIndex === -1) {
+            return res.status(400).json({ message: 'Size not found for this product' });
+        }
+
+        if (operation === 'increase') {
+            product.stocks[sizeIndex] += quantity;
+        } else if (operation === 'decrease') {
+            if (product.stocks[sizeIndex] < quantity) {
+                return res.status(400).json({ message: 'Not enough stock' });
+            }
+            product.stocks[sizeIndex] -= quantity;
+        } else {
+            return res.status(400).json({ message: 'Invalid operation' });
+        }
+
+        await product.save();
+
+        res.status(200).json({ message: 'Stock updated successfully' });
+    } catch (error) {
+        console.error('Error updating product stock:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

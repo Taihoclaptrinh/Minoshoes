@@ -86,6 +86,21 @@ const updateStock = async (orderItems) => {
     }
 };
 
+// Get orders by order ID
+export const getOrdersById = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        res.status(200).json(order);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch order', error: error.message });
+    }
+};
+
 // Get order by ID
 export const getOrdersByUserId = async (req, res) => {
     try {

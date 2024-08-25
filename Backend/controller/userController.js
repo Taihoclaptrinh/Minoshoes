@@ -1,5 +1,6 @@
 import User from '../models/userModel.js';
 import Product from '../models/productModel.js'; // Import the Product model
+import Cart from '../models/cartModel.js';
 
 // Create User
 export const createUser = async (req, res) => {
@@ -109,11 +110,15 @@ export const getSummary = async (req, res) => {
 // Add Product to Wishlist
 export const addProductToWishlist = async (req, res) => {
     try {
-        const { productId, price, size, images } = req.body;  // Get product details from the request body
-        const userId = req.user._id;  // Get user ID from the authenticated user
+        const { id: userId } = req.params;
+        const { productId } = req.params;
 
         // Find the user by ID
         let user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
 
         // Check if the product is already in the wishlist
         const productExists = user.wishlist.some(item => item.product.toString() === productId);
@@ -122,20 +127,72 @@ export const addProductToWishlist = async (req, res) => {
             return res.status(400).send({ message: 'Product already in wishlist' });
         }
 
+        // Find the product to get its details
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).send({ message: 'Product not found' });
+        }
+
         // Add the new product to the wishlist
         user.wishlist.push({
             product: productId,
-            price,
-            size,
-            images
+            name: product.name,
+            price: product.price,
+            images: product.images
         });
 
         // Save the updated user document
         await user.save();
 
-        res.status(200).send(user.wishlist); // Respond with the updated wishlist
+        res.status(200).send(user.wishlist);
     } catch (error) {
         console.error('Error adding to wishlist:', error);
-        res.status(500).send({ message: 'Error adding to wishlist', error });
+        res.status(500).send({ message: 'Error adding to wishlist', error: error.message });
+    }
+};
+
+// Get User Wishlist
+export const getUserWishlist = async (req, res) => {
+    try {
+        const { id: userId } = req.params;
+        const user = await User.findById(userId).populate('wishlist.product');
+
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        res.status(200).send(user.wishlist);
+    } catch (error) {
+        console.error('Error fetching wishlist:', error);
+        res.status(500).send({ message: 'Error fetching wishlist', error: error.message });
+    }
+};
+
+// Remove Product from Wishlist
+export const removeProductFromWishlist = async (req, res) => {
+    try {
+        const { id, productId } = req.params;
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Filter out the product to remove
+        const initialWishlistLength = user.wishlist.length;
+        user.wishlist = user.wishlist.filter(item => item.product.toString() !== productId.toString());
+
+        // Check if the product was not removed
+        if (user.wishlist.length === initialWishlistLength) {
+            return res.status(404).json({ message: 'Product cannot removed' });
+        }
+
+        const updatedUser = await user.save();
+        res.status(200).json({ message: 'Product removed from wishlist', wishlist: updatedUser });
+    }
+    catch (error) {
+        console.error('Error removing product from wishlist:', error);
+        res.status(500).json({ message: 'Error removing product from wishlist', error: error.message });
     }
 };
