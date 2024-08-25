@@ -139,12 +139,12 @@ const AdminUserSingle = () => {
               </div>
             </div>
           </div>
-          <div className="right">
+          {/* <div className="right">
             <AdminChart
               aspect={3 / 1}
               title="User Details"
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
