@@ -91,26 +91,28 @@ const AdminCouponSingle = () => {
                 </button>
               )}
             </div>
-            <h1 className="title">Coupon Information</h1>
-            <div className="details">
+            <h1 className="Coupon_single_title">Coupon Information</h1>
+            <div className="Coupon_single_details">
               <form>
                 {Object.entries(formData).map(([key, value]) => (
-                  <div key={key} className="detail-item">
-                    <label className="item-key" htmlFor={key}>
-                      {key.charAt(0).toUpperCase() + key.slice(1)}:
+                  <div key={key} className="Coupon_single_detail-item">
+                    <label htmlFor={key}>
+                      <span className="Coupon_single_item-key">
+                        {key.charAt(0).toUpperCase() + key.slice(1)}:
+                      </span>
+                      {isEditing ? (
+                        <input
+                          type={['discountValue', 'usageCount', 'usageLimit'].includes(key) ? 'number' : 'text'}
+                          id={key}
+                          name={key}
+                          value={value}
+                          onChange={handleInputChange}
+                          className="Coupon_single_item-value"
+                        />
+                      ) : (
+                        <span className="Coupon_single_item-value">{value}</span>
+                      )}
                     </label>
-                    {isEditing ? (
-                      <input
-                        type={['discountValue', 'usageCount', 'usageLimit'].includes(key) ? 'number' : 'text'}
-                        id={key}
-                        name={key}
-                        value={value}
-                        onChange={handleInputChange}
-                        className="item-value"
-                      />
-                    ) : (
-                      <span className="item-value">{value}</span>
-                    )}
                   </div>
                 ))}
               </form>

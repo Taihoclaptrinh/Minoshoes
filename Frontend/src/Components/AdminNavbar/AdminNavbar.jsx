@@ -11,7 +11,7 @@ const AdminNavbar = () => {
       <div className="wrapper">
         <div className="search">
           <div className="nav-logo">
-            <Link to='/'><img src={logo} alt="" style={{ height: "80px" }} /></Link>
+            <Link to='/'><img src={logo} alt="" style={{ height: "80px", marginLeft:"-13px" }} /></Link>
           </div>
         </div> 
         

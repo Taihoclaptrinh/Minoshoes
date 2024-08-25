@@ -144,7 +144,7 @@ const AdminProductSingle = () => {
                               className="item-value"
                             />
                           ) : (
-                            <span className="Product_single_item-value">
+                            <span className="Product_single_item-value" style={{textAlign: "justify"}}>
                               {formData[key] || "N/A"}
                             </span>
                           )}

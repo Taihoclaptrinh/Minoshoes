@@ -75,9 +75,6 @@ const AdminUserDatatable = () => {
     <div className="AdminDatatable">
       <div className="datatableTitle">
         Users
-        <Link to="/admin/users/new" className="link">
-          Add New
-        </Link>
       </div>
       <DataGrid
         className="datagrid"

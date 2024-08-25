@@ -1,18 +1,16 @@
 /* Image Slider */
 .carousel-item {
   display: flex;
-  justify-content: center;
 }
 .product--card {
   box-shadow: 0 8px 8px 1px rgba(0, 0, 0, 0.2);
-  max-width: 16rem;
+  max-width: 18rem;
   margin: auto 1rem;
   text-align: center;
   border-top: 1.5px solid whitesmoke;
   background-color: #f2f2f3;
   border-radius: 15px; /* Bo góc chỉ ở phần trên*/
   cursor: pointer;
-
   transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
   box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.7);
 }
@@ -63,7 +61,7 @@
 }
 
 /* Carousel Custom*/
-.custom-arrow {
+/* .custom-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -90,7 +88,7 @@
 .left-arrow:hover,
 .right-arrow:hover {
   background-color: #525353 ;
-}
+} */
 .carousel-item-padding-40-px {
   padding: 0 20px; /* Adjust the padding as needed */
 }

@@ -4,8 +4,6 @@ import "../Bestseller/Bestseller.css"
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import im_src from "../Assets/Image2.png"
-import Feedback from "./Review-contents"
-import Loader from "../Loader/Loading.jsx"
 
 const Reviews = () => {
   const responsive = {
@@ -37,31 +35,26 @@ const Reviews = () => {
             <img className="feedback--image" src={im_src} alt="feedback image" />
             <div className="feedback--content">
               <div className="feedback--content-font">
-                <p>
+                <p style={{textAlign: "justify"}}>
                   The variety of shoes available was impressive, with a wide range of styles, sizes, and brands to choose from. The quality of the shoes is top-notch, and I can tell they are made to last. The store itself was clean, well-organized, and had a welcoming atmosphere.
                 </p>
                 <p className="feedback--author-font">Phan Vo Minh Tue</p>
                 <p className="feedback--role-font">Binh Chanh, Ho Chi Minh City </p>
               </div>
-              {/* <div>
-                {review ? <Feedback review={review} /> : <p>Loading...</p>}
-              </div> */}
             </div>
           </div>
         </div>
-        {/* test tính năng */}
         <div className="reviews">
           <div className="feedback">
             <img className="feedback--image" src={im_src} alt="feedback image" />
             <div className="feedback--content">
               <div>
                 <div className="feedback--content-font">
-                  <p>
+                  <p style={{textAlign: "justify"}}>
                     I am thoroughly impressed with the entire experience. The website is user-friendly, making it easy to browse through a wide variety of stylish and high-quality shoes. The detailed product descriptions and multiple photos for each item helped me make an informed decision.                </p>
                   <p className="feedback--author-font">Lam Tai Chi</p>
                   <p className="feedback--role-font">Cai Be, Tien Giang</p>
                 </div>
-                {/* {review ? <Feedback review={review} /> : <Loader />} */}
               </div>
             </div>
           </div>

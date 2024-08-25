@@ -247,7 +247,7 @@ const Product = () => {
                         </div>
                         <div className={`product-description ${isDescriptionExpanded ? "expanded" : ""}`}>
                             <h1>Product Description:</h1>
-                            <p>{renderDescription()}</p>
+                            <p style={{textAlign: "justify"}}>{renderDescription()}</p>
                             {productData.description.split("\n").length > 5 && (
                                 <span className="show-more" onClick={toggleDescription}>
                                     {isDescriptionExpanded ? "Show Less" : "Show More"}
@@ -326,7 +326,7 @@ const Product = () => {
                                     <div key={index} className="review show">
                                         <h3>{review.name}</h3>
                                         <div className="stars">{renderStars(review.rating)}</div>
-                                        <p>{review.comment}</p>
+                                        <p style={{textAlign: "justify"}}>{review.comment}</p>
                                     </div>
                                 ))
                             ) : (

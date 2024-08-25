@@ -31,6 +31,7 @@
 }
 
 .nav-menu li {
+    font-family: "Helvetica Now Text Medium" ;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -157,6 +158,12 @@
     display: flex;
     align-items: center;
     gap: 45px;
+    background-color: unset;
+}
+
+.cart-icon:hover {
+    transform: scale(0.9);
+    z-index: 1;
 }
 
 .search-container {
@@ -170,6 +177,9 @@
     height: 20px;
     cursor: pointer;
 }
+.search-icon:hover {
+    transform: scale(0.9);
+}
 
 .nav-cart-count {
     width: 22px;
@@ -177,17 +187,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -35px;
+    margin-top: -30px;
     margin-left: -50px;
     border-radius: 11px;
     font-size: 14px;
     font-weight: 700;
     color: white;
     background-color: red;
+    z-index: 2;
 }
+
 .user-greeting{
     font-size: 1.5rem;
     font-weight: 700;
+    cursor: pointer;
 }
 /* Search bar  */
 .search-phare {

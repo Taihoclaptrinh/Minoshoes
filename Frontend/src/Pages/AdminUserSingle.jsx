@@ -62,15 +62,15 @@ const AdminUserSingle = () => {
     }));
   };
 
-  const toggleEditMode = () => {
-    setIsEditing(!isEditing);
-  };
+  // const toggleEditMode = () => {
+  //   setIsEditing(!isEditing);
+  // };
 
-  const saveChanges = () => {
-    toggleEditMode();
-    console.log("Updated data:", formData);
-    // Update the backend here
-  };
+  // const saveChanges = () => {
+  //   toggleEditMode();
+  //   console.log("Updated data:", formData);
+  //   // Update the backend here
+  // };
 
   if (!formData) return <div>Data not found</div>;
 
@@ -80,14 +80,6 @@ const AdminUserSingle = () => {
         <div className="top">
           <div className="left">
             <div className="buttonContainer">
-              <button className="editButton" onClick={toggleEditMode}>
-                {isEditing ? "Cancel" : "Edit"}
-              </button>
-              {isEditing && (
-                <button className="saveButton" onClick={saveChanges}>
-                  Save
-                </button>
-              )}
             </div>
             <h1 className="title">User Information</h1>
             <div className="item">
@@ -118,20 +110,9 @@ const AdminUserSingle = () => {
                         <label className="itemKey" htmlFor={key}>
                           {key.charAt(0).toUpperCase() + key.slice(1)}:
                         </label>
-                        {isEditing && !['id', 'totalSpent', 'role', 'createAt'].includes(key) ? (
-                          <input
-                            type="text"
-                            id={key}
-                            name={key}
-                            value={formData[key] || ""}
-                            onChange={handleInputChange}
-                            className="itemValue"
-                          />
-                        ) : (
-                          <span className="itemValue">
-                            {formData[key] || "N/A"}
-                          </span>
-                        )}
+                        <span className="itemValue">
+                          {formData[key] || "N/A"}
+                        </span>
                       </div>
                     )
                   ))}
@@ -139,12 +120,6 @@ const AdminUserSingle = () => {
               </div>
             </div>
           </div>
-          {/* <div className="right">
-            <AdminChart
-              aspect={3 / 1}
-              title="User Details"
-            />
-          </div> */}
         </div>
       </div>
     </div>
