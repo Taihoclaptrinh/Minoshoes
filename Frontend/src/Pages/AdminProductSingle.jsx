@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./CSS/AdminProductSingle.css";
-// import AdminChart from "../Components/AdminChart/AdminChart.jsx";
-import { useParams } from "react-router-dom";
-import { get, post, put, del } from '../config/api';
+import { useParams, useNavigate } from "react-router-dom";
+import { get, put } from '../config/api';
 
 const AdminProductSingle = () => {
   const { productId } = useParams(); // Get the productId from the URL parameters
+  const navigate = useNavigate(); // Initialize useNavigate
   const [formData, setFormData] = useState(null);
   const [previewImages, setPreviewImages] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -65,14 +65,30 @@ const AdminProductSingle = () => {
     setIsEditing(!isEditing);
   };
 
-  const saveChanges = () => {
-    toggleEditMode();
-    console.log("Updated data:", formData);
-    // Update the backend here
+  const saveChanges = async () => {
+    try {
+      // Chuyển đổi formData thành đối tượng JSON
+      const updatedData = {
+        ...formData,
+        sizes: formData.sizes.split(',').map(size => size.trim()), // Chuyển đổi sizes từ chuỗi sang mảng
+        color: formData.color.split(',').map(color => color.trim()), // Chuyển đổi color từ chuỗi sang mảng
+        stocks: formData.stocks.split(',').map(stock => Number(stock.trim())), // Chuyển đổi stocks từ chuỗi sang mảng số
+      };
+  
+      // alert(`Updated data:\n${JSON.stringify(updatedData, null, 2)}`);
+  
+      // Gọi API để cập nhật sản phẩm
+      const response = await put(`/api/v1/auth/products/${productId}`, updatedData);
+      console.log('Product updated successfully:', response.data);
+  
+      navigate('/admin/products');
+    } catch (error) {
+      console.error('Error updating product:', error);
+      alert('Failed to update product. Check console for details.');
+    }
   };
-  const formatPrice = (price) => {
-    return price.toLocaleString('vi-VN') + " VND";
-  };
+  
+
   if (!formData) return <div>Data not found</div>;
 
   return (
@@ -119,14 +135,14 @@ const AdminProductSingle = () => {
                         <label htmlFor={key}>
                           <span className="Product_single_item-key">{key.charAt(0).toUpperCase() + key.slice(1)}: </span>
                           {isEditing ? (
-                              <input
-                                type="text"
-                                id={key}
-                                name={key}
-                                value={formData[key] || ""}
-                                onChange={handleInputChange}
-                                className="item-value"
-                              />
+                            <input
+                              type="text"
+                              id={key}
+                              name={key}
+                              value={formData[key] || ""}
+                              onChange={handleInputChange}
+                              className="item-value"
+                            />
                           ) : (
                             <span className="Product_single_item-value">
                               {formData[key] || "N/A"}
@@ -134,19 +150,12 @@ const AdminProductSingle = () => {
                           )}
                         </label>
                       </div>
-                      
                     )
                   ))}
                 </form>
               </div>
             </div>
           </div>
-          {/* <div className="right">
-            <AdminChart
-              aspect={3 / 1}
-              title="Product Details"
-            />
-          </div> */}
         </div>
       </div>
     </div>

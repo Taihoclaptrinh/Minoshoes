@@ -10,9 +10,6 @@ const AdminNavbar = () => {
     <div className="AdminNavbar">
       <div className="wrapper">
         <div className="search">
-          {/* <Link to="/admin" style={{ textDecoration: "none" }}>
-            <Link to="/" className="logo">Minoshoes</Link>
-          </Link> */}
           <div className="nav-logo">
             <Link to='/'><img src={logo} alt="" style={{ height: "80px" }} /></Link>
           </div>

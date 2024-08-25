@@ -121,7 +121,7 @@ const AdminProductDatatable = () => {
         <Link to="/admin/products/new" className="link">
           Add New
         </Link>
-      </div>
+      </div>  
       <DataGrid
         className="datagrid"
         rows={data}

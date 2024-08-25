@@ -1,21 +1,27 @@
+import React, { useState } from "react";
 import "./CSS/AdminNew.css";
-import { useState } from "react";
-import { get, post, put, del } from '../config/api'; // Đảm bảo đúng đường dẫn đến file api.js
+import { post } from '../config/api'; // Ensure this path is correct
+import { productInputs } from '../formSource'; // Import the productInputs configuration
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-const AdminNew = ({ inputs, title, formType }) => {
-  const [formData, setFormData] = useState(
-    inputs.reduce((acc, input) => ({
+const AdminNew = ({ title, formType }) => {
+  // Initialize formData from productInputs
+  const [formData, setFormData] = useState(() =>
+    productInputs.reduce((acc, input) => ({
       ...acc,
-      [input.id]: input.value || (input.type === "file" ? [] : ""),
+      [input.id]: input.type === "file" ? [] : "",
     }), {})
   );
 
   const [previewImages, setPreviewImages] = useState([]);
+  const navigate = useNavigate(); // Initialize useNavigate
 
+  // Handle input changes
   const handleInputChange = (id, value) => {
     setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
+  // Handle file input changes
   const handleFileChange = (e, id) => {
     const files = e.target.files;
     setFormData((prevData) => ({ ...prevData, [id]: files }));
@@ -25,27 +31,26 @@ const AdminNew = ({ inputs, title, formType }) => {
     setPreviewImages(imageUrls);
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate numeric fields
-    if (formData.productPrice < 0) {
-      alert("Price must be a non-negative value.");
-      return;
-    }
-
+  
     try {
-      // Create FormData for file upload
-      const fileData = new FormData();
       if (formData.productImages.length > 0) {
+        const fileData = new FormData();
         Array.from(formData.productImages).forEach((file) => {
-          fileData.append('images', file); // Ensure the key matches the backend expectation
+          fileData.append('images', file);
         });
-        // Upload images and get image URLs
-        const uploadResponse = await post('/api/v1/auth/upload', fileData);
+  
+        // Upload images
+        const uploadResponse = await post('/api/v1/auth/upload', fileData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
         const { imageUrls } = uploadResponse.data;
-        
-        // Prepare product data
+  
+        // Prepare other product data
         const productData = {
           code: formData.productCode,
           name: formData.productName,
@@ -60,11 +65,11 @@ const AdminNew = ({ inputs, title, formType }) => {
           createdAt: formData.productCreateAt,
           updatedAt: formData.productUpdateAt,
         };
-        alert(`Product Data: ${JSON.stringify(productData, null, 2)}`);
-
-        // Send product data to the API to create a new product
+  
+        // Submit product data
         const response = await post('/api/v1/auth/products', productData);
         console.log('Product created successfully:', response.data);
+        navigate('/admin/products');
       } else {
         alert("Please upload at least one image.");
       }
@@ -72,6 +77,7 @@ const AdminNew = ({ inputs, title, formType }) => {
       console.error('Error creating product:', error);
     }
   };
+  
 
   return (
     <div className="AdminNew">
@@ -81,7 +87,7 @@ const AdminNew = ({ inputs, title, formType }) => {
         </div>
         <div className="bottom">
           <div className="left">
-            {(formType === "product" || formType === "user") && previewImages.length > 0 ? (
+            {formType === "product" && previewImages.length > 0 ? (
               <div className="imagePreviewContainer">
                 {previewImages.map((image, index) => (
                   <img
@@ -104,7 +110,7 @@ const AdminNew = ({ inputs, title, formType }) => {
           </div>
           <div className="right">
             <form onSubmit={handleSubmit}>
-              {inputs.map((input) => (
+              {productInputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
                   {input.type === "file" ? (
@@ -120,6 +126,7 @@ const AdminNew = ({ inputs, title, formType }) => {
                       placeholder={input.placeholder}
                       value={formData[input.id]}
                       onChange={(e) => handleInputChange(input.id, e.target.value)}
+                      min={input.min} // Add min for number inputs
                     />
                   )}
                 </div>

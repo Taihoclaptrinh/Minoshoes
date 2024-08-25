@@ -26,56 +26,37 @@ const ProductCategory = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const productsPerPage = 12;
+  const [searchQuery, setSearchQuery] = useState('');
 
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN') + " VND";
   };
   
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setSearchCompleted(false);
-      try {
-        const searchQuery = new URLSearchParams(location.search).get('query');
-        const colorQuery = selectedColors.length > 0 ? `&color=${selectedColors.join(',')}` : '';
-        const response = await get(`/api/v1/auth/products${searchQuery ? `/search?query=${encodeURIComponent(searchQuery)}${colorQuery}` : colorQuery}`);
-        const products = response.data;
-        setProductData(products);
-        setTotalPages(Math.ceil(products.length / productsPerPage));
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      } finally {
-        setLoading(false);
-        setSearchCompleted(true);
-      }
-    };
-    fetchProducts();
-  }, [location.search, selectedColors]);
-
-  const fetchProductsByColor = useCallback(async (colors) => {
-    setIsFiltering(true);
+  const fetchProducts = async () => {
+    setLoading(true);
     try {
-      const response = await get(`/api/v1/auth/products/color`, {
-        params: { color: colors }
-      });
-      setProductData(response.data);
-      setTotalPages(Math.ceil(response.data.length / productsPerPage));
-      setFilteredProducts(response.data);
+        const response = await get(`/api/v1/auth/products`, {
+            params: {
+                size: selectedSizes.join(','),
+                brand: selectedBrands.join(','),
+                gender: selectedGender.length > 0 ? selectedGender[0] : undefined, // Chỉ gửi giá trị đầu tiên
+                minPrice: priceRange[0],
+                maxPrice: priceRange[1],
+            },
+        });
+        setProductData(response.data);
+        setTotalPages(Math.ceil(response.data.length / productsPerPage));
     } catch (error) {
-      console.error('Error fetching products by color:', error);
-      setFilteredProducts([]);
+        console.error('Error fetching products:', error);
     } finally {
-      setIsFiltering(false);
+        setLoading(false);
     }
-  }, []);
+};
 
-  useEffect(() => {
-    if (selectedColors.length > 0) {
-      fetchProductsByColor(selectedColors);
-    } else {
-      setFilteredProducts(productData);
-    }
-  }, [selectedColors, fetchProductsByColor, productData]);
+useEffect(() => {
+    fetchProducts();
+}, [selectedColors, selectedSizes, selectedBrands, selectedGender, priceRange, sortedBy, currentPage, searchQuery]);
+  
 
   useEffect(() => {
     const filtered = filterProducts(productData);
@@ -109,31 +90,7 @@ const ProductCategory = () => {
         ? prevSelectedSizes.filter((s) => s !== size)
         : [...prevSelectedSizes, size]
     );
-  };
-
-  const handleColorChange = async (color) => {
-    const updatedColors = selectedColors.includes(color)
-      ? selectedColors.filter((c) => c !== color)
-      : [...selectedColors, color];
-  
-    setSelectedColors(updatedColors);
-    setSearchCompleted(false);
-    setLoading(true);
-
-    try {
-      const response = await get(`/api/v1/auth/products/color`, {
-        params: { color: updatedColors }
-      });
-      setProductData(response.data);
-      setTotalPages(Math.ceil(response.data.length / productsPerPage));
-    } catch (error) {
-      console.error('Error fetching products by color:', error);
-    } finally {
-      setLoading(false);
-      setSearchCompleted(true);
-    }
-  };
-  
+  }; 
   const handleBrandChange = (brand) => {
     setSelectedBrands((prevSelectedBrands) =>
       prevSelectedBrands.includes(brand)
@@ -160,19 +117,21 @@ const ProductCategory = () => {
 
   const filterProducts = (products) => {
     return products.filter((product) => {
-      const colorMatch = selectedColors.length === 0 || selectedColors.includes(product.color);
-      const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand);
-      return (
-        product.price >= priceRange[0] &&
-        product.price <= priceRange[1] &&
-        (selectedSizes.length === 0 || selectedSizes.includes(product.size)) &&
-        colorMatch &&
-        (selectedBrands.length === 0 || selectedBrands.includes(product.brand) || selectedBrands.includes(product.subBrand)) &&
-        brandMatch &&
-        (selectedGender.length === 0 || selectedGender.includes(product.gender))
-      );
-    });
+      const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand);
+      const sizeMatch = selectedSizes.length === 0 || selectedSizes.some(size => product.sizes.includes(size));
+      const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
+  
+      let genderSizeMatch = true;
+        if (selectedGender.includes('Women')) {
+            genderSizeMatch = product.sizes.some(size => parseFloat(size) <= 5);
+        } else if (selectedGender.includes('Men')) {
+            genderSizeMatch = product.sizes.some(size => parseFloat(size) > 5);
+        }
+        return priceMatch && sizeMatch && brandMatch && genderSizeMatch;
+
+    })
   };
+  
 
   const sortProducts = (products) => {
     return sortedBy.reduce((sortedProducts, sortOption) => {
@@ -182,7 +141,7 @@ const ProductCategory = () => {
         case 'Price (High - Low)':
           return sortedProducts.sort((a, b) => b.price - a.price);
         case 'Newest':
-          return sortedProducts.sort((a, b) => new Date(b.date) - new Date(a.date));
+          return sortedProducts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         case 'Best Seller': 
           return sortedProducts.sort((a, b) => b.sales - a.sales);
         default:
@@ -190,7 +149,7 @@ const ProductCategory = () => {
       }
     }, [...products]);
   };
-
+  
   const handlePageChange = (direction) => {
     setCurrentPage((prevPage) => {
       if (direction === 'up' && prevPage < totalPages) {
@@ -309,9 +268,9 @@ const ProductCategory = () => {
               </div>
             </div>
             <div className="size-filter">
-              <h3>Sizes</h3>
+              <h3>Sizes (UK)</h3>
               <div>
-                {['8.0 UK', '8.5 UK', '9.0 UK', '9.5 UK'].map((size) => (
+                {['4.0', '5.0', '8.0', '8.5', '9.0', '9.5'].map((size) => (
                   <label key={size}>
                     <input
                       type="checkbox"
@@ -319,21 +278,6 @@ const ProductCategory = () => {
                       onChange={() => handleSizeChange(size)}
                     />
                     {size}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div className="color-filter">
-              <h3>Colours</h3>
-              <div>
-                {['White', 'Blue', 'Grey', 'Black'].map((color) => (
-                  <label key={color}>
-                    <input
-                      type="checkbox"
-                      checked={selectedColors.includes(color)}
-                      onChange={() => handleColorChange(color)}
-                    />
-                    {color}
                   </label>
                 ))}
               </div>
