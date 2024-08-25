@@ -36,8 +36,6 @@ const Slider = () => {
     <Carousel 
       showDots={false} 
       responsive={responsive}
-      // customLeftArrow={<CustomLeftArrow />}
-      // customRightArrow={<CustomRightArrow />}
       className="carousel-item"
     > 
       {productData.map((item) => (

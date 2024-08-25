@@ -194,7 +194,7 @@
     font-weight: 700;
     color: white;
     background-color: red;
-    z-index: 2;
+    z-index: 1;
 }
 
 .user-greeting{
@@ -214,6 +214,7 @@
     position: absolute;
     outline: none;
     background-color: white;
+    z-index: 2;
 }
 .search-phare .search-bar {
     width:60%;

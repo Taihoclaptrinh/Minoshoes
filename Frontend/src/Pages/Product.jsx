@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Slider from "../Components/Slider/Slider.jsx";
 import Footer from "../Components/Footer/Footer.jsx";
 import Loader from "../Components/Loader/Loading.jsx";
-
+import Pop_up from "../Components/Popup/Popup.jsx"
 // Review Form component
 const ReviewForm = ({ onClose, onSubmit }) => {
     const [rating, setRating] = useState(0);
@@ -57,7 +57,11 @@ const Product = () => {
     const [cartCount, setCartCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [showReviewForm, setShowReviewForm] = useState(false);
-
+    const [showNoSizeSelectedPopup, setShowNoSizeSelectedPopup] = useState(false);
+    const [showNoSizesStockPopup, setShowNoSizesStockPopup] = useState(false);
+    const [showAddToCartSuccessPopup, setShowAddToCartSuccessPopup] = useState(false);
+    const [showAddToCartFailedPopup, setShowAddToCartFailurePopup] = useState(false);
+    
     const reviewsPerPage = 5;
     const location = useLocation();
     const navigate = useNavigate();
@@ -93,20 +97,20 @@ const Product = () => {
         }
     
         if (!selectedSize) {
-            alert('Please select a size before adding to cart.');
+            setShowNoSizeSelectedPopup(true)
             return;
         }
     
         // Kiểm tra số lượng tồn kho
         const sizeIndex = product.sizes.indexOf(selectedSize);
         if (sizeIndex === -1) {
-            alert('Selected size is not available for this product.');
+            setShowNoSizesStockPopup(true)
             return;
         }
     
         const stockAvailable = product.stocks[sizeIndex];
         if (stockAvailable <= 0) {
-            alert('Sorry, this product is out of stock for the selected size.');
+            setShowNoSizesStockPopup(true);
             return;
         }
     
@@ -123,14 +127,22 @@ const Product = () => {
             });
     
             if (response.status === 200) {
-                alert('Product added to cart successfully!');
+                setShowAddToCartSuccessPopup(true);
                 const newCartCount = response.data.totalQuantity;
                 setCartCount(response.data.totalQuantity);
             }
         } catch (error) {
-            console.error('Error adding product to cart:', error);
-            alert('Failed to add product to cart. Please try again.');
+            setShowAddToCartFailurePopup(true);
+            // console.error('Error adding product to cart:', error);
+            // alert('Failed to add product to cart. Please try again.');
         }
+    };
+
+    const handleClosePopup = () => {
+        setShowNoSizeSelectedPopup(false);
+        setShowNoSizesStockPopup(false);
+        setShowAddToCartSuccessPopup(false);
+        setShowAddToCartFailurePopup(false);
     };
 
     const renderStars = (rating) => {
@@ -396,6 +408,42 @@ const Product = () => {
                 </div>
                 <Footer />
             </div>
+            {showNoSizeSelectedPopup && 
+                <Pop_up 
+                isSuccess={false} 
+                review="No Size is Selected!" 
+                message="Please select a size before adding to cart" 
+                confirm="Confirm"
+                onClose={handleClosePopup}
+                />
+            }
+            {showNoSizesStockPopup && 
+                <Pop_up 
+                isSuccess={false} 
+                review="Out of Stock!" 
+                message="Sorry, this product is out of stock for the selected size." 
+                confirm="Confirm"
+                onClose={handleClosePopup}
+                />
+            }
+            {showAddToCartSuccessPopup && 
+                <Pop_up 
+                isSuccess={true} 
+                review="Add to Cart Success!" 
+                message="Product added to cart successfully!" 
+                confirm="Confirm"
+                onClose={handleClosePopup}
+                />
+            }
+            {showAddToCartFailedPopup && 
+                <Pop_up 
+                isSuccess={false} 
+                review="Add to Cart Failure !" 
+                message="Failed to add product to cart. Please try again!" 
+                confirm="Confirm"
+                onClose={handleClosePopup}
+                />
+            }
         </div>
     );
 };

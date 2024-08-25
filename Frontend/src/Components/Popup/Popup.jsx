@@ -4,7 +4,15 @@ import './Popup.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
-const Pop_up = ({ isSuccess, review, message, confirm, href }) => {
+const Pop_up = ({ isSuccess, review, message, confirm, href, onClose  }) => {
+    const handleConfirmClick = () => {
+        if (href) {
+            window.location.href = href;
+        } else if (onClose) {
+            onClose();
+        }
+    };
+
     return (
         <div className="overlay active">
             <div className="popup active">
@@ -27,8 +35,8 @@ const Pop_up = ({ isSuccess, review, message, confirm, href }) => {
 
                     <h1 style={{ color: isSuccess ? "#50c878" : "#ff0000" }}>{review}</h1>
                     <p style={{ marginBottom: "50px" }}>{message}</p>
-                    <div className="btnback">
-                        <a className='btn' href={href}>{confirm}</a>
+                    <div className="btnback" style={{cursor: "pointer"}}>
+                        <a className='btn' onClick={handleConfirmClick}>{confirm}</a>
                     </div>
                 </div>
             </div>
@@ -41,7 +49,8 @@ Pop_up.propTypes = {
     review: PropTypes.string.isRequired, // Main message to display
     message: PropTypes.string.isRequired, // Additional message to display
     confirm: PropTypes.string.isRequired, // Show confirm context
-    href: PropTypes.string.isRequired, // Redirect link
+    href: PropTypes.string, // Redirect link
+    onClose: PropTypes.func // Function to call when closing popup
 };
 
 export default Pop_up;

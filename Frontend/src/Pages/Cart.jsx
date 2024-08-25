@@ -15,7 +15,10 @@ const Cart = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [shippingFee, setShippingFee] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState('--');
-
+    const [showStockWarning, setShowStockWarning] = useState(false)
+    const [stockAvailable, setStockAvailable] = useState(0);
+    const [warningSize, setWarningSize] = useState(0);
+    
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
     const itemsPerPage = 4;
@@ -106,7 +109,9 @@ const Cart = () => {
             const stockAvailable = product.product.stocks[sizeIndex];
     
             if (delta > 0 && newQuantity > stockAvailable) {
-                alert(`Sorry, only ${stockAvailable} item(s) available for size ${size}`);
+                setShowStockWarning(true)
+                setStockAvailable(stockAvailable);
+                setWarningSize(size);
                 return;
             }
     
@@ -142,6 +147,11 @@ const Cart = () => {
         } catch (error) {
             console.error('Error handling quantity change:', error);
         }
+    };
+
+    const handleClosePopup = () => {
+        setShowStockWarning(false);
+
     };
 
     useEffect(() => {
@@ -375,6 +385,15 @@ const Cart = () => {
                     message="Your order will be delivered as soon as possible." 
                     confirm="Back to HomePage"
                     href="/"
+                />
+            }
+            {showStockWarning && 
+                <Pop_up 
+                isSuccess={false} 
+                review="Not enough items !" 
+                message={`Sorry, only ${stockAvailable} item(s) available for size ${warningSize}`}
+                confirm="Confirm"
+                onClose={handleClosePopup}
                 />
             }
         </div>
