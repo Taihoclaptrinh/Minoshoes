@@ -33,7 +33,6 @@
   background-color:#F6F6F6;
 }
 .img-format4 {
-  background: url(../Assets/Image4.png) lightgray 50% / cover no-repeat;
   display: block;
   position: relative;
   max-width: 45%;
