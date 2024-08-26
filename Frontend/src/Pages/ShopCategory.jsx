@@ -90,6 +90,7 @@ const ProductCategory = () => {
     
     // Reload products when navigating to the sale page
     if (pathname === '/sale') {
+      setSortedBy([]);
       fetchProducts();
     }
   }, [location.pathname]);
