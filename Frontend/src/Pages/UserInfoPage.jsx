@@ -57,7 +57,7 @@ const UserInfoPage = () => {
     } else {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, reloadWishlist]);
 
   useEffect(() => {
     if (reloadOrders) {
@@ -118,26 +118,32 @@ const UserInfoPage = () => {
   const handleDeleteWishlistItem = async (itemId) => {
     try {
       const token = localStorage.getItem('token');
-      const wishlistItem = localUser.wishlist.find(item => item._id === itemId);
-      const { product: productId } = wishlistItem;
-
-      const response = await del(`/api/v1/auth/users/${user._id}/wishlist/${productId}`, { headers: { Authorization: `Bearer ${token}` } });
-
+      const item = wishlist.find(item => item._id === itemId);
+      const productId = item.product._id
+      // Kiểm tra token
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+  
+      // Gọi API để xóa sản phẩm khỏi wishlist
+      const response = await del(`/api/v1/auth/users/${user._id}/wishlist/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
       if (response.status === 200) {
-        setLocalUser(prevUser => ({
-          ...prevUser,
-          wishlist: prevUser.wishlist.filter(item => item._id !== itemId)
-        }));
-        setReloadWishlist(true);
+        // Cập nhật state để xóa sản phẩm khỏi wishlist ngay lập tức
+        setWishlist(prevWishlist => prevWishlist.filter(item => item._id !== itemId));
       } else {
-        throw new Error(response.data.message || 'Failed to delete item from wishlist');
+        // Xử lý các mã trạng thái khác và thông báo lỗi
+        const errorMessage = response.data?.message || 'Failed to delete item from wishlist';
+        throw new Error(errorMessage);
       }
     } catch (error) {
-      console.error('Error deleting wishlist item:', error.response?.data || error.message);
+      console.error('Error deleting wishlist item:', error.message);
       setError('Failed to delete item from wishlist. Please try again.');
     }
   };
-
+  
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -174,6 +180,44 @@ const UserInfoPage = () => {
       setLoading(false);
     }
   };
+
+  const handleMoveToCart = async (itemId) => {
+    try {
+      // Find the wishlist item with the provided itemId
+      const item = wishlist.find(item => item._id === itemId);
+  
+      if (!item) {
+        throw new Error('Item not found in wishlist');
+      }
+  
+      // Use the product name to construct the query parameter
+      const productName = encodeURIComponent(item.name);
+  
+      // Navigate to the product page with the query parameter
+      navigate(`/product?name=${productName}`);
+  
+      // Make API call to add the item to the cart
+      const response = await fetch('/api/v1/auth/cart/add-to-cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ itemId }), // Pass the itemId to the API
+      });
+  
+      if (response.ok) {
+        // If the request was successful, remove the item from the wishlist
+        await handleDeleteWishlistItem(itemId);
+      } else {
+        throw new Error('Failed to add item to cart');
+      }
+    } catch (error) {
+      console.error('Error moving item to cart:', error.message);
+      setError('Failed to move item to cart. Please try again.');
+    }
+  };
+  
+  
 
   const transformWishlistData = (wishlist) => {
     return wishlist.map((item) => ({
@@ -247,7 +291,7 @@ const UserInfoPage = () => {
           <UserInfo.Section
             type="wishlist"
             wishlist={transformWishlistData(wishlist)}
-            // onMoveToCart={handleMoveToCart}
+            onMoveToCart={handleMoveToCart}
             onRemoveFromWishlist={handleDeleteWishlistItem}
           />
         );

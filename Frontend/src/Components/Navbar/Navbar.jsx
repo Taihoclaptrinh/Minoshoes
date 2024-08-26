@@ -207,9 +207,8 @@ const Navbar = () => {
                             onClick={() => setSearchVisible(!searchVisible)}
                         />
                     </div>
-                    <Link to='cart'><img src={shopping_cart} alt="" className="cart-icon" style={{ width: "30px", height: "30px" }}/> </Link>
-                    <div className="nav-cart-count">{cartCount !== undefined ? cartCount : 0}</div>                    
-                    {user ? (
+                    <Link to='cart'><img src={shopping_cart} alt="" style={{ width: "30px", height: "30px" }} /></Link>
+                    <div className="nav-cart-count">{cartCount !== undefined ? cartCount : 0}</div>                    {user ? (
                         <div className="nav-item user-greeting">
                             <Link to='login'><img src={user_icon} alt="" style={{ width: "30px", height: "30px" }} /></Link>
                             <span>hi, {getLastName(user.name)}</span>

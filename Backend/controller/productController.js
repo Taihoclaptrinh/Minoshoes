@@ -82,8 +82,8 @@ export const searchProducts = async (req, res) => {
         const products = await Product.find({
             $or: [
                 { name: { $regex: query, $options: 'i' } },
-                { code: { $regex: query, $options: 'i' } },
-                { category: { $regex: query, $options: 'i' } }
+                { category: { $regex: query, $options: 'i' } },
+                { brand: { $regex: query, $options: 'i' } }  // Ensure 'brand' is a field in your Product model
             ]
         });
 
@@ -94,9 +94,10 @@ export const searchProducts = async (req, res) => {
     }
 };
 
+
 export const getProducts = async (req, res) => {
     try {
-        const { size, brand, gender, minPrice, maxPrice } = req.query;
+        const { size, brand, gender, minPrice, maxPrice, sale } = req.query;
         const filters = {};
 
         // Add filters based on query parameters
@@ -112,14 +113,19 @@ export const getProducts = async (req, res) => {
             }
         }
 
-
         if (brand) {
             filters.brand = { $in: brand.split(',') };
         }
+
         if (minPrice || maxPrice) {
             filters.price = {};
             if (minPrice) filters.price.$gte = Number(minPrice);
             if (maxPrice) filters.price.$lte = Number(maxPrice);
+        }
+
+        // Add sale filter if provided
+        if (sale !== undefined) {
+            filters.sale = sale === 'true';
         }
 
         // Fetch products from the database with the applied filters

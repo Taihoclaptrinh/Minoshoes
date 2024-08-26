@@ -130,12 +130,26 @@ body {
     font-weight: bold;
     text-align: center;
 }
-.product-item .product-price {
+.product-item .product-price-container {
     padding: 10px;
-    font-size: 1rem;
-    font-weight:500;
-    color: #282828;
     text-align: center;
+}
+
+.product-item .product-price {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #282828;
+}
+
+.product-item .product-previous-price {
+    font-size: 0.9rem;
+    color: #888;
+    text-decoration: line-through;
+    margin-top: 5px;
+}
+
+.sale-item .product-price.sale-price {
+    color: #ff0000;
 }
 /* Filter & Sort Sidebar */
 .filters {

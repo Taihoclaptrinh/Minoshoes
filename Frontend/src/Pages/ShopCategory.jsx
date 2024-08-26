@@ -22,43 +22,51 @@ const ProductCategory = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchCompleted, setSearchCompleted] = useState(false);
   const [filteredAndSortedProducts, setFilteredAndSortedProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [isFiltering, setIsFiltering] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
   const productsPerPage = 12;
-  const [searchQuery, setSearchQuery] = useState('');
+  const searchQuery = new URLSearchParams(location.search).get('query');
   const { user } = useContext(UserContext);
+
+  const [isSalePage, setIsSalePage] = useState(false);
 
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN') + " VND";
   };
 
   const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const response = await get(`/api/v1/auth/products`, {
+  setLoading(true);
+  try {
+    let response;
+    if (searchQuery) {
+      response = await get(`/api/v1/auth/products/search`, {
+        params: { query: searchQuery },
+      });
+    } else {
+      response = await get(`/api/v1/auth/products`, {
         params: {
           size: selectedSizes.join(','),
           brand: selectedBrands.join(','),
-          gender: selectedGender.length > 0 ? selectedGender[0] : undefined, // Chỉ gửi giá trị đầu tiên
+          gender: selectedGender.length > 0 ? selectedGender[0] : undefined,
           minPrice: priceRange[0],
           maxPrice: priceRange[1],
+          sale: isSalePage ? true : undefined, // Thêm tham số này
         },
       });
-      setProductData(response.data);
-      setTotalPages(Math.ceil(response.data.length / productsPerPage));
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+    setProductData(response.data);
+    setTotalPages(Math.ceil(response.data.length / productsPerPage));
+  } catch (error) {
+    console.error('Error fetching products:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedColors, selectedSizes, selectedBrands, selectedGender, priceRange, sortedBy, currentPage, searchQuery]);
+  }, [searchQuery, selectedColors, selectedSizes, selectedBrands, selectedGender, priceRange, sortedBy, currentPage]);
 
 
   useEffect(() => {
@@ -70,19 +78,29 @@ const ProductCategory = () => {
     setFilteredAndSortedProducts(sliced);
   }, [productData, selectedColors, selectedSizes, selectedBrands, selectedGender, priceRange, sortedBy, currentPage]);
 
+  useEffect(() => {
+    if (location.pathname === '/new-arrivals') {
+      setSortedBy(['Newest']);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const pathname = location.pathname;
+    setIsSalePage(pathname === '/sale');
+    
+    // Reload products when navigating to the sale page
+    if (pathname === '/sale') {
+      fetchProducts();
+    }
+  }, [location.pathname]);
+
+
   const handlePriceChange = (e) => {
     const value = Number(e.target.value);
     setMaxPrice(value);
     setPriceRange([priceRange[0], value]);
   };
 
-  // const handleSortChange = (sortOption) => {
-  //   setSortedBy((prevSortedBy) =>
-  //     prevSortedBy.includes(sortOption)
-  //       ? prevSortedBy.filter((s) => s !== sortOption)
-  //       : [...prevSortedBy, sortOption]
-  //   );
-  // };
   const handleSortChange = (sortOption) => {
     setSortedBy([sortOption]);
   };
@@ -110,19 +128,12 @@ const ProductCategory = () => {
     );
   };
 
-  const toggleBrand = (brand) => {
-    setOpenBrands((prevOpenBrands) =>
-      prevOpenBrands.includes(brand)
-        ? prevOpenBrands.filter((b) => b !== brand)
-        : [...prevOpenBrands, brand]
-    );
-  };
-
   const filterProducts = (products) => {
     return products.filter((product) => {
       const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(product.brand);
       const sizeMatch = selectedSizes.length === 0 || selectedSizes.some(size => product.sizes.includes(size));
       const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
+      const saleMatch = isSalePage ? product.sale === true : true; // Thêm điều kiện này
 
       let genderSizeMatch = true;
       if (selectedGender.includes('Women')) {
@@ -130,11 +141,10 @@ const ProductCategory = () => {
       } else if (selectedGender.includes('Men')) {
         genderSizeMatch = product.sizes.some(size => parseFloat(size) > 5);
       }
-      return priceMatch && sizeMatch && brandMatch && genderSizeMatch;
+      return priceMatch && sizeMatch && brandMatch && genderSizeMatch && saleMatch;
 
     })
   };
-
 
   const sortProducts = (products) => {
     return sortedBy.reduce((sortedProducts, sortOption) => {
@@ -223,31 +233,40 @@ const ProductCategory = () => {
           ) : (
             <div className="products-grid">
               {filteredAndSortedProducts.map((product) => (
-                <div key={product._id} className="product-item">
-                  <button className="add-to-wishlist-btn" onClick={() => handleAddToWishlist(product)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="heart-icon">
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                    </svg>
-                  </button>
-                  <img
-                    src={product.images[0]}
-                    alt={product.name}
-                    onClick={() => handleProductClick(product.name)}
-                    className="product-image"
-                  />
-                  <div
-                    className="product-name"
-                    onClick={() => handleProductClick(product.name)}
-                  >
-                    {product.name}
-                  </div>
-                  <div
-                    className="product-price"
-                    onClick={() => handleProductClick(product.name)}
-                  >
-                    {formatPrice(product.price)}
-                  </div>
+                <div key={product._id} className={`product-item ${isSalePage ? 'sale-item' : ''}`}>
+                <button className="add-to-wishlist-btn" onClick={() => handleAddToWishlist(product)}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="heart-icon">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                  </svg>
+                </button>
+                <img
+                  src={product.images[0]}
+                  alt={product.name}
+                  onClick={() => handleProductClick(product.name)}
+                  className="product-image"
+                />
+                <div
+                  className="product-name"
+                  onClick={() => handleProductClick(product.name)}
+                >
+                  {product.name}
                 </div>
+                <div className="product-price-container">
+                  {isSalePage && product.sale ? (
+                    <>
+                      <div className="product-price sale-price" onClick={() => handleProductClick(product.name)}>
+                        {formatPrice(product.price)}
+                      </div>
+                      <div className="product-previous-price"> {formatPrice(product[`previous-price`])}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="product-price" onClick={() => handleProductClick(product.name)}>
+                      {formatPrice(product.price)}
+                    </div>
+                  )}
+                </div>
+              </div>
               ))}
             </div>
           )}
