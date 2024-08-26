@@ -161,11 +161,9 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
 
   const validateCredentials = async (correct_email, email, password) => {
     try {
-      const token = localStorage.getItem('token');
       const response = await post(
         '/api/v1/auth/validateCredentials',
-        { correct_email, email, password },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { correct_email, email, password }
       );
 
       return response.isValid;
