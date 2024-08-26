@@ -17,7 +17,7 @@ const AdminFeatured = () => {
           <CircularProgressbar value={70} text={"70%"} strokeWidth={5} />
         </div>
         <p className="title">Total sales made today</p>
-        <p className="amount">$420</p>
+        <p className="amount">2,000,000 VND</p>
         <p className="desc">
           Previous transactions processing. Last payments may not be included.
         </p>
