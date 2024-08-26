@@ -15,7 +15,7 @@ const AdminHome = () => {
         </div>
         <div className="charts">
           <AdminFeatured />
-          <AdminList title="Last 6 Months (Revenue)" aspect={2 / 1} />
+          <AdminList title="Last Month (Revenue)" aspect={2 / 1} />
         </div>
         <div className="listContainer">
           <div className="listTitle">Latest Transactions</div>
