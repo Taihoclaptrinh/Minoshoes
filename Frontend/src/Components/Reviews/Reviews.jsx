@@ -3,9 +3,10 @@ import "./Reviews.css"
 import "../Bestseller/Bestseller.css"
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import im_src from "../Assets/Image2.png"
 
 const Reviews = () => {
+  const im_src1 = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/rv1.jpg"
+  const im_src2 = "https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/rv2.jpeg"
   const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.
@@ -32,7 +33,7 @@ const Reviews = () => {
       <Carousel showDots={true} responsive={responsive}>
         <div className="reviews">
           <div className="feedback">
-            <img className="feedback--image" src={im_src} alt="feedback image" />
+            <img className="feedback--image" src={im_src1} alt="feedback image" />
             <div className="feedback--content">
               <div className="feedback--content-font">
                 <p style={{textAlign: "justify"}}>
@@ -46,7 +47,7 @@ const Reviews = () => {
         </div>
         <div className="reviews">
           <div className="feedback">
-            <img className="feedback--image" src={im_src} alt="feedback image" />
+            <img className="feedback--image" src={im_src2} alt="feedback image" />
             <div className="feedback--content">
               <div>
                 <div className="feedback--content-font">
