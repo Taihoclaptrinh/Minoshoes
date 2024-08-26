@@ -142,17 +142,17 @@
   gap: 1.5rem;
 }
 .adding-button-container button {
-  padding: 1rem 2rem;
+  padding: 1rem 1rem;
   border: 2px solid #000;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
-  max-width: 13rem;
+  max-width: 18rem;
   width: 100%;
   transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
   box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.7);
 
-  font-family: "Inria Sans";
+  font-family: "Raleway-MediumItalic", Helvetica;
   font-size: 1.4rem;
   font-style: normal;
   font-weight: 700;
@@ -162,6 +162,9 @@
 .add-to-bag {
   background-color: #333535;
   color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .adding-button-container button:hover {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), -1px -1px 3px rgba(255, 255, 255, 0.7);
@@ -487,31 +490,34 @@
 .form-buttons {
   display: flex;
   justify-content: space-between;
-  width: 80%;
-  margin-left: 10%;
+  width: 95%;
+  margin-left: 2.5%;
 }
 
 .form-buttons button[type="submit"],
 .form-buttons button[type="button"] 
 {
-  flex: 0.4;
-  font-size: 1rem;
+  flex: 0.45;
+  font-size: 1.2rem;
   font-family: "Inria Sans";
-  padding: 5px;
+  padding: 7px;
+  border-radius: 15px;
   transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
   box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.7);
 }
 .form-buttons button[type="submit"] {
-  background-color: green;
+  border: 1px solid green;
+  color: green;
 }
 .form-buttons button[type="button"] {
-  background-color: red;
+  border: 1px solid 505454 ;
+  color: #505454 ;
 }
 
 .form-buttons button[type="submit"]:hover,
 .form-buttons button[type="button"]:hover
 {
-  background-color:   #4d4c4f ;
+  background-color:   #9fa2a2   ;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), -1px -1px 3px rgba(255, 255, 255, 0.7);
   transform: translateY(2px);   
 } 
