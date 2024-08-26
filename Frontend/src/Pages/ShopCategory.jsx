@@ -88,7 +88,6 @@ const ProductCategory = () => {
     const pathname = location.pathname;
     setIsSalePage(pathname === '/sale');
     
-    // Reload products when navigating to the sale page
     if (pathname === '/sale') {
       fetchProducts();
     }
