@@ -133,8 +133,6 @@ const Product = () => {
             }
         } catch (error) {
             setShowAddToCartFailurePopup(true);
-            // console.error('Error adding product to cart:', error);
-            // alert('Failed to add product to cart. Please try again.');
         }
     };
 
