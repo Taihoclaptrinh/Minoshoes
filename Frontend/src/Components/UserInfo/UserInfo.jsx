@@ -13,7 +13,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
   const [cancelReason, setCancelReason] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('COD');
   const [bankAccount, setBankAccount] = useState('');
-  const [bankName, setBankName] = useState('');  
+  const [bankName, setBankName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,15 +91,33 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
     try {
       const localUser = JSON.parse(localStorage.getItem('user'));
       const correct_email = localUser.email;
-  
+
       // Validate password (you'd need to implement this check against your backend)
       const isValidCredentials = await validateCredentials(correct_email, email, password);
-  
+
       if (!isValidCredentials) {
         Swal.fire('Error', 'Invalid email or password. Try again!', 'error');
         return;
       }
-  
+
+      // Validate payment method
+      const orderResponse = await fetch(`/api/v1/orders/get-order/${cancellingOrderId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!orderResponse.ok) {
+        throw new Error('Failed to fetch order details');
+      }
+
+      const orderData = await orderResponse.json();
+
+      if (orderData.paymentMethod !== paymentMethod) {
+        Swal.fire('Error', 'Selected payment method does not match the order\'s payment method.', 'error');
+        return;
+      }
+
       const result = await Swal.fire({
         title: 'Are you sure?',
         text: 'You won\'t be able to revert this!',
@@ -109,7 +127,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, cancel it!'
       });
-  
+
       if (result.isConfirmed) {
         // Get the order details
         const orderResponse = await fetch(`/api/v1/orders/get-order/${cancellingOrderId}`, {
@@ -117,19 +135,19 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-  
+
         if (orderResponse.status === 401) {
           throw new Error('Unauthorized');
         }
-  
+
         if (!orderResponse.ok) {
           throw new Error('Failed to fetch order details');
         }
         const orderData = await orderResponse.json();
-  
+
         // Update the stock for each product in the order
         await updateProductStock(orderData.orderItems);
-  
+
         // Call the onCancelOrder function passed as prop
         await onCancelOrder({
           orderId: cancellingOrderId,
@@ -138,7 +156,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
           bankName: paymentMethod === 'E-Banking' ? bankName : undefined,
           bankAccount: paymentMethod === 'E-Banking' ? bankAccount : undefined
         });
-  
+
         Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success');
         setCancellingOrderId(null);
         setCancelReason('');
@@ -147,16 +165,16 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
         setBankAccount('');
         setPassword('');
       }
-  
+
       setIsModalOpen(false); // Close the modal after confirming cancellation
-  
+
     } catch (error) {
       console.error('Error cancelling order:', error);
       Swal.fire('Error', 'An error occurred while cancelling the order.', 'error');
     }
   };
-  
-  
+
+
 
   const validateCredentials = async (correct_email, email, password) => {
     try {
@@ -391,8 +409,8 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
       </div>
     </>
   );
-  
-  
+
+
 
   const renderSection = () => {
     switch (type) {
