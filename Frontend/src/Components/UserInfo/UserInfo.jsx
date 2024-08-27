@@ -16,7 +16,9 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const formatPrice = (price) => {
+    return price.toLocaleString('vi-VN') + " VND";
+  };
   const handleEdit = () => setIsEditing(true);
   const handleSave = () => {
     if (validateUser()) {
@@ -161,11 +163,9 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
 
   const validateCredentials = async (correct_email, email, password) => {
     try {
-      const token = localStorage.getItem('token');
       const response = await post(
         '/api/v1/auth/validateCredentials',
-        { correct_email, email, password },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { correct_email, email, password }
       );
 
       return response.isValid;
@@ -264,7 +264,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
             <img src={item.images[0]} alt={item.name} className="product-image-wishlist" />
             <div className="product-info-wishlist">
               <h3>{item.name}</h3>
-              <p>${item.price.toFixed(2)}</p>
+              <p>{formatPrice(item.price)}</p>
             </div>
             <div className="product-actions">
               <CartIcon

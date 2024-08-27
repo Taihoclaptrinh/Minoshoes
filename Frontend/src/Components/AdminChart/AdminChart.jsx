@@ -9,12 +9,11 @@ import {
 } from "recharts";
 
 const data = [
-  { name: "January", Total: 1200 },
-  { name: "February", Total: 2100 },
-  { name: "March", Total: 800 },
-  { name: "April", Total: 1600 },
-  { name: "May", Total: 900 },
-  { name: "June", Total: 1700 },
+  { name: "tmp", Total: 0 },
+  { name: "Week 1", Total: 2100 },
+  { name: "Week 2", Total: 800 },
+  { name: "Week 3", Total: 1600 },
+  { name: "Week 4", Total: 900 },
 ];
 
 const AdminChart = ({ aspect, title }) => {

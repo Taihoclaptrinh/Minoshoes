@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./CSS/Product.css";
 import { get, post, put, del } from '../config/api';
 import { useLocation, useNavigate } from "react-router-dom";
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import Slider from "../Components/Slider/Slider.jsx";
 import Footer from "../Components/Footer/Footer.jsx";
 import Loader from "../Components/Loader/Loading.jsx";
@@ -36,6 +38,7 @@ const ReviewForm = ({ onClose, onSubmit }) => {
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Write your review here..."
                     required
+                    style={{ width: "95%", height: "150px", resize:"none", fontFamily:"sans-serif", fontSize:"1.2rem", padding:"10px" }}
                 />
                 <div className="form-buttons">
                     <button type="submit">Submit</button>
@@ -321,7 +324,28 @@ const Product = () => {
                         </div>
 
                         <div className="adding-button-container">
-                            <button onClick={() => onAddtoCartHandler(productData)} className="add-to-bag">Add to cart</button>
+                            <button onClick={() => onAddtoCartHandler(productData)} className="add-to-bag">
+                                <ShoppingCartOutlinedIcon
+                                className="icon"
+                                style={{
+                                    backgroundColor: "unset",
+                                    color: "white",
+                                    width: "40px",
+                                }}
+                                />
+                                ADD TO CART
+                            </button>
+                            <button onClick={() => onAddtoCartHandler(productData)} className="add-to-bag">
+                                <FavoriteBorderOutlinedIcon
+                                className="icon"
+                                style={{
+                                    backgroundColor: "unset",
+                                    color: "white",
+                                    width: "40px",
+                                }}
+                                />
+                                ADD TO WISHLIST
+                            </button>
                         </div>
                     </div>
                 </div>
