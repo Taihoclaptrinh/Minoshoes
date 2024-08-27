@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./CSS/Product.css";
 import { get, post, put, del } from '../config/api';
 import { useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from '../UserContext';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import Slider from "../Components/Slider/Slider.jsx";
 import Footer from "../Components/Footer/Footer.jsx";
 import Loader from "../Components/Loader/Loading.jsx";
 import Pop_up from "../Components/Popup/Popup.jsx"
+import Swal from 'sweetalert2';
 // Review Form component
 const ReviewForm = ({ onClose, onSubmit }) => {
     const [rating, setRating] = useState(0);
@@ -64,7 +66,8 @@ const Product = () => {
     const [showNoSizesStockPopup, setShowNoSizesStockPopup] = useState(false);
     const [showAddToCartSuccessPopup, setShowAddToCartSuccessPopup] = useState(false);
     const [showAddToCartFailedPopup, setShowAddToCartFailurePopup] = useState(false);
-    
+    const { user } = useContext(UserContext);
+
     const reviewsPerPage = 5;
     const location = useLocation();
     const navigate = useNavigate();
@@ -136,6 +139,40 @@ const Product = () => {
             }
         } catch (error) {
             setShowAddToCartFailurePopup(true);
+        }
+    };
+
+    const handleAddToWishlist = async (product) => {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            Swal.fire('Error', 'Please login to add items to your wishlist', 'error');
+            return;
+          }
+    
+          const response = await post(
+            `/api/v1/auth/users/${user._id}/wishlist/${product._id}`,
+            {},
+            {
+              headers: { Authorization: `Bearer ${token}` }
+            }
+          );
+    
+          if (response.status === 200) {
+            Swal.fire('Success', 'Product added to wishlist', 'success');
+          } else {
+            throw new Error(response.data.message || 'Failed to add product to wishlist');
+          }
+        } catch (error) {
+          console.error('Error adding product to wishlist:', error.response?.data || error.message);
+          if (error.response?.status === 401) {
+            Swal.fire('Error', 'Your session has expired. Please login again.', 'error');
+            // Optionally, you can redirect to the login page or clear the token
+            // localStorage.removeItem('token');
+            // navigate('/login');
+          } else {
+            Swal.fire('Error', 'Failed to add product to wishlist. Please try again.', 'error');
+          }
         }
     };
 
@@ -335,7 +372,7 @@ const Product = () => {
                                 />
                                 ADD TO CART
                             </button>
-                            <button onClick={() => onAddtoCartHandler(productData)} className="add-to-bag">
+                            <button onClick={() => handleAddToWishlist(productData)} className="add-to-bag">
                                 <FavoriteBorderOutlinedIcon
                                 className="icon"
                                 style={{
