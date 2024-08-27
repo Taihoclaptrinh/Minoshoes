@@ -1,11 +1,12 @@
 import { Order } from '../models/orderModel.js'; // Import the Order model
 import Product from '../models/productModel.js'; // Import the Product model
 import Coupon from '../models/couponModel.js'; // Import the Coupon model
+import { sendCancellationEmail } from '../controller/authController.js'; // Đảm bảo import hàm gửi email
 
 // Create a new order
 export const createOrder = async (req, res) => {
     try {
-        const { orderItems, shippingAddress, paymentMethod, shippingPrice, totalPrice, couponCode } = req.body;
+        const { orderItems, shippingAddress, paymentMethod, shippingPrice, totalPrice, couponCode, email } = req.body;
         const userId = req.user._id;
 
         // Validate and apply coupon if provided
@@ -41,7 +42,8 @@ export const createOrder = async (req, res) => {
             paymentMethod,
             shippingPrice,
             totalPrice: finalTotalPrice,
-            couponCode
+            coupon: couponCode,
+            email // Add email field
         });
 
         // Save the order
@@ -50,11 +52,14 @@ export const createOrder = async (req, res) => {
         // Update stock quantities
         await updateStock(orderItems);
 
+        // Optionally, send a confirmation email here if needed
+
         res.status(201).json(createdOrder);
     } catch (error) {
         res.status(500).json({ message: 'Failed to create order', error: error.message });
     }
 };
+
 
 // Function to update stock quantities
 const updateStock = async (orderItems) => {
@@ -139,24 +144,43 @@ export const getUserOrders = async (req, res) => {
 // Update order status
 export const updateOrderStatus = async (req, res) => {
     try {
-        const { status } = req.body;
-        const order = await Order.findById(req.body.orderId);
+        const { status, cancellationReason, orderId } = req.body;
+
+        // Kiểm tra yêu cầu cần các thông tin cơ bản
+        if (!orderId) {
+            return res.status(400).json({ message: 'Order ID is required' });
+        }
+
+        // Tìm đơn hàng theo ID
+        const order = await Order.findById(orderId);
 
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
 
+        // Cập nhật trạng thái đơn hàng
         order.status = status;
-        if (status === 'Delivered') {
+        
+        if (status === 'Cancelled') {
+            order.canceledAt = Date.now();
+            order.cancellationReason = cancellationReason;
+            // Gửi email xác nhận hủy đơn hàng
+            const success = await sendCancellationEmail(order.email, order);
+            if (!success) {
+                return res.status(500).json({ message: 'Failed to send cancellation email' });
+            }
+        } else if (status === 'Delivered') {
             order.deliveredAt = Date.now();
         }
 
+        // Lưu thay đổi vào cơ sở dữ liệu
         const updatedOrder = await order.save();
         res.status(200).json(updatedOrder);
     } catch (error) {
         res.status(500).json({ message: 'Failed to update order status', error: error.message });
     }
 };
+
 
 // Delete an order
 export const deleteOrder = async (req, res) => {

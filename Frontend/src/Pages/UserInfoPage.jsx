@@ -157,6 +157,7 @@ const UserInfoPage = () => {
 
       const response = await put(`/api/v1/orders/${orderId}/status`, {
         status: 'Cancelled',
+        cancellationReason: cancelDetails.reason,
         ...cancelDetails
       }, { headers: { Authorization: `Bearer ${token}` } });
 

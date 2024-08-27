@@ -16,12 +16,14 @@ import AdminSidebar from "./Components/AdminSidebar/AdminSidebar";
 import AdminHome from "./Pages/AdminHome";
 import AdminUserList from "./Pages/AdminUserList";
 import AdminProductList from "./Pages/AdminProductList";
+import AdminNotificationList from "./Pages/AdminNotificationList";
 import AdminOrderList from "./Pages/AdminOrderList";
 import AdminCouponList from "./Pages/AdminCouponList";
 import AdminUserSingle from "./Pages/AdminUserSingle";
 import AdminProductSingle from "./Pages/AdminProductSingle";
 import AdminOrderSingle from "./Pages/AdminOrderSingle";
 import AdminCouponSingle from "./Pages/AdminCouponSingle";
+import AdminNotificationSingle from "./Pages/AdminNotificationSingle";
 
 import AdminNew from "./Pages/AdminNew";
 
@@ -65,8 +67,9 @@ const AdminApp = () => (
             <Route path=":couponId" element={<AdminCouponSingle />} />
             <Route path="new" element={<AdminNew title="Add New Coupon" formType="coupon" />} />
           </Route>
-          <Route path="notification">
-
+          <Route path="notifications">
+            <Route index element={<AdminNotificationList />} />
+            <Route path=":notificationId" element={<AdminNotificationSingle />} /> {/* Tạo AdminNotificationSingle để xem chi tiết */}
           </Route>
         </Routes>
       </div>

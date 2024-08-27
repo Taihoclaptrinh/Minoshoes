@@ -227,6 +227,7 @@ const Cart = () => {
                 paymentMethod,
                 shippingPrice: shippingFee,
                 totalPrice: totalCost,
+                email: user.email,
                 status: ''
             };
 

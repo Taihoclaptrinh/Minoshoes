@@ -6,7 +6,7 @@ import {
     sendResetCodeController,
     resetPasswordController,
     testController,
-    validateCredentials
+    validateCredentials,
 } from "../controller/authController.js";
 import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js';
 
@@ -33,5 +33,6 @@ router.post('/reset-password', resetPasswordController);
 
 // Validate Credentials || method POST
 router.post('/validateCredentials', validateCredentials);
+
 
 export default router;

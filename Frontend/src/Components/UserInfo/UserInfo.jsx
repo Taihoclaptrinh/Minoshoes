@@ -13,6 +13,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
   const [cancelReason, setCancelReason] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('COD');
   const [bankAccount, setBankAccount] = useState('');
+  const [bankName, setBankName] = useState('');  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,13 +50,6 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
     const { name, value } = e.target;
     setUpdatedUser({ ...updatedUser, [name]: value });
   };
-
-  // const handleAddressChange = (city, district, ward, street, index) => {
-  //   const newAddresses = updatedUser.addresses.map((address, i) =>
-  //     i === index ? { city, district, ward, street } : address
-  //   );
-  //   setUpdatedUser({ ...updatedUser, addresses: newAddresses });
-  // };
 
   const handleCancel = async (orderId, status) => {
     if (status !== 'Pending') {
@@ -96,17 +90,16 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
   const handleCancelConfirm = async () => {
     try {
       const localUser = JSON.parse(localStorage.getItem('user'));
-      // Input email in local storage
       const correct_email = localUser.email;
-
+  
       // Validate password (you'd need to implement this check against your backend)
       const isValidCredentials = await validateCredentials(correct_email, email, password);
-
+  
       if (!isValidCredentials) {
         Swal.fire('Error', 'Invalid email or password. Try again!', 'error');
         return;
       }
-
+  
       const result = await Swal.fire({
         title: 'Are you sure?',
         text: 'You won\'t be able to revert this!',
@@ -116,7 +109,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, cancel it!'
       });
-
+  
       if (result.isConfirmed) {
         // Get the order details
         const orderResponse = await fetch(`/api/v1/orders/get-order/${cancellingOrderId}`, {
@@ -124,42 +117,46 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-
+  
         if (orderResponse.status === 401) {
           throw new Error('Unauthorized');
         }
-
+  
         if (!orderResponse.ok) {
           throw new Error('Failed to fetch order details');
         }
         const orderData = await orderResponse.json();
-
+  
         // Update the stock for each product in the order
         await updateProductStock(orderData.orderItems);
-
+  
         // Call the onCancelOrder function passed as prop
         await onCancelOrder({
           orderId: cancellingOrderId,
-          reason: cancelReason,
+          reason: cancelReason + (paymentMethod === 'E-Banking' ? ` | Bank Name: ${bankName} | Bank Account: ${bankAccount}` : ''),
           paymentMethod,
+          bankName: paymentMethod === 'E-Banking' ? bankName : undefined,
           bankAccount: paymentMethod === 'E-Banking' ? bankAccount : undefined
         });
-
+  
         Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success');
         setCancellingOrderId(null);
         setCancelReason('');
         setPaymentMethod('COD');
+        setBankName('');
         setBankAccount('');
         setPassword('');
       }
-
+  
       setIsModalOpen(false); // Close the modal after confirming cancellation
-
+  
     } catch (error) {
       console.error('Error cancelling order:', error);
       Swal.fire('Error', 'An error occurred while cancelling the order.', 'error');
     }
   };
+  
+  
 
   const validateCredentials = async (correct_email, email, password) => {
     try {
@@ -312,7 +309,6 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
           rowsPerPageOptions={[5, 10, 20]}
           autoHeight
         />
-        {/* {cancellingOrderId !== null && ( */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <div className="cancel-form">
             <h3>Cancel Order</h3>
@@ -355,20 +351,30 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
                 </select>
               </label>
               {paymentMethod === 'E-Banking' && (
-                <label>
-                  Bank Account:
-                  <input
-                    type="text"
-                    value={bankAccount}
-                    onChange={(e) => setBankAccount(e.target.value)}
-                    required
-                  />
-                </label>
+                <>
+                  <label>
+                    Bank Name:
+                    <input
+                      type="text"
+                      value={bankName}
+                      onChange={(e) => setBankName(e.target.value)}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Bank Account:
+                    <input
+                      type="text"
+                      value={bankAccount}
+                      onChange={(e) => setBankAccount(e.target.value)}
+                      required
+                    />
+                  </label>
+                </>
               )}
               <button
                 type="submit"
                 className="confirm-cancel"
-              // onClick={() => setIsModalOpen(false)}
               >
                 Confirm
               </button>
@@ -381,11 +387,12 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
               </button>
             </form>
           </div>
-          {/* )} */}
         </Modal>
       </div>
     </>
   );
+  
+  
 
   const renderSection = () => {
     switch (type) {

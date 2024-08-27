@@ -419,3 +419,20 @@ export const validateCredentials = async (req, res) => {
     res.status(500).json({ isValid: false, message: 'Server error' });
   }
 }
+export const sendCancellationEmail = async (recipientEmail, order) => {
+  try {
+      const mailOptions = {
+          from: EMAIL_USERNAME, // Địa chỉ email của bạn
+          to: order.email, // Địa chỉ email người nhận
+          subject: 'Order Cancellation Confirmation',
+          text: `Your order with ID ${order._id} has been cancelled. Reason: ${order.cancellationReason}`,
+      };
+      console.log('Mail options:', mailOptions);
+
+      await transporter.sendMail(mailOptions);
+      return true;
+  } catch (error) {
+      console.error('Error sending cancellation email:', error);
+      return false;
+  }
+};
