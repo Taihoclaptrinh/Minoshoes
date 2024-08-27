@@ -17,8 +17,8 @@ const AdminList = () => {
   const [error, setError] = useState(null);
 
   const orderColumns = [
-    { field: 'id', headerName: 'Order ID', width: 200 },
-    { field: 'userEmail', headerName: 'User Email', width: 250 },
+    { field: 'id', headerName: 'Order ID', width: 100 },
+    { field: 'userEmail', headerName: 'User Email', width: 200 },
     { field: 'totalItems', headerName: 'Total Items', width: 150 },
     { field: 'address', headerName: 'Address', width: 400 },
     { field: 'phoneNumber', headerName: 'Phone Number', width: 150 },
@@ -30,10 +30,10 @@ const AdminList = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('/api/v1/admin/orders'); // Update with your API endpoint
+      const response = await axios.get('/api/v1/admin/get2orders'); // Update with your API endpoint
       let orders = response.data.orders.map(order => ({
         id: order._id,
-        userEmail: order.user.email,
+        userEmail: order.email,
         address: order.shippingAddress.address || '',
         phoneNumber: order.shippingAddress.phoneNumber || '',
         paymentMethod: order.paymentMethod,
@@ -44,8 +44,11 @@ const AdminList = () => {
       }));
 
       // Sort orders by createdAt in descending order and take the first 2
-      orders = orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 2);
-
+      orders = orders.sort((a, b) => b.createdAt - a.createdAt).slice(0, 2);
+      orders = orders.map(order => ({
+        ...order,
+        createdAt: order.createdAt.toLocaleString(),
+      }));
       setOrders(orders);
     } catch (error) {
       setError('Failed to fetch orders');

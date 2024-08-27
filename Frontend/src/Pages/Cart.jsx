@@ -82,6 +82,16 @@ const Cart = () => {
         fetchCart();
     }, []);
 
+    const calculateTotalCost = () => {
+        const subtotal = products.reduce((acc, product) => acc + product.product.price * product.quantity, 0);
+        setTotalCost((subtotal - discount) + shippingFee);
+    };
+
+    useEffect(() => {
+        calculateTotalCost();
+    }, [products, discount, shippingFee]);
+    
+
     const handleApplyCoupon = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -95,12 +105,7 @@ const Cart = () => {
             setMessage(error.response?.data.message || 'Failed to apply coupon.');
         }
     };
-
-    const calculateTotalCost = () => {
-        const subtotal = products.reduce((acc, product) => acc + product.product.price * product.quantity, 0);
-        setTotalCost((subtotal - discount) + shippingFee);
-    };
-
+    
     const clearCart = async () => {
         const token = localStorage.getItem('token');
         try {
@@ -196,7 +201,7 @@ const Cart = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const status = urlParams.get('status');
             const orderCode = urlParams.get('orderCode');
-            const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
+            // const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
 
             if (status === 'PAID' && orderCode) {
                 const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
@@ -267,6 +272,7 @@ const Cart = () => {
                 email: user.email,
                 status: ''
             };
+            alert(JSON.stringify(orderItems, null, 2));
 
             if (paymentMethod === 'COD') {
                 // Create the order immediately for COD

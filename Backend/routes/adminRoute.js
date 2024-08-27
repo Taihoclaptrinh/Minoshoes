@@ -5,6 +5,7 @@ import {
     getUserById, getAllUsers,
     countAllUsers, countAllOrders,
     getAllOrders, getOrderById,
+    getLatestOrder,
     deleteOrderById, createCoupon,
     getAllCoupons, getCouponById,
     updateCoupon, deleteCoupon
@@ -21,7 +22,8 @@ router.get('/get-user/:userId', getUserById);
 router.get('/count-order', countAllOrders);
 router.get('/orders', getAllOrders);
 router.get('/orders/:orderId', getOrderById);
-router.delete('/orders/:orderId', deleteOrderById)
+router.delete('/orders/:orderId', deleteOrderById);
+router.get('/get2orders', getLatestOrder)
 router.get('/get-user', getAllUsers);
 
 // Route related to coupons
