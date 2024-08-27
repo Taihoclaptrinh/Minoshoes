@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { get, post, put, del } from '../config/api';
 import "./CSS/Cart.css";
-import { Link, useNavigate } from 'react-router-dom';
+import { json, Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.js';
 import Pop_up from '../Components/Popup/Popup.jsx';
+import { max } from "lodash";
 
 const Cart = () => {
     const [products, setProducts] = useState([]);
@@ -18,7 +19,11 @@ const Cart = () => {
     const [showStockWarning, setShowStockWarning] = useState(false)
     const [stockAvailable, setStockAvailable] = useState(0);
     const [warningSize, setWarningSize] = useState(0);
-    
+    const [cart, setCart] = useState(null);
+    const [couponCode, setCouponCode] = useState('');
+    const [discount, setDiscount] = useState(0);
+    const [message, setMessage] = useState('');
+
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
     const itemsPerPage = 4;
@@ -59,9 +64,41 @@ const Cart = () => {
         }
     }, [user]);
 
+    useEffect(() => {
+        // Fetch the cart when the component mounts
+        const fetchCart = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const { data } = await get('/api/v1/auth/cart/get-cart', { headers: { Authorization: `Bearer ${token}` } });
+                setCart(data);
+                if (data.discount) {
+                    setDiscount(data.discount);
+                }
+            } catch (error) {
+                console.error('Error fetching cart:', error);
+            }
+        };
+
+        fetchCart();
+    }, []);
+
+    const handleApplyCoupon = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const { data } = await post('/api/v1/auth/cart/apply-coupon', { couponCode }, { headers: { Authorization: `Bearer ${token}` } });
+            setCart(data.cart);
+            setDiscount(data.discountAmount);
+            setMessage('Coupon applied successfully!');
+            calculateTotalCost();
+        } catch (error) {
+            console.error('Error applying coupon:', error);
+            setMessage(error.response?.data.message || 'Failed to apply coupon.');
+        }
+    };
+
     const calculateTotalCost = () => {
         const subtotal = products.reduce((acc, product) => acc + product.product.price * product.quantity, 0);
-        setTotalCost(subtotal + shippingFee);
+        setTotalCost((subtotal - discount) + shippingFee);
     };
 
     const clearCart = async () => {
@@ -91,30 +128,30 @@ const Cart = () => {
             }
             const updatedProducts = [...products];
             const product = updatedProducts.find(item => item.product._id === productId && item.size === size);
-            
+
             if (!product) {
                 console.error('Product not found in cart');
                 return;
             }
-    
+
             const newQuantity = product.quantity + delta;
-    
+
             // Kiểm tra số lượng trong kho
             const sizeIndex = product.product.sizes.indexOf(size);
             if (sizeIndex === -1) {
                 console.error('Size not found for product');
                 return;
             }
-    
+
             const stockAvailable = product.product.stocks[sizeIndex];
-    
+
             if (delta > 0 && newQuantity > stockAvailable) {
                 setShowStockWarning(true)
                 setStockAvailable(stockAvailable);
                 setWarningSize(size);
                 return;
             }
-    
+
             if (newQuantity === 0) {
                 // Remove item from cart
                 await del('/api/v1/auth/cart/remove-from-cart', {
@@ -129,7 +166,7 @@ const Cart = () => {
             } else {
                 // Update quantity in local state
                 product.quantity = newQuantity;
-    
+
                 // Update cart in backend
                 await put('/api/v1/auth/cart/update-cart', {
                     productId,
@@ -140,10 +177,10 @@ const Cart = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             }
-    
+
             setProducts(updatedProducts);
             await updateTotalCartCount();
-    
+
         } catch (error) {
             console.error('Error handling quantity change:', error);
         }
@@ -160,23 +197,23 @@ const Cart = () => {
             const status = urlParams.get('status');
             const orderCode = urlParams.get('orderCode');
             const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
-            
+
             if (status === 'PAID' && orderCode) {
                 const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
-    
+
                 if (pendingOrder) {
                     try {
                         pendingOrder.status = 'PAID'
                         // Lưu trạng thái cập nhật vào localStorage
                         localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
-    
+
                         const token = localStorage.getItem('token');
-    
+
                         // Tạo đơn hàng từ thông tin đã lưu trong localStorage
                         const createOrderResponse = await post('/api/v1/orders/create-order', pendingOrder, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
-    
+
                         if (createOrderResponse.status === 201) {
                             const cleared = await clearCart();
                             if (cleared) {
@@ -199,16 +236,16 @@ const Cart = () => {
                 // Xử lý khi thanh toán bị hủy, nếu cần
             }
         };
-    
+
         handlePaymentCompletion();
     }, []); // Empty dependency array to run only once when component mounts
-    
-    
+
+
 
     const handleBuy = async () => {
         setIsLoading(true);
         setError(null);
-    
+
         try {
             const token = localStorage.getItem('token');
             const orderItems = {
@@ -236,11 +273,11 @@ const Cart = () => {
                 const response = await post('/api/v1/orders/create-order', orderItems, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-    
+
                 if (response.status === 201) {
                     const cleared = await clearCart(); // Wait for cart to clear
                     if (cleared) {
-                        setShowPopup(true); 
+                        setShowPopup(true);
                     } else {
                         setError('Order created but failed to clear cart. Please refresh the page.');
                     }
@@ -249,7 +286,7 @@ const Cart = () => {
                 }
             } else if (paymentMethod === 'E-Banking') {
                 const paymentResponse = await post('/api/v1/payos/create-payment-link', {
-                    amount: totalCost,
+                    amount: (totalCost - discount > 0 ? totalCost - discount : 1), // Ensure amount is at least 1
                     description: `Payment for ${totalItems} items`,
                 }, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -260,7 +297,7 @@ const Cart = () => {
                 } else {
                     throw new Error('Invalid response from payment link creation');
                 }
-            }            
+            }
         } catch (error) {
             console.error('Error processing payment:', error);
             setError('Unable to process payment. Please try again later.');
@@ -307,55 +344,68 @@ const Cart = () => {
                                         <>
                                             <div className="cart_products-container">
                                                 <table id="cart_product-table">
-                                                {displayedProducts.map(product => (
-                                                    <tr key={product.product._id}>
-                                                        <td style={{width:"12rem"}}>{product.product.name}</td>
-                                                        <td style={{width:"4rem"}}>Size: {product.size}</td>
-                                                        <td className="cart_quantity-container">
-                                                            <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, -1, product.size)}>-</button>
-                                                            <span className="cart_quantity">{product.quantity}</span>
-                                                            <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, 1, product.size)}>+</button>
-                                                        </td>
-                                                        <td style={{display:"flex",marginRight:"0"}}>{formatPrice(product.product.price * product.quantity)}</td>
-                                                    </tr>
-                                                ))}
+                                                    {displayedProducts.map(product => (
+                                                        <tr key={product.product._id}>
+                                                            <td style={{ width: "12rem" }}>{product.product.name}</td>
+                                                            <td style={{ width: "4rem" }}>Size: {product.size}</td>
+                                                            <td className="cart_quantity-container">
+                                                                <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, -1, product.size)}>-</button>
+                                                                <span className="cart_quantity">{product.quantity}</span>
+                                                                <button className="cart_quantity-button" onClick={() => handleQuantityChange(product.product._id, 1, product.size)}>+</button>
+                                                            </td>
+                                                            <td style={{ display: "flex", marginRight: "0" }}>{formatPrice(product.product.price * product.quantity)}</td>
+                                                        </tr>
+                                                    ))}
                                                 </table>
                                             </div>
-                                            <p style={{borderTop:"1px solid black", paddingTop:"1rem"}}>Total Items: {totalItems}</p>
-                                            <p style={{marginTop:"0.5rem"}}>Address: {user.address || "Address not provided"}</p>
-                                            <p style={{marginTop:"0.5rem"}}>Shipping Fee: {formatPrice(shippingFee)}</p>
+                                            <p style={{ borderTop: "1px solid black", paddingTop: "1rem" }}>Total Items: {totalItems}</p>
+                                            <p style={{ marginTop: "0.5rem" }}>Address: {user.address || "Address not provided"}</p>
+                                            <p style={{ marginTop: "0.5rem" }}>Shipping Fee: {formatPrice(shippingFee)}</p>
                                             <div className="payment-discount-container">
-                                            <div className="payment-discount-row">
-                                                <label htmlFor="payment-method">Payment Method</label>
-                                                <select 
-                                                    id="payment-method" 
-                                                    value={paymentMethod} 
-                                                    onChange={(e) => setPaymentMethod(e.target.value)}
-                                                >
-                                                    <option value="--">--</option>
-                                                    <option value="COD">COD</option>
-                                                    <option value="E-Banking">E-Banking</option>
-                                                </select>
-                                            </div>
+                                                <div className="payment-discount-row">
+                                                    <label htmlFor="payment-method">Payment Method</label>
+                                                    <select
+                                                        id="payment-method"
+                                                        value={paymentMethod}
+                                                        onChange={(e) => setPaymentMethod(e.target.value)}
+                                                    >
+                                                        <option value="--">--</option>
+                                                        <option value="COD">COD</option>
+                                                        <option value="E-Banking">E-Banking</option>
+                                                    </select>
+                                                </div>
                                                 <div className="payment-discount-row">
                                                     <label htmlFor="discount-code">Discount Code</label>
-                                                    <input type="text" id="discount-code" placeholder="G-" />
+                                                    <input
+                                                        type="text"
+                                                        id="discount-code"
+                                                        placeholder="G-"
+                                                        value={couponCode}
+                                                        onChange={(e) => setCouponCode(e.target.value)}
+                                                    />
+                                                    <button onClick={handleApplyCoupon}>Apply Coupon</button>
                                                 </div>
                                             </div>
+                                            {message && <div className="message">{message}</div>}
                                             {error && <div className="error-message">{error}</div>}
                                             <div className="cart-total">
-                                                <div className="element-total" style={{marginBottom: "0.5rem"}}> 
-                                                    <span >Subtotal:
+                                                <div className="element-total" style={{ marginBottom: "0.5rem" }}>
+                                                    <span>Subtotal:
                                                         <span className="value">{formatPrice(totalCost - shippingFee)}</span>
                                                     </span>
-                                                    <span >Shipping Fee:
+                                                    <span>Shipping Fee:
                                                         <span className="value">{formatPrice(shippingFee)}</span>
                                                     </span>
+                                                    {discount > 0 && (
+                                                        <span>Discount:
+                                                            <span className="value">-{formatPrice(discount)}</span>
+                                                        </span>
+                                                    )}
                                                 </div>
-                                                <span >Total:</span>
-                                                <span className="value">{formatPrice(totalCost)}</span>
-                                                <button 
-                                                    onClick={handleBuy} 
+                                                <span>Total:</span>
+                                                <span className="value">{formatPrice(totalCost - discount)}</span>
+                                                <button
+                                                    onClick={handleBuy}
                                                     disabled={isLoading || products.length === 0 || totalCost === 0 || !paymentMethod}
                                                 >
                                                     {isLoading ? 'Processing...' : 'Buy'}
@@ -369,32 +419,32 @@ const Cart = () => {
                             </div>
                         </div>
                     ) : (
-                        <Pop_up 
-                            isSuccess={false} 
-                            review="Please log in to view your cart" 
-                            message="You need to be logged in to access your shopping cart" 
+                        <Pop_up
+                            isSuccess={false}
+                            review="Please log in to view your cart"
+                            message="You need to be logged in to access your shopping cart"
                             confirm="Move to LoginPage"
                             href="/login"
                         />
                     )}
                 </div>
             </div>
-            {showPopup && 
-                <Pop_up 
-                    isSuccess={true} 
-                    review="Payment Successful!" 
-                    message="Your order will be delivered as soon as possible." 
+            {showPopup &&
+                <Pop_up
+                    isSuccess={true}
+                    review="Payment Successful!"
+                    message="Your order will be delivered as soon as possible."
                     confirm="Back to HomePage"
                     href="/"
                 />
             }
-            {showStockWarning && 
-                <Pop_up 
-                isSuccess={false} 
-                review="Not enough items !" 
-                message={`Sorry, only ${stockAvailable} item(s) available for size ${warningSize}`}
-                confirm="Confirm"
-                onClose={handleClosePopup}
+            {showStockWarning &&
+                <Pop_up
+                    isSuccess={false}
+                    review="Not enough items !"
+                    message={`Sorry, only ${stockAvailable} item(s) available for size ${warningSize}`}
+                    confirm="Confirm"
+                    onClose={handleClosePopup}
                 />
             }
         </div>
