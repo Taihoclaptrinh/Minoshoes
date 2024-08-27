@@ -8,6 +8,7 @@ import { max } from "lodash";
 
 const Cart = () => {
     const [products, setProducts] = useState([]);
+    const [subtotal, setSubtotal] = useState(0);
     const [totalCost, setTotalCost] = useState(0);
     const [totalItems, setTotalItems] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -84,13 +85,14 @@ const Cart = () => {
 
     const calculateTotalCost = () => {
         const subtotal = products.reduce((acc, product) => acc + product.product.price * product.quantity, 0);
+        setSubtotal(subtotal);
         setTotalCost((subtotal - discount) + shippingFee);
     };
 
     useEffect(() => {
         calculateTotalCost();
     }, [products, discount, shippingFee]);
-    
+
 
     const handleApplyCoupon = async () => {
         try {
@@ -99,13 +101,14 @@ const Cart = () => {
             setCart(data.cart);
             setDiscount(data.discountAmount);
             setMessage('Coupon applied successfully!');
+            setSubtotal(totalCost);
             calculateTotalCost();
         } catch (error) {
             console.error('Error applying coupon:', error);
             setMessage(error.response?.data.message || 'Failed to apply coupon.');
         }
     };
-    
+
     const clearCart = async () => {
         const token = localStorage.getItem('token');
         try {
@@ -114,6 +117,7 @@ const Cart = () => {
             });
             console.log('Clear cart response:', response.data);
             await fetchCart(); // Fetch updated cart
+            setSubtotal(0);
             setTotalCost(0);
             setTotalItems(0);
             await updateTotalCartCount();
@@ -272,7 +276,7 @@ const Cart = () => {
                 email: user.email,
                 status: ''
             };
-            alert(JSON.stringify(orderItems, null, 2));
+            // alert(JSON.stringify(orderItems, null, 2));
 
             if (paymentMethod === 'COD') {
                 // Create the order immediately for COD
@@ -292,7 +296,7 @@ const Cart = () => {
                 }
             } else if (paymentMethod === 'E-Banking') {
                 const paymentResponse = await post('/api/v1/payos/create-payment-link', {
-                    amount: (totalCost - discount > 0 ? totalCost - discount : 1), // Ensure amount is at least 1
+                    amount: totalCost,
                     description: `Payment for ${totalItems} items`,
                 }, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -397,7 +401,7 @@ const Cart = () => {
                                             <div className="cart-total">
                                                 <div className="element-total" style={{ marginBottom: "0.5rem" }}>
                                                     <span>Subtotal:
-                                                        <span className="value">{formatPrice(totalCost - shippingFee)}</span>
+                                                        <span className="value">{formatPrice(subtotal)}</span>
                                                     </span>
                                                     <span>Shipping Fee:
                                                         <span className="value">{formatPrice(shippingFee)}</span>
@@ -409,7 +413,7 @@ const Cart = () => {
                                                     )}
                                                 </div>
                                                 <span>Total:</span>
-                                                <span className="value">{formatPrice(totalCost - discount)}</span>
+                                                <span className="value">{formatPrice(totalCost)}</span>
                                                 <button
                                                     onClick={handleBuy}
                                                     disabled={isLoading || products.length === 0 || totalCost === 0 || !paymentMethod}
