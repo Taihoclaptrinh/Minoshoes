@@ -124,12 +124,12 @@ const UserInfoPage = () => {
       if (!token) {
         throw new Error('No authentication token found');
       }
-
+  
       // Gọi API để xóa sản phẩm khỏi wishlist
       const response = await del(`/api/v1/auth/users/${user._id}/wishlist/${productId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
+  
       if (response.status === 200) {
         // Cập nhật state để xóa sản phẩm khỏi wishlist ngay lập tức
         setWishlist(prevWishlist => prevWishlist.filter(item => item._id !== itemId));
@@ -143,7 +143,7 @@ const UserInfoPage = () => {
       setError('Failed to delete item from wishlist. Please try again.');
     }
   };
-
+  
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -186,17 +186,17 @@ const UserInfoPage = () => {
     try {
       // Find the wishlist item with the provided itemId
       const item = wishlist.find(item => item._id === itemId);
-
+  
       if (!item) {
         throw new Error('Item not found in wishlist');
       }
-
+  
       // Use the product name to construct the query parameter
       const productName = encodeURIComponent(item.name);
-
+  
       // Navigate to the product page with the query parameter
       navigate(`/product?name=${productName}`);
-
+  
       // Make API call to add the item to the cart
       const response = await fetch('/api/v1/auth/cart/add-to-cart', {
         method: 'POST',
@@ -205,7 +205,7 @@ const UserInfoPage = () => {
         },
         body: JSON.stringify({ itemId }), // Pass the itemId to the API
       });
-
+  
       if (response.ok) {
         // If the request was successful, remove the item from the wishlist
         await handleDeleteWishlistItem(itemId);
@@ -218,8 +218,6 @@ const UserInfoPage = () => {
     }
   };
 
-
-
   const transformWishlistData = (wishlist) => {
     return wishlist.map((item) => ({
       id: item._id,
@@ -228,13 +226,6 @@ const UserInfoPage = () => {
       images: item.images,
     }));
   };
-
-  const wishlistColumns = [
-    { field: "images", headerName: "Images", width: 400 },
-    { field: "name", headerName: "Product Name", width: 200 },
-    { field: "price", headerName: "Price", width: 100 },
-    { field: "status", headerName: "Status", width: 150 },
-  ];
 
   // Hàm transform dữ liệu đơn hàng
   const transformOrderData = (orders) => {
@@ -262,6 +253,7 @@ const UserInfoPage = () => {
     { field: "totalPrice", headerName: "Total Price", width: 150 },
     { field: "shippingAddress", headerName: "Shipping Address", width: 300 },
     { field: "phone", headerName: "Phone", width: 150 },
+    { field: "paymentMethod", headerName: "Payment Method", width: 150 },
     { field: "status", headerName: "Status", width: 150 },
   ];
 

@@ -411,7 +411,7 @@ const Cart = () => {
                                                     />
                                                     <FontAwesomeIcon
                                                         icon={faCircleCheck} 
-                                                        style={{ fontSize: '38px', color: "#50c878", marginTop:"24px", display:"flex"}}
+                                                        style={{ fontSize: '38px', color: "#F98A09", marginTop:"24px", display:"flex"}}
                                                         onClick={handleApplyCoupon}
                                                         className="appli_coupon_icon"
                                                     />
