@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import "./Botchat.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments, faPaperPlane, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { get, post, put, del } from './config/api';
 
 const Botchat = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +19,7 @@ const Botchat = () => {
         setQuestion('');
 
         try {
-            const response = await axios.post('/api/v1/botchat/ask', { question });
+            const response = await post('/api/v1/botchat/ask', { question });
             setMessages(prev => [...prev, { type: 'bot', content: response.data.answer }]);
         } catch (error) {
             console.error('Error:', error);

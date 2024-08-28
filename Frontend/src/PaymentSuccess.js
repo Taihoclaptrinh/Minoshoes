@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { get, post, put, del } from './config/api';
 
@@ -50,7 +49,7 @@ const PaymentSuccess = () => {
     const clearCart = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.delete('/api/v1/auth/cart/clear', {
+        const response = await del('/api/v1/auth/cart/clear', {
           headers: { Authorization: `Bearer ${token}` }
         });
         return response.status === 200;

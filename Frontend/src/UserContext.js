@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import { get, post, put, del } from './config/api';
 
 export const UserContext = createContext();
 
@@ -42,7 +42,7 @@ export const UserProvider = ({ children }) => {
     const updateUser = async (newUserData) => {
         try {
             // Use the user's _id to make a request to the update API
-            const response = await axios.put(`/api/v1/auth/users/${user._id}`, newUserData, {
+            const response = await put(`/api/v1/auth/users/${user._id}`, newUserData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }

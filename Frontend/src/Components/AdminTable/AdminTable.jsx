@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios"; // Ensure you have axios installed
+import { get, post, put, del } from './config/api';
 
 const AdminList = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const AdminList = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('/api/v1/admin/get2orders'); // Update with your API endpoint
+      const response = await get('/api/v1/admin/get2orders'); // Update with your API endpoint
       let orders = response.data.orders.map(order => ({
         id: order._id,
         userEmail: order.email,
