@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { get, post, put, del } from './config/api';
+import { post, del } from './config/api';
 
 const PaymentSuccess = () => {
   const [error, setError] = useState(null);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import "./CSS/Product.css";
-import { get, post, put, del } from '../config/api';
+import { get, post } from '../config/api';
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from '../UserContext';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
@@ -60,7 +60,6 @@ const Product = () => {
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [cartCount, setCartCount] = useState(0);
-    const [loading, setLoading] = useState(true);
     const [showReviewForm, setShowReviewForm] = useState(false);
     const [showNoSizeSelectedPopup, setShowNoSizeSelectedPopup] = useState(false);
     const [showNoSizesStockPopup, setShowNoSizesStockPopup] = useState(false);
@@ -167,9 +166,6 @@ const Product = () => {
           console.error('Error adding product to wishlist:', error.response?.data || error.message);
           if (error.response?.status === 401) {
             Swal.fire('Error', 'Your session has expired. Please login again.', 'error');
-            // Optionally, you can redirect to the login page or clear the token
-            // localStorage.removeItem('token');
-            // navigate('/login');
           } else {
             Swal.fire('Error', 'Failed to add product to wishlist. Please try again.', 'error');
           }

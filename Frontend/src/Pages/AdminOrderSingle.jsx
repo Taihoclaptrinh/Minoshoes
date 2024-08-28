@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { get, post, put, del } from '../config/api';
+import { get, put } from '../config/api';
 import "./CSS/AdminOrderSingle.css";
 
 const AdminOrderSingle = () => {
@@ -41,14 +41,13 @@ const AdminOrderSingle = () => {
 
 
   const handleInputChange = (e) => {
-    setStatus(e.target.value); // Cập nhật trạng thái khi người dùng thay đổi
+    setStatus(e.target.value);
   };
 
   const toggleEditMode = () => {
-    setIsEditing(!isEditing); // Chuyển đổi giữa chế độ chỉnh sửa và chế độ xem
+    setIsEditing(!isEditing); 
   };
 
-  // nhớ sửa
   const saveChanges = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -62,7 +61,6 @@ const AdminOrderSingle = () => {
   
       console.log('Order status updated successfully:', response.data);
   
-      // Cập nhật trạng thái trong state
       setOrderData((prevData) => ({
         ...prevData,
         status: status,
@@ -142,10 +140,6 @@ const AdminOrderSingle = () => {
                         <span className="Order_single_item-value">{orderData.status}</span>
                       )}
                     </label>
-                    {/* <label>
-                      <span className="Order_Single_item-key">Status</span>
-                      <span className="Order_Single_item-value">{orderData.status}</span>
-                    </label>   */}
                   </div>
                   <div className="Order_Single_detail-item">
                     <label >
@@ -179,7 +173,6 @@ const AdminOrderSingle = () => {
                             <th>Quantity</th>
                             <th>Price</th>
                             <th>Size</th>
-                            {/* <th>Color</th> */}
                           </tr>
                         </thead>
                         <tbody>
@@ -189,7 +182,6 @@ const AdminOrderSingle = () => {
                               <td>{item.quantity}</td>
                               <td>{formatPrice(item.price)}</td>
                               <td>{item.size}</td>
-                              {/* <td>{item.color}</td> */}
                             </tr>
                           ))}
                         </tbody>

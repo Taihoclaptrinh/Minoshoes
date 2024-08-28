@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { get, post, put, del } from '../config/api';
 import "./CSS/Cart.css";
-import { json, Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.js';
 import Pop_up from '../Components/Popup/Popup.jsx';
-import { max } from "lodash";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faCircleCheck} from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
 const Cart = () => {
     const [products, setProducts] = useState([]);
@@ -212,7 +211,6 @@ const Cart = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const status = urlParams.get('status');
             const orderCode = urlParams.get('orderCode');
-            // const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
 
             if (status === 'PAID' && orderCode) {
                 const pendingOrder = JSON.parse(localStorage.getItem('pendingOrder'));
@@ -220,7 +218,6 @@ const Cart = () => {
                 if (pendingOrder) {
                     try {
                         pendingOrder.status = 'PAID'
-                        // Lưu trạng thái cập nhật vào localStorage
                         localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
 
                         const token = localStorage.getItem('token');
@@ -283,7 +280,6 @@ const Cart = () => {
                 email: user.email,
                 status: ''
             };
-            // alert(JSON.stringify(orderItems, null, 2));
 
             if (paymentMethod === 'COD') {
                 // Create the order immediately for COD

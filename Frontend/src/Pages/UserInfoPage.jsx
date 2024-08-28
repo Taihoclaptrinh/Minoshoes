@@ -3,7 +3,7 @@ import UserInfo from '../Components/UserInfo/UserInfo';
 import { useNavigate } from "react-router-dom";
 import { UserContext } from '../UserContext';
 import './CSS/UserInfoPage.css';
-import { get, post, put, del } from '../config/api';
+import { get, put, del } from '../config/api';
 
 const UserInfoPage = () => {
   const [activeSection, setActiveSection] = useState('details');

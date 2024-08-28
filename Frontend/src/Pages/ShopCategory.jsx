@@ -204,9 +204,6 @@ const ProductCategory = () => {
       console.error('Error adding product to wishlist:', error.response?.data || error.message);
       if (error.response?.status === 401) {
         Swal.fire('Error', 'Your session has expired. Please login again.', 'error');
-        // Optionally, you can redirect to the login page or clear the token
-        // localStorage.removeItem('token');
-        // navigate('/login');
       } else {
         Swal.fire('Error', 'Failed to add product to wishlist. Please try again.', 'error');
       }

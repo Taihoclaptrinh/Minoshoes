@@ -16,14 +16,14 @@ const AdminCouponSingle = () => {
       setError(null);
       try {
         const response = await get(`/api/v1/admin/coupons/${couponId}`);
-        console.log("API Response:", response); // Log the full response
+        console.log("API Response:", response); 
 
         if (!response || !response.data) {
           throw new Error("No data received from API");
         }
 
         const coupon = response.data.coupon || response.data;
-        console.log("Coupon data:", coupon); // Log the coupon data
+        console.log("Coupon data:", coupon); 
 
         if (!coupon || typeof coupon !== 'object') {
           throw new Error("Invalid coupon data structure");

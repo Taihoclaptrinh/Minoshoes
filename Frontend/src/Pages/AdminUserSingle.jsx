@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "./CSS/AdminSingle.css";
-import AdminChart from "../Components/AdminChart/AdminChart.jsx";
 import { useParams } from "react-router-dom";
-import { get, post, put, del } from '../config/api';
+import { get } from '../config/api';
 
 const AdminUserSingle = () => {
   const { userId } = useParams();
   const [formData, setFormData] = useState(null);
   const [previewImages, setPreviewImages] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await get(`/api/v1/admin/get-user/${userId}`);
-        const user = response.data.user; // Đảm bảo lấy dữ liệu từ user
+        const user = response.data.user;
         setFormData({
           id: user._id || "N/A",
           name: user.name || "N/A",
@@ -25,10 +24,8 @@ const AdminUserSingle = () => {
           role: user.role || "N/A",
           createAt: new Date(user.createdAt).toLocaleString() || "Invalid Date",
           images: ["https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/people.jpg"]
-          // images: user.images || [] // Assuming images is an array
         });
         setPreviewImages(["https://minoshoesstorage.blob.core.windows.net/minoshoesbackground/people.jpg"]);
-        // setPreviewImages(user.images || []);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -61,16 +58,6 @@ const AdminUserSingle = () => {
       images: imageUrls,
     }));
   };
-
-  // const toggleEditMode = () => {
-  //   setIsEditing(!isEditing);
-  // };
-
-  // const saveChanges = () => {
-  //   toggleEditMode();
-  //   console.log("Updated data:", formData);
-  //   // Update the backend here
-  // };
 
   if (!formData) return <div>Data not found</div>;
 

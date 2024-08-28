@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import "./Botchat.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments, faPaperPlane, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { get, post, put, del } from './config/api';
+import { get, post, put, del } from '../../config/api';
 
 const Botchat = () => {
     const [isOpen, setIsOpen] = useState(false);

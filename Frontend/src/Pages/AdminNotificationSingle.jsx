@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { get, post, put, del } from '../config/api';
+import { get } from '../config/api';
 import "./CSS/AdminOrderSingle.css";
 
 const AdminOrderSingle = () => {
@@ -125,7 +125,6 @@ const AdminOrderSingle = () => {
                               <td>{item.quantity}</td>
                               <td>{formatPrice(item.price)}</td>
                               <td>{item.size}</td>
-                              {/* <td>{item.color}</td> */}
                             </tr>
                           ))}
                         </tbody>

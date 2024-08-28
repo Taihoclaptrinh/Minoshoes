@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import "./CSS/LoginLogup.css";
 import AddressSelector from "../Components/Address/Address.jsx"
-import { get, post, put, del } from '../config/api';
+import { get, post } from '../config/api';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../UserContext.js'; // Ensure correct path
+import { UserContext } from '../UserContext.js';
 
 const LoginLogup = () => {
     const [showSignIn, setShowSignIn] = useState(true);
@@ -19,7 +19,7 @@ const LoginLogup = () => {
     const [address, setAddress] = useState({city: '', district: '', ward: ''});
         const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const { login } = useContext(UserContext); // Get login function from UserContext
+    const { login } = useContext(UserContext);
 
     const navigate = useNavigate();
 
@@ -47,13 +47,13 @@ const LoginLogup = () => {
     };
 
     const handleSignUpSubmit = async (e) => {
-        e.preventDefault(); // Ngăn chặn hành vi mặc định của form submit
-        setError(''); // Xóa lỗi cũ
-        setSuccess(''); // Xóa thông báo thành công cũ
+        e.preventDefault();
+        setError(''); 
+        setSuccess(''); 
     
         // Kiểm tra mã xác thực
         if (verificationCode !== providedCode) {
-            setError('Verification code is incorrect.'); // Hiển thị lỗi nếu mã xác thực không khớp
+            setError('Verification code is incorrect.'); 
             return;
         }
         

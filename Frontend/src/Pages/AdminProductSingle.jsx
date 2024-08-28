@@ -4,8 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { get, put } from '../config/api';
 
 const AdminProductSingle = () => {
-  const { productId } = useParams(); // Get the productId from the URL parameters
-  const navigate = useNavigate(); // Initialize useNavigate
+  const { productId } = useParams();
+  const navigate = useNavigate(); 
   const [formData, setFormData] = useState(null);
   const [previewImages, setPreviewImages] = useState([]);
   const [isEditing, setIsEditing] = useState(false);

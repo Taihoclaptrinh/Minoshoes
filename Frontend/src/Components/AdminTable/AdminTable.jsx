@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { get, post, put, del } from './config/api';
+import { get, post, put, del } from '../../config/api';
 
 const AdminList = () => {
   const navigate = useNavigate();

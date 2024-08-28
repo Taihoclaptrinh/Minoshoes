@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { get, post, put, del } from './config/api';
+import { put } from './config/api';
 
 export const UserContext = createContext();
 

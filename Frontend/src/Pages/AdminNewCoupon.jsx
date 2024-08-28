@@ -3,7 +3,6 @@ import "./CSS/AdminNew.css";
 import { post } from '../config/api'; // Ensure this path is correct
 import { couponInputs } from '../formSource'; // Import the couponInputs configuration
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { string } from "prop-types";
 
 const AdminNewCoupon = ({ title, formType }) => {
   // Initialize formData from couponInputs
@@ -66,28 +65,6 @@ const AdminNewCoupon = ({ title, formType }) => {
           <h1>{title}</h1>
         </div>
         <div className="bottom">
-          {/* <div className="left">
-            {formType === "product" && previewImages.length > 0 ? (
-              <div className="imagePreviewContainer">
-                {previewImages.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`Preview ${index}`}
-                    className="imagePreview"
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="imagePreviewContainer">
-                <img
-                  src="https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
-                  alt="No Preview"
-                  className="imagePreview"
-                />
-              </div>
-            )}
-          </div> */}
           <div className="right">
             <form onSubmit={handleSubmit}>
               {couponInputs.map((input) => (
