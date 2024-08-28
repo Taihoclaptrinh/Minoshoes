@@ -144,7 +144,6 @@ export const getUserOrders = async (req, res) => {
 // Update order status
 export const updateOrderStatus = async (req, res) => {
     try {
-        // const { status, cancellationReason, orderId } = req.body;
         const { status, cancellationReason } = req.body;
         const { orderId } = req.params; // Sử dụng orderId từ params
         // Kiểm tra yêu cầu cần các thông tin cơ bản
@@ -161,7 +160,7 @@ export const updateOrderStatus = async (req, res) => {
 
         // Cập nhật trạng thái đơn hàng
         order.status = status;
-        
+        console.log(status);
         if (status === 'Cancelled') {
             order.canceledAt = Date.now();
             order.cancellationReason = cancellationReason;
@@ -173,15 +172,15 @@ export const updateOrderStatus = async (req, res) => {
         } else if (status === 'Delivered') {
             order.deliveredAt = Date.now();
         }
-
+        
         // Lưu thay đổi vào cơ sở dữ liệu
         const updatedOrder = await order.save();
+        console.log(updatedOrder)
         res.status(200).json(updatedOrder);
     } catch (error) {
         res.status(500).json({ message: 'Failed to update order status', error: error.message });
     }
 };
-
 
 // Delete an order
 export const deleteOrder = async (req, res) => {

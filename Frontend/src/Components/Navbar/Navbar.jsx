@@ -159,7 +159,6 @@ const Navbar = () => {
                     <Link to='/'><img src={logo} alt="" style={{ height: "80px" }} /></Link>
                 </div>
                 <ul className="nav-menu" style={{ opacity: searchVisible ? 0 : 1 }}>
-                    {/* thêm api vào onClick, tương tự với các mục click khác */}
                     <li class="nav-item" onClick={() => { setMenu("men") }}><Link style={{ textDecoration: 'none', color: 'black' }} to='men'>MEN</Link>{menu === "men"}
                         <div className="dropdown-container">
                             <div class="dropdown">
