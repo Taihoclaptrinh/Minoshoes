@@ -3,6 +3,7 @@ import "./CSS/AdminNew.css";
 import { post } from '../config/api'; // Ensure this path is correct
 import { couponInputs } from '../formSource'; // Import the couponInputs configuration
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { string } from "prop-types";
 
 const AdminNewCoupon = ({ title, formType }) => {
   // Initialize formData from couponInputs
@@ -34,44 +35,29 @@ const AdminNewCoupon = ({ title, formType }) => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      if (formData.productImages.length > 0) {
-        const fileData = new FormData();
-        Array.from(formData.productImages).forEach((file) => {
-          fileData.append('images', file);
-        });
-  
-        // Upload images
-        const uploadResponse = await post('/api/v1/auth/upload', fileData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        const { imageUrls } = uploadResponse.data;
-  
-        // Prepare other product data
-        const productData = {
-          code: formData.productCode,
-          discountValue: Number(formData.discountValue),
-          startDate: formData.startDate,
-          endDate: formData.endDate,
-          usageCount: formData.usageCount,
-          usageLimit: formData.usageLimit,
-        };
-  
-        // Submit product data
-        const response = await post('/api/v1/auth/products', productData);
-        console.log('Product created successfully:', response.data);
-        navigate('/admin/products');
-      } else {
-        alert("Please upload at least one image.");
-      }
+      // Prepare other product data
+      const couponData = {
+        code: formData.couponCode,
+        discountValue: Number(formData.discountValue),
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        usageCount: formData.usageCount,
+        usageLimit: formData.usageLimit,
+      };
+
+      // Submit product data
+      alert(JSON.stringify(couponData));
+      const token = localStorage.getItem('token');
+      const response = await post('/api/v1/admin/coupons', couponData, { headers: { Authorization: `Bearer ${token}` } });
+      console.log('Coupon created:', response.data);
+      navigate('/admin/coupons');
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error('Error creating coupon:', error);
     }
   };
-  
+
 
   return (
     <div className="AdminNew">
@@ -125,8 +111,8 @@ const AdminNewCoupon = ({ title, formType }) => {
                   )}
                 </div>
               ))}
-              <div style={{display:"flex", justifyContent:"center", width:"100%"}}>
-              <button type="submit">Submit</button>
+              <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                <button type="submit">Submit</button>
               </div>
             </form>
           </div>
