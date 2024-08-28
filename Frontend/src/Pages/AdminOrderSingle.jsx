@@ -53,10 +53,10 @@ const AdminOrderSingle = () => {
     try {
       const token = localStorage.getItem('token');
       const updatedData = { status }; // Chỉ gửi trạng thái mới
-  
+      alert(status)
       const response = await put(`/api/v1/orders/${orderId}/status`, {
-        status: 'Delivered' // Không cần gửi cancellationReason
-      }, { 
+        status: status,
+        }, { 
         headers: { Authorization: `Bearer ${token}` }
       });
   
@@ -137,7 +137,6 @@ const AdminOrderSingle = () => {
                         >
                           <option value="Pending">Pending</option>
                           <option value="Delivered">Delivered</option>
-                          <option value="Cancelled">Cancelled</option>
                         </select>
                       ) : (
                         <span className="Order_single_item-value">{orderData.status}</span>
