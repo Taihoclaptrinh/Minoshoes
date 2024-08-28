@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import "./CSS/AdminNew.css";
 import { post } from '../config/api'; // Ensure this path is correct
-import { productInputs } from '../formSource'; // Import the productInputs configuration
+import { couponInputs } from '../formSource'; // Import the couponInputs configuration
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-const AdminNew = ({ title, formType }) => {
-  // Initialize formData from productInputs
+const AdminNewCoupon = ({ title, formType }) => {
+  // Initialize formData from couponInputs
   const [formData, setFormData] = useState(() =>
-    productInputs.reduce((acc, input) => ({
+    couponInputs.reduce((acc, input) => ({
       ...acc,
       [input.id]: input.type === "file" ? [] : "",
     }), {})
@@ -53,17 +53,11 @@ const AdminNew = ({ title, formType }) => {
         // Prepare other product data
         const productData = {
           code: formData.productCode,
-          discountValue: formData.productName,
-          description: formData.productDescription,
-          price: Number(formData.productPrice),
-          brand: formData.productBrand,
-          category: formData.productCategory,
-          sizes: formData.productSizes.split(',').map(size => size.trim()),
-          color: formData.productColor.split(',').map(color => color.trim()),
-          stocks: formData.productStocks.split(',').map(stock => Number(stock.trim())),
-          images: imageUrls,
-          createdAt: formData.productCreateAt,
-          updatedAt: formData.productUpdateAt,
+          discountValue: Number(formData.discountValue),
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          usageCount: formData.usageCount,
+          usageLimit: formData.usageLimit,
         };
   
         // Submit product data
@@ -86,7 +80,7 @@ const AdminNew = ({ title, formType }) => {
           <h1>{title}</h1>
         </div>
         <div className="bottom">
-          <div className="left">
+          {/* <div className="left">
             {formType === "product" && previewImages.length > 0 ? (
               <div className="imagePreviewContainer">
                 {previewImages.map((image, index) => (
@@ -107,10 +101,10 @@ const AdminNew = ({ title, formType }) => {
                 />
               </div>
             )}
-          </div>
+          </div> */}
           <div className="right">
             <form onSubmit={handleSubmit}>
-              {productInputs.map((input) => (
+              {couponInputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
                   {input.type === "file" ? (
@@ -131,7 +125,9 @@ const AdminNew = ({ title, formType }) => {
                   )}
                 </div>
               ))}
+              <div style={{display:"flex", justifyContent:"center", width:"100%"}}>
               <button type="submit">Submit</button>
+              </div>
             </form>
           </div>
         </div>
@@ -140,4 +136,4 @@ const AdminNew = ({ title, formType }) => {
   );
 };
 
-export default AdminNew;
+export default AdminNewCoupon;

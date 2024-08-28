@@ -25,7 +25,7 @@ import AdminOrderSingle from "./Pages/AdminOrderSingle";
 import AdminCouponSingle from "./Pages/AdminCouponSingle";
 import AdminNotificationSingle from "./Pages/AdminNotificationSingle";
 
-import AdminNewOrder from "./Pages/AdminNewOrder"
+import AdminNewCoupon from "./Pages/AdminNewCoupon"
 import AdminNew from "./Pages/AdminNew";
 
 // Shop Components
@@ -66,7 +66,7 @@ const AdminApp = () => (
           <Route path="coupons">
             <Route index element={<AdminCouponList />} />
             <Route path=":couponId" element={<AdminCouponSingle />} />
-            <Route path="new" element={<AdminNewOrder title="Add New Coupon" formType="coupon" />} />
+            <Route path="new" element={<AdminNewCoupon title="Add New Coupon" formType="coupon" />} />
           </Route>
           <Route path="notifications">
             <Route index element={<AdminNotificationList />} />

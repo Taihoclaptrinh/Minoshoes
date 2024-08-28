@@ -123,16 +123,16 @@ export const productInputs = [
     placeholder: "Upload images",
     multiple: true,
   },
-  {
-    id: 'productCreateAt', // Unique ID
-    label: "Created At",
-    type: "date",
-  },
-  {
-    id: 'productUpdateAt', // Unique ID
-    label: "Updated At",
-    type: "date",
-  },
+  // {
+  //   id: 'productCreateAt', // Unique ID
+  //   label: "Created At",
+  //   type: "date",
+  // },
+  // {
+  //   id: 'productUpdateAt', // Unique ID
+  //   label: "Updated At",
+  //   type: "date",
+  // },
 ];
 export const orderInputs = [
   {
