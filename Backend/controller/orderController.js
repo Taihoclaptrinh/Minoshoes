@@ -144,8 +144,9 @@ export const getUserOrders = async (req, res) => {
 // Update order status
 export const updateOrderStatus = async (req, res) => {
     try {
-        const { status, cancellationReason, orderId } = req.body;
-
+        // const { status, cancellationReason, orderId } = req.body;
+        const { status, cancellationReason } = req.body;
+        const { orderId } = req.params; // Sử dụng orderId từ params
         // Kiểm tra yêu cầu cần các thông tin cơ bản
         if (!orderId) {
             return res.status(400).json({ message: 'Order ID is required' });

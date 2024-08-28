@@ -94,7 +94,7 @@ const AdminNotificationDatatable = () => {
   return (
     <div className="AdminDatatable">
       <div className="datatableTitle">
-        Orders
+        Notifications
       </div>
       <DataGrid
         className="datagrid"

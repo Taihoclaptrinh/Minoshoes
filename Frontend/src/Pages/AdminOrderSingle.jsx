@@ -6,7 +6,9 @@ import "./CSS/AdminOrderSingle.css";
 const AdminOrderSingle = () => {
   const { orderId } = useParams(); // Get the orderId from the URL parameters
   const [orderData, setOrderData] = useState(null);
-  
+  const [isEditing, setIsEditing] = useState(false); // Kiểm soát chế độ chỉnh sửa
+  const [status, setStatus] = useState(""); // Trạng thái đơn hàng
+
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN') + " VND";
   };
@@ -28,6 +30,7 @@ const AdminOrderSingle = () => {
           createdAt: new Date(order.createdAt).toLocaleString() || "Invalid Date",
           updatedAt: new Date(order.updatedAt).toLocaleString() || "Invalid Date",
         });
+        setStatus(order.status || "N/A");
       } catch (error) {
         console.error("Error fetching order data:", error);
       }
@@ -35,6 +38,42 @@ const AdminOrderSingle = () => {
 
     fetchOrderData();
   }, [orderId]);
+
+
+  const handleInputChange = (e) => {
+    setStatus(e.target.value); // Cập nhật trạng thái khi người dùng thay đổi
+  };
+
+  const toggleEditMode = () => {
+    setIsEditing(!isEditing); // Chuyển đổi giữa chế độ chỉnh sửa và chế độ xem
+  };
+
+  // nhớ sửa
+  const saveChanges = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const updatedData = { status }; // Chỉ gửi trạng thái mới
+  
+      const response = await put(`/api/v1/orders/${orderId}/status`, {
+        status: 'Delivered' // Không cần gửi cancellationReason
+      }, { 
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
+      console.log('Order status updated successfully:', response.data);
+  
+      // Cập nhật trạng thái trong state
+      setOrderData((prevData) => ({
+        ...prevData,
+        status: status,
+      }));
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating order status:', error.response ? error.response.data : error.message);
+      alert('Failed to update order status. Check console for details.');
+    }
+  };
+  
 
   if (!orderData) return <div>Data not found</div>;
 
@@ -44,6 +83,14 @@ const AdminOrderSingle = () => {
         <div className="top">
           <div className="left">
             <h1 className="title">Order Information</h1>
+            <div className="Order_Single_detail-item">
+            <button className="edit-button"  onClick={toggleEditMode}>
+              {isEditing  ? "Cancel" : "Edit"}
+            </button>
+            {isEditing  && (
+                <button className="save-button" type="button" onClick={saveChanges}>Save</button>
+            )}
+            </div>
             <div className="item">
               <div className="Order_Single_details">
                 <form>
@@ -79,9 +126,27 @@ const AdminOrderSingle = () => {
                   </div>
                   <div className="Order_Single_detail-item">
                     <label>
+                      <span className="Order_Single_item-key">Status:</span>
+                      {isEditing ? (
+                        <select
+                          id="status"
+                          name="status"
+                          value={status}
+                          onChange={handleInputChange}
+                          className="item-value"
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Delivered">Delivered</option>
+                          <option value="Cancelled">Cancelled</option>
+                        </select>
+                      ) : (
+                        <span className="Order_single_item-value">{orderData.status}</span>
+                      )}
+                    </label>
+                    {/* <label>
                       <span className="Order_Single_item-key">Status</span>
                       <span className="Order_Single_item-value">{orderData.status}</span>
-                    </label>  
+                    </label>   */}
                   </div>
                   <div className="Order_Single_detail-item">
                     <label >

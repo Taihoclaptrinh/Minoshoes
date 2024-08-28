@@ -5,6 +5,8 @@ import { json, Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.js';
 import Pop_up from '../Components/Popup/Popup.jsx';
 import { max } from "lodash";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faCircleCheck} from '@fortawesome/free-solid-svg-icons';
 
 const Cart = () => {
     const [products, setProducts] = useState([]);
@@ -14,6 +16,8 @@ const Cart = () => {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [showPopup, setShowPopup] = useState(false);
+    const [showCouponAppliedPopup, setShowCouponAppliedPopup] = useState(false)
+    const [showCouponInvalidPopup, setShowCouponInvalidPopup] = useState(false)
     const [shippingFee, setShippingFee] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState('--');
     const [showStockWarning, setShowStockWarning] = useState(false)
@@ -98,11 +102,13 @@ const Cart = () => {
             const { data } = await post('/api/v1/auth/cart/apply-coupon', { couponCode }, { headers: { Authorization: `Bearer ${token}` } });
             setCart(data.cart);
             setDiscount(data.discountAmount);
-            setMessage('Coupon applied successfully!');
+            setShowCouponAppliedPopup(true);
+            // setMessage('Coupon applied successfully!');
             calculateTotalCost();
         } catch (error) {
             console.error('Error applying coupon:', error);
-            setMessage(error.response?.data.message || 'Failed to apply coupon.');
+            // setMessage(error.response?.data.message || 'Failed to apply coupon.');
+            setShowCouponInvalidPopup(true);
         }
     };
     
@@ -193,7 +199,8 @@ const Cart = () => {
 
     const handleClosePopup = () => {
         setShowStockWarning(false);
-
+        setShowCouponAppliedPopup(false);
+        setShowCouponInvalidPopup(false);
     };
 
     useEffect(() => {
@@ -364,11 +371,19 @@ const Cart = () => {
                                                     ))}
                                                 </table>
                                             </div>
-                                            <p style={{ borderTop: "1px solid black", paddingTop: "1rem" }}>Total Items: {totalItems}</p>
-                                            <p style={{ marginTop: "0.5rem" }}>Address: {user.address || "Address not provided"}</p>
-                                            <p style={{ marginTop: "0.5rem" }}>Shipping Fee: {formatPrice(shippingFee)}</p>
+                                            <p style={{paddingTop:"1rem", borderTop: "1px solid black"}}>
+                                                <span style={{paddingLeft: "3rem", marginBottom: "1rem", fontWeight:"700" }}> Total Items:
+                                                    <span className="value" style={{fontWeight:"400" }} > {totalItems}</span>
+                                                </span>
+                                            </p>
+                                            <p>
+                                                <span style={{paddingLeft: "3rem", fontWeight:"700" }}>Address: 
+                                                    <span className="value" style={{fontWeight:"400" }} > {user.address || "Address not provided"}</span>
+                                                </span>
+                                            </p>
+                                            {/* <p style={{ marginTop: "0.5rem" }}>Shipping Fee: {formatPrice(shippingFee)}</p> */}
                                             <div className="payment-discount-container">
-                                                <div className="payment-discount-row">
+                                                <div className="payment-discount-row" style={{marginBottom: "-1rem"}}>
                                                     <label htmlFor="payment-method">Payment Method</label>
                                                     <select
                                                         id="payment-method"
@@ -380,7 +395,7 @@ const Cart = () => {
                                                         <option value="E-Banking">E-Banking</option>
                                                     </select>
                                                 </div>
-                                                <div className="payment-discount-row">
+                                                <div className="payment-discount-row" style={{marginBottom: "-1rem"}}>
                                                     <label htmlFor="discount-code">Discount Code</label>
                                                     <input
                                                         type="text"
@@ -388,27 +403,35 @@ const Cart = () => {
                                                         placeholder="G-"
                                                         value={couponCode}
                                                         onChange={(e) => setCouponCode(e.target.value)}
+                                                        style={{fontSize:"1.2rem"}}
                                                     />
-                                                    <button onClick={handleApplyCoupon}>Apply Coupon</button>
+                                                    <FontAwesomeIcon
+                                                        icon={faCircleCheck} 
+                                                        style={{ fontSize: '38px', color: "#50c878", marginTop:"24px", display:"flex"}}
+                                                        onClick={handleApplyCoupon}
+                                                        className="appli_coupon_icon"
+                                                    />
+                                                    
+                                                    {/* <button >Apply Coupon</button> */}
                                                 </div>
                                             </div>
                                             {message && <div className="message">{message}</div>}
                                             {error && <div className="error-message">{error}</div>}
                                             <div className="cart-total">
                                                 <div className="element-total" style={{ marginBottom: "0.5rem" }}>
-                                                    <span>Subtotal:
+                                                    <span style={{ marginBottom: "0.5rem" }}>Subtotal:
                                                         <span className="value">{formatPrice(totalCost - shippingFee)}</span>
-                                                    </span>
-                                                    <span>Shipping Fee:
+                                                    </span >
+                                                    <span style={{ marginBottom: "0.5rem" }}>Shipping Fee:
                                                         <span className="value">{formatPrice(shippingFee)}</span>
                                                     </span>
                                                     {discount > 0 && (
-                                                        <span>Discount:
+                                                        <span style={{ marginBottom: "0.5rem" }}>Discount:
                                                             <span className="value">-{formatPrice(discount)}</span>
                                                         </span>
                                                     )}
                                                 </div>
-                                                <span>Total:</span>
+                                                <span >Total:</span>
                                                 <span className="value">{formatPrice(totalCost - discount)}</span>
                                                 <button
                                                     onClick={handleBuy}
@@ -449,6 +472,24 @@ const Cart = () => {
                     isSuccess={false}
                     review="Not enough items !"
                     message={`Sorry, only ${stockAvailable} item(s) available for size ${warningSize}`}
+                    confirm="Confirm"
+                    onClose={handleClosePopup}
+                />
+            }
+            {showCouponAppliedPopup &&
+                <Pop_up
+                    isSuccess={true}
+                    review="Coupon applied successfully!"
+                    // message={``}
+                    confirm="Confirm"
+                    onClose={handleClosePopup}
+                />
+            }
+            {showCouponInvalidPopup &&
+                <Pop_up
+                    isSuccess={false}
+                    review="Coupon Invalid!"
+                    message={`Please enter the correct Coupon Code!`}
                     confirm="Confirm"
                     onClose={handleClosePopup}
                 />
