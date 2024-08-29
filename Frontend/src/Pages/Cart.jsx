@@ -58,7 +58,7 @@ const Cart = () => {
         if (address && address.toLowerCase().includes('hồ chí minh')) {
             return 0;
         }
-        return 0;
+        return 30000;
     };
 
     useEffect(() => {
@@ -292,7 +292,7 @@ const Cart = () => {
                     if (cleared) {
                         setShowPopup(true);
                     } else {
-                        setError('Order created but failed to clear cart. Please refresh the page.');
+                        // setError('Order created but failed to clear cart. Please refresh the page.');
                     }
                 } else {
                     throw new Error('Failed to create order');
