@@ -13,10 +13,13 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
   const [cancelReason, setCancelReason] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('COD');
   const [bankAccount, setBankAccount] = useState('');
+  const [bankName, setBankName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const formatPrice = (price) => {
+    return price.toLocaleString('vi-VN') + " VND";
+  };
   const handleEdit = () => setIsEditing(true);
   const handleSave = () => {
     if (validateUser()) {
@@ -47,13 +50,6 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
     const { name, value } = e.target;
     setUpdatedUser({ ...updatedUser, [name]: value });
   };
-
-  // const handleAddressChange = (city, district, ward, street, index) => {
-  //   const newAddresses = updatedUser.addresses.map((address, i) =>
-  //     i === index ? { city, district, ward, street } : address
-  //   );
-  //   setUpdatedUser({ ...updatedUser, addresses: newAddresses });
-  // };
 
   const handleCancel = async (orderId, status) => {
     if (status !== 'Pending') {
@@ -94,7 +90,6 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
   const handleCancelConfirm = async () => {
     try {
       const localUser = JSON.parse(localStorage.getItem('user'));
-      // Input email in local storage
       const correct_email = localUser.email;
 
       // Validate password (you'd need to implement this check against your backend)
@@ -102,6 +97,24 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
 
       if (!isValidCredentials) {
         Swal.fire('Error', 'Invalid email or password. Try again!', 'error');
+        return;
+      }
+
+      // Validate payment method
+      const orderResponse = await fetch(`/api/v1/orders/get-order/${cancellingOrderId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!orderResponse.ok) {
+        throw new Error('Failed to fetch order details');
+      }
+
+      const orderData = await orderResponse.json();
+
+      if (orderData.paymentMethod !== paymentMethod) {
+        Swal.fire('Error', 'Selected payment method does not match the order\'s payment method.', 'error');
         return;
       }
 
@@ -138,8 +151,9 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
         // Call the onCancelOrder function passed as prop
         await onCancelOrder({
           orderId: cancellingOrderId,
-          reason: cancelReason,
+          reason: cancelReason + (paymentMethod === 'E-Banking' ? ` | Bank Name: ${bankName} | Bank Account: ${bankAccount}` : ''),
           paymentMethod,
+          bankName: paymentMethod === 'E-Banking' ? bankName : undefined,
           bankAccount: paymentMethod === 'E-Banking' ? bankAccount : undefined
         });
 
@@ -147,6 +161,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
         setCancellingOrderId(null);
         setCancelReason('');
         setPaymentMethod('COD');
+        setBankName('');
         setBankAccount('');
         setPassword('');
       }
@@ -159,13 +174,13 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
     }
   };
 
+
+
   const validateCredentials = async (correct_email, email, password) => {
     try {
-      const token = localStorage.getItem('token');
       const response = await post(
         '/api/v1/auth/validateCredentials',
-        { correct_email, email, password },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { correct_email, email, password }
       );
 
       return response.isValid;
@@ -264,7 +279,7 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
             <img src={item.images[0]} alt={item.name} className="product-image-wishlist" />
             <div className="product-info-wishlist">
               <h3>{item.name}</h3>
-              <p>${item.price.toFixed(2)}</p>
+              <p>{formatPrice(item.price)}</p>
             </div>
             <div className="product-actions">
               <CartIcon
@@ -312,7 +327,6 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
           rowsPerPageOptions={[5, 10, 20]}
           autoHeight
         />
-        {/* {cancellingOrderId !== null && ( */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <div className="cancel-form">
             <h3>Cancel Order</h3>
@@ -355,20 +369,30 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
                 </select>
               </label>
               {paymentMethod === 'E-Banking' && (
-                <label>
-                  Bank Account:
-                  <input
-                    type="text"
-                    value={bankAccount}
-                    onChange={(e) => setBankAccount(e.target.value)}
-                    required
-                  />
-                </label>
+                <>
+                  <label>
+                    Bank Name:
+                    <input
+                      type="text"
+                      value={bankName}
+                      onChange={(e) => setBankName(e.target.value)}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Bank Account:
+                    <input
+                      type="text"
+                      value={bankAccount}
+                      onChange={(e) => setBankAccount(e.target.value)}
+                      required
+                    />
+                  </label>
+                </>
               )}
               <button
                 type="submit"
                 className="confirm-cancel"
-              // onClick={() => setIsModalOpen(false)}
               >
                 Confirm
               </button>
@@ -381,11 +405,12 @@ const UserInfo = ({ user, type, orders, orderColumns, onUpdateUser, onCancelOrde
               </button>
             </form>
           </div>
-          {/* )} */}
         </Modal>
       </div>
     </>
   );
+
+
 
   const renderSection = () => {
     switch (type) {

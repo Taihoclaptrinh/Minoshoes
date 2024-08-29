@@ -4,43 +4,46 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import { get, post, put, del } from '../../config/api';
-const AdminOrderDatatable = () => {
+const AdminNotificationDatatable = () => {
   const [data, setData] = useState([]);
 
   const orderColumns = [
     { field: 'id', headerName: 'Order ID', width: 200 },
     { field: 'userEmail', headerName: 'User Email', width: 250 },
     { field: 'totalItems', headerName: 'Total Items', width: 150 },
-    { field: 'address', headerName: 'Address', width: 400 },
-    { field: 'phoneNumber', headerName: 'Phone Number', width: 150 },
     { field: 'paymentMethod', headerName: 'Payment Method', width: 150 },
     { field: 'totalPrice', headerName: 'Total Price', width: 150 },
     { field: 'status', headerName: 'Status', width: 150 },
-    { field: 'createdAt', headerName: 'Created At', width: 200 },
+    { field: 'canceledAt', headerName: 'Canceled At', width: 200 },
+    { field: 'cancellationReason', headerName: 'Reason', width: 200 },
   ];
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await get('/api/v1/admin/orders');
-        const orders = response.data.orders.map(order => ({
+  const fetchOrders = async () => {
+    try {
+      const response = await get('/api/v1/admin/orders');
+      
+      // Lọc các đơn hàng có trạng thái là 'Cancelled'
+      const cancelledOrders = response.data.orders
+        .filter(order => order.status === 'Cancelled')
+        .map(order => ({
           id: order._id,
           userId: order.user._id,
           userEmail: order.user.email,
-          address: order.shippingAddress.address || '',
-          phoneNumber: order.shippingAddress.phoneNumber || '',
           paymentMethod: order.paymentMethod,
           totalPrice: order.totalPrice,
           totalItems: order.orderItems.reduce((total, item) => total + item.quantity, 0), // Compute total items
           status: order.status,
-          createdAt: new Date(order.createdAt).toLocaleString(),
+          canceledAt: new Date(order.canceledAt).toLocaleString(),
+          cancellationReason: order.cancellationReason
         }));
-        setData(orders);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
 
+      setData(cancelledOrders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchOrders();
   }, []);
 
@@ -91,7 +94,7 @@ const AdminOrderDatatable = () => {
   return (
     <div className="AdminDatatable">
       <div className="datatableTitle">
-        Orders
+        Notifications
       </div>
       <DataGrid
         className="datagrid"
@@ -105,4 +108,4 @@ const AdminOrderDatatable = () => {
   );
 };
 
-export default AdminOrderDatatable;
+export default AdminNotificationDatatable;

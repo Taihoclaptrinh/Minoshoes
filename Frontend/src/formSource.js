@@ -123,16 +123,16 @@ export const productInputs = [
     placeholder: "Upload images",
     multiple: true,
   },
-  {
-    id: 'productCreateAt', // Unique ID
-    label: "Created At",
-    type: "date",
-  },
-  {
-    id: 'productUpdateAt', // Unique ID
-    label: "Updated At",
-    type: "date",
-  },
+  // {
+  //   id: 'productCreateAt', // Unique ID
+  //   label: "Created At",
+  //   type: "date",
+  // },
+  // {
+  //   id: 'productUpdateAt', // Unique ID
+  //   label: "Updated At",
+  //   type: "date",
+  // },
 ];
 export const orderInputs = [
   {
@@ -191,31 +191,32 @@ export const couponInputs = [
     placeholder: "Enter coupon code",
   },
   {
-    id: 'couponDiscountValue',
+    id: 'discountValue',
     label: "Discount Value",
     type: "number",
     placeholder: "Enter discount value",
     min: 0, // Ensure non-negative values
   },
   {
-    id: 'couponStartDate',
+    id: 'startDate',
     label: "Start Date",
     type: "date",
   },
   {
-    id: 'couponEndDate',
+    id: 'endDate',
     label: "End Date",
     type: "date",
   },
   {
-    id: 'couponUsageCount',
+    id: 'usageCount',
     label: "Usage Count",
     type: "number",
     placeholder: "Enter usage count",
+    default: 0, // Default value
     min: 0, // Ensure non-negative values
   },
   {
-    id: 'couponUsageLimit',
+    id: 'usageLimit',
     label: "Usage Limit",
     type: "number",
     placeholder: "Enter usage limit",

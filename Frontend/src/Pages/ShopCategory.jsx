@@ -22,6 +22,7 @@ const ProductCategory = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchCompleted, setSearchCompleted] = useState(false);
   const [filteredAndSortedProducts, setFilteredAndSortedProducts] = useState([]);
+  const [noProductsFound, setNoProductsFound] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,8 +58,10 @@ const ProductCategory = () => {
     }
     setProductData(response.data);
     setTotalPages(Math.ceil(response.data.length / productsPerPage));
+    setNoProductsFound(response.data.length === 0);
   } catch (error) {
     console.error('Error fetching products:', error);
+    setNoProductsFound(true);
   } finally {
     setLoading(false);
   }
@@ -76,13 +79,15 @@ const ProductCategory = () => {
     const end = start + productsPerPage;
     const sliced = sorted.slice(start, end);
     setFilteredAndSortedProducts(sliced);
+    setNoProductsFound(sliced.length === 0);
   }, [productData, selectedColors, selectedSizes, selectedBrands, selectedGender, priceRange, sortedBy, currentPage]);
 
   useEffect(() => {
-    if (location.pathname === '/new-arrivals') {
+    if (location.pathname === '/new-arrivals' && !location.search && !location.hash) {
       setSortedBy(['Newest']);
     }
-  }, [location.pathname]);
+  }, [location.pathname, location.search, location.hash]);
+  
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -100,10 +105,12 @@ const ProductCategory = () => {
     const value = Number(e.target.value);
     setMaxPrice(value);
     setPriceRange([priceRange[0], value]);
+    setCurrentPage(1); 
   };
 
   const handleSortChange = (sortOption) => {
     setSortedBy([sortOption]);
+    setCurrentPage(1); 
   };
 
   const handleSizeChange = (size) => {
@@ -112,6 +119,7 @@ const ProductCategory = () => {
         ? prevSelectedSizes.filter((s) => s !== size)
         : [...prevSelectedSizes, size]
     );
+    setCurrentPage(1); 
   };
   const handleBrandChange = (brand) => {
     setSelectedBrands((prevSelectedBrands) =>
@@ -119,6 +127,7 @@ const ProductCategory = () => {
         ? prevSelectedBrands.filter((b) => b !== brand)
         : [...prevSelectedBrands, brand]
     );
+    setCurrentPage(1); 
   };
 
   const handleGenderChange = (gender) => {
@@ -127,6 +136,7 @@ const ProductCategory = () => {
         ? prevSelectedGender.filter((g) => g !== gender)
         : [...prevSelectedGender, gender]
     );
+    setCurrentPage(1); 
   };
 
   const filterProducts = (products) => {
@@ -204,9 +214,6 @@ const ProductCategory = () => {
       console.error('Error adding product to wishlist:', error.response?.data || error.message);
       if (error.response?.status === 401) {
         Swal.fire('Error', 'Your session has expired. Please login again.', 'error');
-        // Optionally, you can redirect to the login page or clear the token
-        // localStorage.removeItem('token');
-        // navigate('/login');
       } else {
         Swal.fire('Error', 'Failed to add product to wishlist. Please try again.', 'error');
       }
@@ -225,10 +232,10 @@ const ProductCategory = () => {
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "10%" }}>
               <Loader />
             </div>
-          ) : searchCompleted && filteredAndSortedProducts.length === 0 ? (
+          ) : noProductsFound ? (
             <div className="no-results">
               <p style={{ color: "red", fontSize: "1.5rem" }}>
-                Sorry, we don't have the product you are looking for :_(
+                Sorry, we don't have the product you are looking for :(
               </p>
             </div>
           ) : (

@@ -62,8 +62,6 @@ const AdminNew = ({ title, formType }) => {
           color: formData.productColor.split(',').map(color => color.trim()),
           stocks: formData.productStocks.split(',').map(stock => Number(stock.trim())),
           images: imageUrls,
-          createdAt: formData.productCreateAt,
-          updatedAt: formData.productUpdateAt,
         };
   
         // Submit product data

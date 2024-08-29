@@ -31,7 +31,9 @@
     margin: 1.5rem;
     box-sizing: border-box;
     width: 45.7rem;
+    height: auto;
     min-height: 55rem;
+    /* max-height: 57rem; */
     flex-shrink: 0;
     border-radius: 60px;
     background: #F6F6F6;
@@ -64,10 +66,6 @@
     line-height: normal;
     padding-bottom: 1rem;
     border-bottom: 1px solid black;
-}
-.cart p {
-    padding-left: 3rem;
-    /* margin-bottom: 0.5rem; */
 }
 .cart_products-container {
     height: 15rem;
@@ -151,7 +149,17 @@
     flex: 1;
     margin-left: 12rem;
     padding: 5px;
-    font-size: 1rem; /* Adjust font size if needed */
+    font-size: 1.2rem; /* Adjust font size if needed */
+}
+.payment-discount-row .appli_coupon_icon {
+    background-color: transparent; 
+    border-radius: 50%;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(131, 128, 128, 0.7);
+}
+.payment-discount-row .appli_coupon_icon:hover {
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), -1px -1px 3px rgba(131, 128, 128, 0.7);
+    transform: translateY(2px);
 }
 .cart .cart-total {
     text-align: right;

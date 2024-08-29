@@ -46,7 +46,7 @@ const AdminSidebar = () => {
             </li>
           </Link>
           <p className="title">USEFUL</p>
-          <Link to="/admin/notifications">
+          <Link to="/admin/notifications" style={{ textDecoration: "none" }}>
             <li>
               <NotificationsNoneIcon className="icon" />
               <span>Notifications</span>

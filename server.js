@@ -4,7 +4,6 @@ import morgan from "morgan";
 import connectDB from "./Backend/config/db.js";
 import cors from "cors";
 import path from "path";
-import JWT from 'jsonwebtoken'; 
 
 import payosRoutes from "./Backend/routes/payosRoute.js";
 import authRoutes from "./Backend/routes/authRoute.js";

@@ -1,5 +1,5 @@
 import cartModel from '../models/cartModel.js';
-import productModel from '../models/productModel.js';
+import couponModel from '../models/couponModel.js';
 import jwt from 'jsonwebtoken'; // Đảm bảo rằng import này có trong file của bạn
 
 // Get cart items
@@ -59,7 +59,7 @@ export const updateCart = async (req, res) => {
     }
 
     // Find the item to update (match by product ID and size)
-    const existingItemIndex = cart.cartItems.findIndex(item => 
+    const existingItemIndex = cart.cartItems.findIndex(item =>
       item.product.toString() === productId.toString() && item.size === size
     );
 
@@ -127,9 +127,6 @@ export const removeFromCart = async (req, res) => {
   }
 };
 
-
-
-
 // Count total items in cart
 export const countCart = async (req, res) => {
   try {
@@ -150,21 +147,76 @@ export const countCart = async (req, res) => {
 };
 // Clear entire cart
 export const clearCart = async (req, res) => {
-    try {
-      const userId = req.user._id;
-      const cart = await cartModel.findOne({ user: userId });
-  
-      if (!cart) {
-        return res.status(404).send({ message: 'Cart not found' });
-      }
-  
-      // Clear all items from the cart
-      cart.cartItems = [];
-      await cart.save();
-  
-      res.status(200).send({ message: 'Cart cleared successfully' });
-    } catch (error) {
-      console.error('Error clearing cart:', error);
-      res.status(500).send({ message: 'Error clearing cart', error });
+  try {
+    const userId = req.user._id;
+    const cart = await cartModel.findOne({ user: userId });
+
+    if (!cart) {
+      return res.status(404).send({ message: 'Cart not found' });
     }
-  };
+
+    // Clear all items from the cart
+    cart.cartItems = [];
+    await cart.save();
+
+    res.status(200).send({ message: 'Cart cleared successfully' });
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    res.status(500).send({ message: 'Error clearing cart', error });
+  }
+};
+
+// Apply coupon to cart
+export const applyCoupon = async (req, res) => {
+  try {
+    const { couponCode } = req.body;
+    const userId = req.user._id;
+
+    // Find the user's cart
+    const cart = await cartModel.findOne({ user: userId });
+    if (!cart) {
+      return res.status(404).send({ message: 'Cart not found' });
+    }
+
+    // Find the coupon (case-insensitive)
+    const coupon = await couponModel.findOne({ code: new RegExp(`^${couponCode}$`, 'i') });
+    if (!coupon) {
+      return res.status(404).send({ message: 'Coupon not found' });
+    }
+
+    // Check if the coupon is valid (within date range)
+    const currentDate = new Date();
+    if (currentDate < coupon.startDate) {
+      return res.status(400).send({ message: 'Coupon is not yet valid.' });
+    } else if (currentDate > coupon.endDate) {
+      return res.status(400).send({ message: 'Coupon has expired.' });
+    }
+
+    // Check if the coupon has reached its usage limit
+    if (coupon.usageCount >= coupon.usageLimit) {
+      return res.status(400).send({ message: 'Coupon usage limit has been reached' });
+    }
+
+    // Calculate the discount
+    const cartTotal = cart.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    const discountAmount = Math.min(coupon.discountValue, cartTotal); // Ensure discount doesn't exceed cart total
+
+    // Apply the discount to the cart
+    cart.discount = discountAmount;
+    cart.couponApplied = couponCode;
+    await cart.save();
+
+    // Update coupon usage count atomically
+    await couponModel.updateOne({ code: couponCode }, { $inc: { usageCount: 1 } });
+
+    res.status(200).send({
+      message: 'Coupon applied successfully',
+      cart: cart,
+      discountAmount: discountAmount
+    });
+
+  } catch (error) {
+    console.error('Error applying coupon:', error.message);
+    res.status(500).send({ message: 'Error applying coupon', error: error.message });
+  }
+};

@@ -36,7 +36,19 @@ export const countAllOrders = async (req, res) => {
         });
     }
 };
+export const getLatestOrder = async (req, res) => {
+    try {
+        // Truy vấn để lấy 2 order mới nhất
+        const orders = await Order.find({})
+            .sort({ createdAt: -1 }) // Sắp xếp theo createdAt giảm dần (mới nhất trước)
+            .limit(2); // Giới hạn chỉ lấy 2 đơn hàng
 
+        res.status(200).json({ orders });
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ message: 'Failed to fetch orders' });
+    }
+};
 export const getAllUsers = async (req, res) => {
     try {
         const users = await User.find(); // Fetch all users
@@ -210,7 +222,7 @@ export const deleteOrderById = async (req, res) => {
 
 export const createCoupon = async (req, res) => {
     try {
-        const { code, discountValue, startDate, endDate } = req.body;
+        const { code, discountValue, startDate, endDate, usageCount, usageLimit } = req.body;
         const coupon = new Coupon({
             code,
             discountValue,

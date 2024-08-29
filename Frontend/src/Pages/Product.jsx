@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./CSS/Product.css";
-import { get, post, put, del } from '../config/api';
+import { get, post } from '../config/api';
 import { useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from '../UserContext';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import Slider from "../Components/Slider/Slider.jsx";
 import Footer from "../Components/Footer/Footer.jsx";
 import Loader from "../Components/Loader/Loading.jsx";
 import Pop_up from "../Components/Popup/Popup.jsx"
+import Swal from 'sweetalert2';
 // Review Form component
 const ReviewForm = ({ onClose, onSubmit }) => {
     const [rating, setRating] = useState(0);
@@ -36,6 +40,7 @@ const ReviewForm = ({ onClose, onSubmit }) => {
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Write your review here..."
                     required
+                    style={{ width: "95%", height: "150px", resize:"none", fontFamily:"sans-serif", fontSize:"1.2rem", padding:"10px" }}
                 />
                 <div className="form-buttons">
                     <button type="submit">Submit</button>
@@ -55,13 +60,13 @@ const Product = () => {
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [cartCount, setCartCount] = useState(0);
-    const [loading, setLoading] = useState(true);
     const [showReviewForm, setShowReviewForm] = useState(false);
     const [showNoSizeSelectedPopup, setShowNoSizeSelectedPopup] = useState(false);
     const [showNoSizesStockPopup, setShowNoSizesStockPopup] = useState(false);
     const [showAddToCartSuccessPopup, setShowAddToCartSuccessPopup] = useState(false);
     const [showAddToCartFailedPopup, setShowAddToCartFailurePopup] = useState(false);
-    
+    const { user } = useContext(UserContext);
+
     const reviewsPerPage = 5;
     const location = useLocation();
     const navigate = useNavigate();
@@ -133,6 +138,37 @@ const Product = () => {
             }
         } catch (error) {
             setShowAddToCartFailurePopup(true);
+        }
+    };
+
+    const handleAddToWishlist = async (product) => {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            Swal.fire('Error', 'Please login to add items to your wishlist', 'error');
+            return;
+          }
+    
+          const response = await post(
+            `/api/v1/auth/users/${user._id}/wishlist/${product._id}`,
+            {},
+            {
+              headers: { Authorization: `Bearer ${token}` }
+            }
+          );
+    
+          if (response.status === 200) {
+            Swal.fire('Success', 'Product added to wishlist', 'success');
+          } else {
+            throw new Error(response.data.message || 'Failed to add product to wishlist');
+          }
+        } catch (error) {
+          console.error('Error adding product to wishlist:', error.response?.data || error.message);
+          if (error.response?.status === 401) {
+            Swal.fire('Error', 'Your session has expired. Please login again.', 'error');
+          } else {
+            Swal.fire('Error', 'Failed to add product to wishlist. Please try again.', 'error');
+          }
         }
     };
 
@@ -321,7 +357,28 @@ const Product = () => {
                         </div>
 
                         <div className="adding-button-container">
-                            <button onClick={() => onAddtoCartHandler(productData)} className="add-to-bag">Add to cart</button>
+                            <button onClick={() => onAddtoCartHandler(productData)} className="add-to-bag">
+                                <ShoppingCartOutlinedIcon
+                                className="icon"
+                                style={{
+                                    backgroundColor: "unset",
+                                    color: "white",
+                                    width: "40px",
+                                }}
+                                />
+                                ADD TO CART
+                            </button>
+                            <button onClick={() => handleAddToWishlist(productData)} className="add-to-bag">
+                                <FavoriteBorderOutlinedIcon
+                                className="icon"
+                                style={{
+                                    backgroundColor: "unset",
+                                    color: "white",
+                                    width: "40px",
+                                }}
+                                />
+                                ADD TO WISHLIST
+                            </button>
                         </div>
                     </div>
                 </div>

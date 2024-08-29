@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { post, del } from './config/api';
 
 const PaymentSuccess = () => {
   const [error, setError] = useState(null);
@@ -18,7 +18,7 @@ const PaymentSuccess = () => {
         if (pendingOrder) {
           try {
             const token = localStorage.getItem('token');
-            const response = await axios.post('/api/v1/orders/create-order', pendingOrder, {
+            const response = await post('/api/v1/orders/create-order', pendingOrder, {
               headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -49,7 +49,7 @@ const PaymentSuccess = () => {
     const clearCart = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.delete('/api/v1/auth/cart/clear', {
+        const response = await del('/api/v1/auth/cart/clear', {
           headers: { Authorization: `Bearer ${token}` }
         });
         return response.status === 200;

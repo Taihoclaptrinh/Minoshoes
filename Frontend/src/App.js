@@ -1,8 +1,6 @@
 import React from 'react';
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import { productInputs, userInputs, orderInputs, couponInputs } from "./formSource";
-import PaymentSuccess from './PaymentSuccess';
 
 import SearchResults from './Pages/SearchResult';
 import { UserProvider } from './UserContext';
@@ -16,13 +14,16 @@ import AdminSidebar from "./Components/AdminSidebar/AdminSidebar";
 import AdminHome from "./Pages/AdminHome";
 import AdminUserList from "./Pages/AdminUserList";
 import AdminProductList from "./Pages/AdminProductList";
+import AdminNotificationList from "./Pages/AdminNotificationList";
 import AdminOrderList from "./Pages/AdminOrderList";
 import AdminCouponList from "./Pages/AdminCouponList";
 import AdminUserSingle from "./Pages/AdminUserSingle";
 import AdminProductSingle from "./Pages/AdminProductSingle";
 import AdminOrderSingle from "./Pages/AdminOrderSingle";
 import AdminCouponSingle from "./Pages/AdminCouponSingle";
+import AdminNotificationSingle from "./Pages/AdminNotificationSingle";
 
+import AdminNewCoupon from "./Pages/AdminNewCoupon"
 import AdminNew from "./Pages/AdminNew";
 
 // Shop Components
@@ -63,10 +64,11 @@ const AdminApp = () => (
           <Route path="coupons">
             <Route index element={<AdminCouponList />} />
             <Route path=":couponId" element={<AdminCouponSingle />} />
-            <Route path="new" element={<AdminNew title="Add New Coupon" formType="coupon" />} />
+            <Route path="new" element={<AdminNewCoupon title="Add New Coupon" formType="coupon" />} />
           </Route>
-          <Route path="notification">
-
+          <Route path="notifications">
+            <Route index element={<AdminNotificationList />} />
+            <Route path=":notificationId" element={<AdminNotificationSingle />} /> {/* Tạo AdminNotificationSingle để xem chi tiết */}
           </Route>
         </Routes>
       </div>

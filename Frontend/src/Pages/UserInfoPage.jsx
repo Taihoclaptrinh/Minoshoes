@@ -3,7 +3,7 @@ import UserInfo from '../Components/UserInfo/UserInfo';
 import { useNavigate } from "react-router-dom";
 import { UserContext } from '../UserContext';
 import './CSS/UserInfoPage.css';
-import { get, post, put, del } from '../config/api';
+import { get, put, del } from '../config/api';
 
 const UserInfoPage = () => {
   const [activeSection, setActiveSection] = useState('details');
@@ -157,6 +157,7 @@ const UserInfoPage = () => {
 
       const response = await put(`/api/v1/orders/${orderId}/status`, {
         status: 'Cancelled',
+        cancellationReason: cancelDetails.reason,
         ...cancelDetails
       }, { headers: { Authorization: `Bearer ${token}` } });
 
@@ -216,8 +217,6 @@ const UserInfoPage = () => {
       setError('Failed to move item to cart. Please try again.');
     }
   };
-  
-  
 
   const transformWishlistData = (wishlist) => {
     return wishlist.map((item) => ({
@@ -227,13 +226,6 @@ const UserInfoPage = () => {
       images: item.images,
     }));
   };
-
-  const wishlistColumns = [
-    { field: "images", headerName: "Images", width: 400 },
-    { field: "name", headerName: "Product Name", width: 200 },
-    { field: "price", headerName: "Price", width: 100 },
-    { field: "status", headerName: "Status", width: 150 },
-  ];
 
   // Hàm transform dữ liệu đơn hàng
   const transformOrderData = (orders) => {
@@ -258,16 +250,11 @@ const UserInfoPage = () => {
   const orderColumns = [
     { field: "productName", headerName: "Product Name", width: 200 },
     { field: "quantity", headerName: "Quantity", width: 100 },
-    { field: "price", headerName: "Price", width: 100 },
+    { field: "totalPrice", headerName: "Total Price", width: 150 },
     { field: "shippingAddress", headerName: "Shipping Address", width: 300 },
-    { field: "name", headerName: "Name", width: 150 },
     { field: "phone", headerName: "Phone", width: 150 },
     { field: "paymentMethod", headerName: "Payment Method", width: 150 },
-    { field: "shippingPrice", headerName: "Shipping Price", width: 150 },
-    { field: "totalPrice", headerName: "Total Price", width: 150 },
     { field: "status", headerName: "Status", width: 150 },
-    { field: "createAt", headerName: "Created At", width: 200 },
-    { field: "updateAt", headerName: "Updated At", width: 200 },
   ];
 
   const renderSection = () => {
