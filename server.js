@@ -20,19 +20,13 @@ dotenv.config();
 const app = express();
 const router = express.Router();
 
-const corsOptions = {
-  origin: 'http://10.0.1.4:3000',  // Địa chỉ IP của frontend (hoặc domain của frontend)
-  methods: 'GET, POST, PUT, DELETE',   // Các phương thức HTTP bạn cho phép
-  allowedHeaders: 'Content-Type, Authorization', // Các header bạn cho phép
-};
-
 const PORT = process.env.PORT;
 
 // Connect to MongoDB
 connectDB();
 
 // Middleware setup
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
