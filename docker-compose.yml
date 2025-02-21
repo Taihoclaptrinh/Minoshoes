@@ -3,7 +3,7 @@ services:
     container_name: frontend-app
     image: frontend:v1
     ports:
-      - "3000:80"
+      - "80:80"
     restart: unless-stopped
 
   backend:
