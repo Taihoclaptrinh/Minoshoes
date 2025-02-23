@@ -15,11 +15,6 @@ import orderRoute from "./Backend/routes/orderRoute.js";
 import adminRoute from "./Backend/routes/adminRoute.js";
 import reviewRoute from "./Backend/routes/reviewRoute.js";
 import botchatRoute from "./Backend/routes/botchat.js";
-const corsOptions = {
-  origin: "http://10.0.0.4", // Private IP của Frontend
-  methods: "GET, POST, PUT, DELETE",
-  credentials: true,
-};
 
 
 dotenv.config();
@@ -32,7 +27,7 @@ const PORT = process.env.PORT;
 connectDB();
 
 // Middleware setup
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
