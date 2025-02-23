@@ -16,7 +16,7 @@ import adminRoute from "./Backend/routes/adminRoute.js";
 import reviewRoute from "./Backend/routes/reviewRoute.js";
 import botchatRoute from "./Backend/routes/botchat.js";
 const corsOptions = {
-  origin: "http://10.0.1.4", // Private IP của Frontend
+  origin: "http://10.0.0.4", // Private IP của Frontend
   methods: "GET, POST, PUT, DELETE",
   credentials: true,
 };
