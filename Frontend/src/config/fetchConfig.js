@@ -1,4 +1,5 @@
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+//private back
 
 const fetchInstance = async (url, options = {}) => {
   const response = await fetch(`${BASE_URL}${url}`, {

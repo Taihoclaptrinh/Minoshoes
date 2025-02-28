@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL, // Base URL cho các API
+  baseURL: process.env.APP_API_BASE_URL, // Base URL cho các API
   headers: {
     'Content-Type': 'application/json', // Loại nội dung mặc định cho tất cả các yêu cầu
   },
